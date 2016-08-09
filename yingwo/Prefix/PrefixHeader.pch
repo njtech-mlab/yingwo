@@ -1,0 +1,73 @@
+//
+//  PrefixHeader.pch
+//  yingwo
+//
+//  Created by apple on 16/7/11.
+//  Copyright © 2016年 wangxiaofa. All rights reserved.
+//
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+
+//Library
+#import <AssetsLibrary/AssetsLibrary.h>
+#import "LSYConfig.h"
+#import "LSYAlbum.h"
+
+//pod第三方库
+#import "AFNetworking.h"
+#import "MBProgressHUD.h"
+#import "UINavigationController+FDFullscreenPopGesture.h"
+#import "Masonry.h"
+#import "MJExtension.h"
+#import "MJRefresh.h"
+#import "ReactiveCocoa.h"
+#import "UITableView+FDTemplateLayoutCell.h"
+#import "MagicalRecord.h"
+#import "QiniuSDK.h"
+#import "UIImageView+WebCache.h"
+
+//第三方框架vender
+#import "LSYNavigationController.h"
+#import "LSYAlbumCatalog.h"
+#import "CatZanButton.h"
+
+//自定义tools
+#import "InputTextField.h"
+#import "UIView+Frame.h"
+#import "UIColor+Hex.h"
+#import "UIImage+(Copping).h"
+#import "MBProgressHUD+Dispaly.h"
+#import "Macro.h"
+#import "Validate.h"
+#import "Customer.h"
+#import "User.h"
+#import "MD5.h"
+#import "User+CURD.h"
+#import "YWSandBoxTool.h"
+#import "UINavigationBar+HideBottomLine.h"
+#import "UIBarButtonItem+Left.h"
+#import "NSDate+Grade.h"
+#import "YWNetworkTools.h"
+#import "YWHTTPManager.h"
+#import "CustomPresentSegue.h"
+#import "CustomDismissSegue.h"
+#import "YWQiNiuUploadTool.h"
+#import "YWDateTools.h"
+#import "NSString+Clean.h"
+
+//自定义控件
+#import "InputTextField.h"
+#import "YWInputButton.h"
+
+//controller
+#import "BaseViewController.h"
+#import "MainNavController.h"
+#import "MainController.h"
+#import "VerificationController.h"
+#import "LoginNavController.h"
+#import "LoginController.h"
+
+#endif /* PrefixHeader_pch */
