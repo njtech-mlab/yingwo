@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ *  注册时，年级的范围获取
+ */
 @interface NSDate (Grade)
 
 /**

@@ -21,10 +21,15 @@ typedef NS_ENUM(NSInteger, ContentCategory){
 
 };
 
+/**
+ *  HomeController 用于首页显示贴子、新鲜事
+ *  同时此类具备内容的筛选，就是上面的 ContentCategory 分类
+ */
 @interface HomeController : BaseViewController
 
 @property (nonatomic, strong) YWTabBar        *tabBar;
 @property (nonatomic, assign) NSUInteger      index;
 @property (nonatomic, assign) ContentCategory contentCategoryModel;
+@property (nonatomic, strong) UITableView     *homeTableview;
 
 @end

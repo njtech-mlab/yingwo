@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ *  MBProgressHUD 分类，用于扩展 MBProgressHUD 
+ */
 @interface MBProgressHUD (Dispaly)
 
 + (void)showHUDToAddToView:(UIView *)view

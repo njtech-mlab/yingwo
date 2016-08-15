@@ -9,17 +9,26 @@
 #import <UIKit/UIKit.h>
 #import "YWHomeCellLabelView.h"
 #import "YWDetailMasterView.h"
-#import "YWDetailBottomView.h"
+#import "YWDetailTopView.h"
+#import "YWContentLabel.h"
+
+@protocol YWDetailTabeleViewProtocol;
 
 @interface YWDetailBaseTableViewCell : UITableViewCell
 
-@property (nonatomic, strong) YWHomeCellLabelView *topView;
-@property (nonatomic, strong) YWDetailMasterView  *masterView;
-@property (nonatomic, strong) YWDetailBottomView  *bottomView;
-@property (nonatomic, strong) UIView              *bgImageView;
-@property (nonatomic, strong) UILabel             *contentLabel;
-@property (nonatomic, assign) NSInteger           imageCount;
+@property (nonatomic, strong) YWDetailTopView            *topView;
+@property (nonatomic, strong) YWDetailMasterView         *masterView;
+@property (nonatomic, strong) UIView                     *bgImageView;
+@property (nonatomic, strong) YWContentLabel             *contentLabel;
+@property (nonatomic, assign) NSInteger                  imageCount;
+@property (nonatomic,assign ) id<YWDetailTabeleViewProtocol> delegate;
 
 - (void)createSubview;
 - (void)addImageViewByImageArr:(NSMutableArray *)imageArr;
+@end
+
+@protocol YWDetailTabeleViewProtocol <NSObject>
+
+- (void)didSeletedImageView:(UIImageView *)seletedImageView;
+
 @end

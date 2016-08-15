@@ -14,7 +14,9 @@
 
 @interface MainController ()
 
-@property (nonatomic, strong)YWTabBarController *mainTabBarController;
+@property (nonatomic, strong) YWTabBarController *mainTabBarController;
+@property (nonatomic, strong) HomeController     *homeVC;
+@property (nonatomic, assign) NSInteger          selectedIndex;
 
 @end
 
@@ -28,8 +30,8 @@
     
     
     
-    HomeController *pcVc1 = [self.storyboard instantiateViewControllerWithIdentifier:CONTROLLER_OF_HOME_IDENTIFIER];
-    MainNavController *nav1 = [[MainNavController alloc] initWithRootViewController:pcVc1];
+    self.homeVC = [self.storyboard instantiateViewControllerWithIdentifier:CONTROLLER_OF_HOME_IDENTIFIER];
+    MainNavController *nav1 = [[MainNavController alloc] initWithRootViewController:self.homeVC];
     
 
     PersonalCenterController *pcVc2 = [self.storyboard instantiateViewControllerWithIdentifier:CONTROLLER_OF_PERSONNAL_CENTER_IDENTIFY];
@@ -70,8 +72,8 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    //[self initNavigationBar];
-    
+    //防止点击发布新鲜事后，跳转回来后，但前TabBar的颜色不见了
+    [_mainTabBarController.tabBar selectTabAtIndex:self.selectedIndex];
     //去掉导航栏下的下划线
     [self.navigationController.navigationBar hideNavigationBarBottomLine];
 }
@@ -92,7 +94,12 @@
 }
 
 - (void)didSelectedViewController:(UIViewController *)viewController AtIndex:(NSInteger)index {
-    if (index == 2) {
+    self.selectedIndex = index;
+    if (index == 0) {
+        //点击后刷新
+        [self.homeVC.homeTableview.mj_header beginRefreshing];
+    }
+    else if (index == 2) {
         
         [self performSegueWithIdentifier:@"announce" sender:self];
 

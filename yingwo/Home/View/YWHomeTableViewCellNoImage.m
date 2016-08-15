@@ -14,13 +14,8 @@
     
     self.backgroundView = [[UIView alloc] init];
     self.labelView      = [[YWHomeCellLabelView alloc] init];
-    self.contentText    = [[UILabel alloc] init];
+    self.contentText    = [[YWContentLabel alloc] initWithFrame:CGRectZero];
     self.bottemView     = [[YWHomeCellBottomView alloc] init];
-    
-    self.contentText.font = [UIFont systemFontOfSize:14];
-    self.contentText.numberOfLines = 4;
-    self.contentText.layer.masksToBounds = YES;
-   // self.contentText.text = @"的方式发那就十分拉风吗兰副卡房间打扫；发哈是非法哈佛卷发肯定十分拉风叫阿爽";
     
     [self.contentView addSubview:self.backgroundView];
     [self.backgroundView addSubview:self.labelView];

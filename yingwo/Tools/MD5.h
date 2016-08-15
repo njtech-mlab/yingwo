@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 #import <CommonCrypto/CommonDigest.h>
 
+/**
+ *  MD5密码加密
+ */
 @interface MD5 : NSObject
 
 + (NSString*)getmd5WithString:(NSString *)string;

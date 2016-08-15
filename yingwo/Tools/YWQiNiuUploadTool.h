@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 #import "YWQiNiuUploadHelper.h"
 
+/**
+ *  七牛上传图片的工具类，实现了单、多文件的上传
+ */
 @interface YWQiNiuUploadTool : NSObject
 
 /**
@@ -21,7 +24,7 @@
 /**
  *  上传一张图片
  *
- *  @param image    tupian
+ *  @param image    图片
  *  @param progress 进度
  *  @param success  成功
  *  @param failure  失败

@@ -7,9 +7,19 @@
 //
 
 #import "DetailViewModel.h"
-#import "YWDateTools.h"
 
 @implementation DetailViewModel
+
+- (NSString *)idForRowByIndexPath:(NSIndexPath *)indexPath model:(TieZi *)model{
+    
+    if (indexPath.row == 0) {
+        
+        self.imageUrlArr = [model.img componentsSeparatedByString:@","];
+        
+        return @"detailCell";
+    }
+    return nil;
+}
 
 - (void)setupModelOfCell:(YWDetailBaseTableViewCell *)cell model:(TieZi *)model {
     
@@ -19,65 +29,133 @@
     cell.contentLabel.text                     = model.content;
     cell.masterView.nicnameLabel.text          = model.nickname;
     NSString *dataString          = [NSString stringWithFormat:@"%d",model.create_time];
-    cell.masterView.timeLabel.text =[YWDateTools getDateString:dataString];
+    cell.masterView.timeLabel.text =[NSDate getDateString:dataString];
     
- //   NSLog(@"model:%@",model.img);
-
-    if (model.img.length > 10) {
-        
-        NSMutableArray *photoArr = [[NSMutableArray alloc] init];
-
-        for (int i = 0; i < self.imageUrlArr.count; i ++) {
-            
-            NSString *partUrl = [self.imageUrlArr objectAtIndex:i];
-            [self requestImageWithUrl:partUrl ForCell:cell addToArr:photoArr];
-            
-        }
-        
-        if (photoArr.count > 0) {
-            
-            [cell addImageViewByImageArr:photoArr];
-            
-        }
+    if (model.imageUrlArr.count > 0) {
+        [self requestImageWithUrls:model.imageUrlArr ForCell:cell];
     }
 
 }
 
 /**
- *  限宽图片
+ *  从缓存中取
+ *
+ *  @param name 名字图片
+ *
+ *  @return 返回UIImage
+ */
+- (UIImage *)loadImageInCaheByName:(NSString *)name {
+    Boolean isExist = [YWSandBoxTool isExistImageByName:name];
+    if (isExist) {
+        
+        UIImage *image = [UIImage imageWithData:[YWSandBoxTool loadImageDataByImageName:name]];
+        return image;
+        
+    }
+    return nil;
+}
+
+/**
+ *  网络请求图片图片
  *
  *  @param urlArr 图片链接
- */
+
 - (void)requestImageWithUrl:(NSString *)partUrl ForCell:(YWDetailBaseTableViewCell *)cell addToArr:(NSMutableArray *)photoArr{
     
         partUrl = [NSString replaceIllegalStringForUrl:partUrl];
     
         UIImageView *imageView = [[UIImageView alloc] init];
 
-        int imageWidth         = (SCREEN_WIDTH-80) * 2;
-        NSString *imageMode    = [NSString stringWithFormat:QINIU_PROPORTION_IMAGE_MODEL,imageWidth];
+        NSString *imageMode    = [NSString stringWithFormat:QINIU_PROPORTION_IMAGE_MODEL,(int)SCREEN_WIDTH*2,(int)SCREEN_HEIGHT*2];
         NSString *fullUrl      = [partUrl stringByAppendingString:imageMode];
         NSURL *imageUrl        = [NSURL URLWithString:fullUrl];
     
-        [imageView sd_setImageWithURL:imageUrl placeholderImage:[UIImage imageNamed:@"pic"]];
+        [imageView sd_setImageWithURL:imageUrl placeholderImage:[UIImage imageNamed:@"yingwo"]];
         
         [photoArr addObject:imageView];
         
-}
+} */
 
-- (NSString *)idForRowByIndexPath:(NSIndexPath *)indexPath model:(TieZi *)model{
+- (void)requestImageWithUrls:(NSArray *)urls ForCell:(YWDetailBaseTableViewCell *)cell {
     
-    if (indexPath.row == 0) {
+    [self downloadCompletedImageViewByUrls:urls
+                                  progress:^(CGFloat progress) {
+                                      
+                                  }
+                                   success:^(NSMutableArray *imageArr) {
+                                       
+                                       [cell addImageViewByImageArr:imageArr];
+
+//                                       NSString *imageName    = [urls objectAtIndex:0];
+//                                       imageName              = [imageName lastPathComponent];
+//                                       Boolean hasExsitImages = [YWSandBoxTool isExistImageByName:imageName];
+//                                       //先从沙盒中找图片
+//                                       if (hasExsitImages) {
+//                                           [cell addImageViewByImageArr:[self getImagesFromCacheByUrlsArr:urls]];
+//                                       }
+
+                                       
+    } failure:^(NSString *error) {
         
-        self.imageUrlArr = [model.img componentsSeparatedByString:@","];
+    }];
+    
+}
 
-        return @"detailCell";
+- (void)downloadCompletedImageViewByUrls:(NSArray *)imageUrls
+                                progress:(void (^)(CGFloat))progress
+                                 success:(void (^)(NSMutableArray *imageArr))imageArr
+                                 failure:(void (^)(NSString *error))failure{
+    
+    
+    NSString *imageName    = [imageUrls objectAtIndex:0];
+    imageName              = [imageName lastPathComponent];
+    Boolean hasExsitImages = [YWSandBoxTool isExistImageByName:imageName];
+    //先从沙盒中找图片
+    if (hasExsitImages) {
+        imageArr([self getImagesFromCacheByUrlsArr:imageUrls]);
+     //   progress(1);
     }
-    return nil;
+    else
+    {
+        [YWAvatarBrowser downloadImagesWithUrls:imageUrls
+                                       progress:^(CGFloat progressNum) {
+                                           //这个不能写
+                                           progress(progressNum);
+                                       }
+                                        success:^(NSMutableArray *success) {
+                                            
+                                            imageArr(success);
+                                            
+                                        } failure:^(NSString *error) {
+                                            failure(error);
+                                            NSLog(@"failure:%@",error);
+                                        }];
+    }
+    
 }
 
-- (void)requestImageWithUrl:(NSString *)url {
-  //  NSURL
+/**
+ *  从缓存中读取图片
+ *
+ *  @param urlArr 图片url数组
+ *
+ *  @return 返回保存UIImage的数组
+ */
+- (NSMutableArray *)getImagesFromCacheByUrlsArr:(NSArray *)urlArr {
+    
+    NSMutableArray *cacheimageArr = [NSMutableArray arrayWithCapacity:urlArr.count];
+    
+    for (NSString *url in urlArr) {
+        
+        NSString *name    = [url lastPathComponent];
+        NSData *imageData = [YWSandBoxTool loadImageDataByImageName:name];
+        UIImage *image    = [UIImage imageWithData:imageData];
+        
+        [cacheimageArr addObject:image];
+    }
+    
+    return cacheimageArr;
 }
+
 
 @end

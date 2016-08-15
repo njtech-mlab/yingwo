@@ -9,14 +9,16 @@
 #import <UIKit/UIKit.h>
 
 #import "YWHomeCellLabelView.h"
+#import "YWHomeCellMiddleViewBase.h"
 #import "YWHomeCellBottomView.h"
+#import "YWContentLabel.h"
 
 @interface YWHomeTableViewCellBase : UITableViewCell
 
-//@property (nonatomic, strong) UIView               *backgroundView;
-@property (nonatomic, strong) YWHomeCellLabelView  *labelView;
-@property (nonatomic, strong) YWHomeCellBottomView *bottemView;
-@property (nonatomic, strong) UILabel              *contentText;
+@property (nonatomic, strong) YWHomeCellLabelView      *labelView;
+@property (nonatomic, strong) YWHomeCellMiddleViewBase *middleView;
+@property (nonatomic, strong) YWHomeCellBottomView     *bottemView;
+@property (nonatomic, strong) YWContentLabel           *contentText;
 
 /**
  *  添加子视图（需重写）

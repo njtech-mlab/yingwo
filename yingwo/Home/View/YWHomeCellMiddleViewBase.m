@@ -73,6 +73,10 @@
         //约束的key，最好检查错误的时候最好设置一下
         imageView.mas_key = [NSString stringWithFormat:@"imageView%d",i];
         
+        //给每个图片添加点击事件
+        UITapGestureRecognizer *tap      = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(selectedImageView:)];
+        imageView.userInteractionEnabled = YES;
+        [imageView addGestureRecognizer:tap];
     }
     
     [self addImageViewsFrameToView];
@@ -93,6 +97,7 @@
             UIImageView *newImageView = [imageArr objectAtIndex:i];
             UIImageView *oldImageView = (UIImageView *)[self viewWithTag:i+1];
             oldImageView.image        = newImageView.image;
+
         }
     }else {
         for (int i = 0; i < 9; i ++) {
@@ -104,8 +109,12 @@
         }
     }
     
+}
 
+- (void)selectedImageView:(UIGestureRecognizer *)gesture {
+    UIImageView *imageView = (UIImageView *)gesture.view;
     
+    [self.delegate didSelectedAvatarImageViewOfMiddleView:imageView imageArr:self.imagesArr];
 }
 
 @end

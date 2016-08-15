@@ -8,6 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ *  网络请求时，用户数据的对应模型类，与coredata的模型类Customer对应
+ *  为什么有了Customer类还要有User类呢？解释：因为Customer类不能直接使用
+ *  不能通过MJExtension键值转换
+ */
 @interface User : NSObject
 
 @property (nonatomic, copy)NSString *userId;

@@ -8,6 +8,9 @@
 
 #import <AFNetworking/AFNetworking.h>
 
+/**
+ *  继承于AFHTTPSessionManager,主要用于判断网络链接
+ */
 @interface YWNetworkTools : AFHTTPSessionManager
 
 //+ (instancetype)shareNetworkTools;

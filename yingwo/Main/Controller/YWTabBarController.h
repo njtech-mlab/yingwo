@@ -10,15 +10,17 @@
 #import "YWTabBar.h"
 @class UITabBarController;
 @protocol YWTabBarControllerDelegate;
-
+/**
+ *  应我主要的TabBar
+ */
 @interface YWTabBarController : UIViewController<YWTabBarDelegate>
 
-@property(nonatomic, strong) NSMutableArray *viewControllers;
-@property(nonatomic, readonly) UIViewController *selectedViewController;
-@property(nonatomic) NSUInteger selectedIndex;
+@property (nonatomic, strong  ) NSMutableArray             *viewControllers;
+@property (nonatomic, readonly) UIViewController           *selectedViewController;
+@property (nonatomic          ) NSUInteger                 selectedIndex;
 
-@property (nonatomic, readonly) YWTabBar *tabBar;
-@property(nonatomic,assign) id<YWTabBarControllerDelegate> delegate;
+@property (nonatomic, readonly) YWTabBar                   *tabBar;
+@property (nonatomic,assign   ) id<YWTabBarControllerDelegate> delegate;
 
 // Default is NO, if set to YES, content will under tabbar
 @property (nonatomic) BOOL tabBarTransparent;

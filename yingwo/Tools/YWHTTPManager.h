@@ -8,6 +8,10 @@
 
 #import <AFNetworking/AFNetworking.h>
 
+/**
+ *  继承于 AFHTTPSessionManager
+ *  在对 AFNetworking框架使用时，一半不直接使用 AFNetworking 中的类
+ */
 @interface YWHTTPManager : AFHTTPSessionManager
 
 + (instancetype)manager;

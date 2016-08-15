@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
+/**
+ *  这个分类使得View获取frame的各种参数变的更加简单
+ */
 @interface UIView (Frame)
 
 // 自己模仿frame写出他的四个属性

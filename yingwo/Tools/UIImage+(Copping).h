@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
+/**
+ *  圆形裁剪类，主要用来裁剪圆形头像
+ */
 @interface UIImage (Copping)
 
 + (UIImage *)circleImage:(UIImage *)image ;

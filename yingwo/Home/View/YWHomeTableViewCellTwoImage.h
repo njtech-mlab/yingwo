@@ -13,7 +13,4 @@
 
 @interface YWHomeTableViewCellTwoImage : YWHomeTableViewCellBase
 
-
-@property (nonatomic, strong) YWHomeCellMiddleViewTwoImage *middleView;
-
 @end

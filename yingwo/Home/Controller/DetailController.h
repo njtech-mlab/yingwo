@@ -9,6 +9,10 @@
 #import "BaseViewController.h"
 #import "TieZi.h"
 
+/**
+ *  DetailController 用于显示贴子、新鲜事的详细信息
+ *  包括贴子的评论，用户可还可以评论贴子
+ */
 @interface DetailController : BaseViewController
 
 @property (nonatomic, strong) TieZi           *model;

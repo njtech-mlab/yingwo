@@ -7,12 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-
+@protocol  YWHomeCellMiddleViewBaseProtocol;
 @interface YWHomeCellMiddleViewBase : UIView
 
-@property (nonatomic, strong) NSMutableArray *imagesArr;
-@property (nonatomic, assign) double         YWOneImageHeight;
-@property (nonatomic, assign) double         margin;
+@property (nonatomic, strong) NSMutableArray                   *imagesArr;
+@property (nonatomic, assign) id<YWHomeCellMiddleViewBaseProtocol> delegate;
+@property (nonatomic, assign) double                           YWOneImageHeight;
+@property (nonatomic, assign) double                           margin;
 
 - (instancetype)initWithImagesNumber:(NSInteger)num;
 /**
@@ -40,5 +41,17 @@
  *  @param divide 一排几个图片
  */
 - (void)setImageHeightByDivide:(double) divide;
+
+@end
+
+@protocol YWHomeCellMiddleViewBaseProtocol <NSObject>
+
+@required
+/**
+ *  点击cell中的图片
+ *
+ *  @param imageView
+ */
+- (void)didSelectedAvatarImageViewOfMiddleView:(UIImageView *)imageView imageArr:(NSMutableArray *)imageArr;
 
 @end

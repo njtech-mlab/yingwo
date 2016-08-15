@@ -8,6 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ *  User的分类，用于实现User类的从数据库的增、删、改、查
+ *  是一个间接类，直接操作的是 Customer 类
+ */
 @interface User (CURD)
 
 //将user模型转为customer模型

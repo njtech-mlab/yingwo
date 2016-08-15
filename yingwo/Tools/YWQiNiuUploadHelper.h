@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ *  七牛上传图片的单例类
+ */
 @interface YWQiNiuUploadHelper : NSObject
 
 @property (nonatomic,copy) void (^singleSuccessBlock)(NSString *);

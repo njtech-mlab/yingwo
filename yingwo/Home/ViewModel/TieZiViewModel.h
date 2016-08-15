@@ -12,6 +12,9 @@
 #import "TieZiResult.h"
 #import "HomeController.h"
 
+/**
+ *  HomeViewController 的ViewModel
+ */
 @interface TieZiViewModel : NSObject
 
 @property (nonatomic, strong)RACCommand *fecthTieZiEntityCommand;
@@ -74,6 +77,15 @@
                     success:(void (^)(NSArray *tieZi))success
                       error:(void (^)(NSURLSessionDataTask *task,NSError *error))failure;
 
-
-
+/**
+ *  图片下载
+ *
+ *  @param imageUrls 图片url数组
+ *  @param imageArr  成功返回UIImage数组
+ *  @param failure   失败
+ */
+- (void)downloadCompletedImageViewByUrls:(NSArray *)imageUrls
+                                progress:(void (^)(CGFloat))progress
+                                 success:(void (^)(NSMutableArray *imageArr))imageArr
+                                 failure:(void (^)(NSString *failure))failure;
 @end

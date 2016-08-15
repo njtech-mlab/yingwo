@@ -6,9 +6,9 @@
 //  Copyright © 2016年 wangxiaofa. All rights reserved.
 //
 
-#import "NSString+Clean.h"
+#import "NSString+Url.h"
 
-@implementation NSString (Clean)
+@implementation NSString (Url)
 
 + (NSString *)replaceIllegalStringForUrl:(NSString *)urlString {
     

@@ -53,7 +53,6 @@
     MBProgressHUD *hud            = [MBProgressHUD showHUDAddedTo:view animated:animated];
     hud.mode                      = MBProgressHUDModeIndeterminate;
     hud.removeFromSuperViewOnHide = YES;
- //   [hud hide:YES afterDelay:3];
     return hud;
 }
 

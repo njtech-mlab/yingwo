@@ -8,7 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
-@interface NSString (Clean)
+/**
+ *  url过滤非法字符类
+ */
+@interface NSString (Url)
 
 /**
  *  url非法字符清除

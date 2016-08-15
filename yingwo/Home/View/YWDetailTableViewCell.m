@@ -14,10 +14,9 @@
 - (void)createSubview {
     
     self.backgroundView             = [[UIView alloc] init];
-    self.topView                    = [[YWHomeCellLabelView alloc] init];
+    self.topView                    = [[YWDetailTopView alloc] init];
     self.masterView                 = [[YWDetailMasterView alloc] init];
-    self.bottomView                 = [[YWDetailBottomView alloc] init];
-    self.contentLabel               = [[UILabel alloc] init];
+    self.contentLabel               = [[YWContentLabel alloc] initWithFrame:CGRectZero];
     self.bgImageView                = [[UIView alloc] init];
 
     self.contentLabel.font          = [UIFont systemFontOfSize:15];
@@ -28,8 +27,7 @@
     [self.backgroundView addSubview:self.masterView];
     [self.backgroundView addSubview:self.contentLabel];
     [self.backgroundView addSubview:self.bgImageView];
-    [self.backgroundView addSubview:self.bottomView];
-    
+        
     [self.backgroundView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.contentView).insets(UIEdgeInsetsMake(2.5, 10, 2.5, 10));
     }];
@@ -52,24 +50,14 @@
        make.top.equalTo(self.masterView.mas_bottom).offset(10);
         make.left.equalTo(self.masterView.mas_left);
         make.right.equalTo(self.masterView.mas_right);
-       // make.height.equalTo(@30).priorityLow();
     }];
     
     [self.bgImageView mas_updateConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.contentLabel.mas_bottom).offset(10);
         make.left.right.equalTo(self.contentLabel);
-     //   make.bottom.equalTo(self.backgroundView.mas_bottom).priorityLow();
-    }];
-        
-    [self.bottomView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.height.equalTo(@40);
-        make.top.equalTo(self.bgImageView.mas_bottom);
-        make.bottom.equalTo(self.backgroundView.mas_bottom).offset(-20);
-        make.left.right.equalTo(self.bgImageView);
+        make.bottom.equalTo(self.backgroundView.mas_bottom).offset(-20).priorityLow();
     }];
     
-   // self.contentLabel.backgroundColor = [UIColor greenColor];
-  //  self.bgImageView.backgroundColor  = [UIColor blueColor];
 }
 
 - (void)addImageViewByImageArr:(NSMutableArray *)imageArr {
@@ -78,10 +66,21 @@
     
     for (int i = 0; i < imageArr.count; i ++) {
         
-        UIImageView *imageView = [imageArr objectAtIndex:i];
-        imageView.tag          = i+1;
-        NSLog(@"imageView.image.size.height:%f", imageView.image.size.height);
-        NSLog(@"imageView.image.size.width:%f", imageView.image.size.width);
+        UIImage *image                   = [imageArr objectAtIndex:i];
+        UIImageView *imageView           = [[UIImageView alloc] initWithImage:image];
+        imageView.tag                    = i+1;
+        imageView.userInteractionEnabled = YES;
+        
+        //添加单击放大事件
+        UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singelTap:)];
+        singleTap.numberOfTouchesRequired = 1;
+        singleTap.numberOfTapsRequired    = 1;
+        [imageView addGestureRecognizer:singleTap];
+        
+        imageView.mas_key                = [NSString stringWithFormat:@"DetailImageView%d:",i+1];
+    
+//        NSLog(@"imageView.image.size.height:%f", imageView.image.size.height);
+//        NSLog(@"imageView.image.size.width:%f", imageView.image.size.width);
 
         [self.bgImageView addSubview:imageView];
         
@@ -91,25 +90,32 @@
                 make.top.equalTo(self.contentLabel.mas_bottom).offset(10);
                 make.left.equalTo(self.bgImageView.mas_left);
                 make.right.equalTo(self.bgImageView.mas_right);
-                make.height.equalTo(@(imageView.image.size.height));
-              //  make.bottom.equalTo(self.backgroundView.mas_bottom);
+                make.height.equalTo(@(imageView.image.size.height)).priorityHigh();
             }];
             lastView = imageView;
             
         }else {
             [imageView mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.left.right.equalTo(lastView);
-                make.top.equalTo(lastView.mas_bottom).offset(10);
-                make.height.equalTo(@(imageView.image.size.height));
-              //  make.bottom.equalTo(lastView.mas_bottom).priorityLow();
+                make.top.equalTo(lastView.mas_bottom).offset(10).priorityHigh();
+                make.height.equalTo(@(imageView.image.size.height)).priorityHigh();
             }];
             lastView = imageView;
         }
     }
     
     [lastView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.bottom.equalTo(self.bottomView.mas_top).offset(10);
+        make.bottom.equalTo(self.backgroundView.mas_bottom).offset(-20).priorityLow();
     }];
+    
+}
+
+- (void)singelTap:(UITapGestureRecognizer *)sender {
+    
+    if ([self.delegate respondsToSelector:@selector(didSeletedImageView:)]) {
+        [self.delegate didSeletedImageView:(UIImageView *)sender.view];
+
+    }
 }
 
 - (void)awakeFromNib {

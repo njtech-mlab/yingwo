@@ -10,10 +10,30 @@
 #import "YWDetailBaseTableViewCell.h"
 #import "TieZi.h"
 
+/**
+ *  DetailViewController 的ViewModel
+ */
 @interface DetailViewModel : NSObject
 
-@property (nonatomic, assign) NSArray        *imageUrlArr;
+@property (nonatomic, strong) RACCommand *fetchDetailEntityCommand;
+@property (nonatomic, strong) NSArray    *imageUrlArr;
 
+/**
+ *  初始化cell
+ *
+ *  @param cell  YWDetailBaseTableViewCell
+ *  @param model TieZi
+ */
 - (void)setupModelOfCell:(YWDetailBaseTableViewCell *)cell model:(TieZi *)model;
+
+/**
+ *  寻找相对应的id
+ *
+ *  @param indexPath NSIndexPath
+ *  @param model     TieZi
+ *
+ *  @return 返回id
+ */
 - (NSString *)idForRowByIndexPath:(NSIndexPath *)indexPath model:(TieZi *)model;
+
 @end

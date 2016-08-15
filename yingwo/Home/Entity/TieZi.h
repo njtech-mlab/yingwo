@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ *  贴子的模型类
+ */
 @interface TieZi : NSObject
 
 @property (nonatomic, assign) int       post_id;

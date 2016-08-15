@@ -19,13 +19,14 @@
 }
 
 - (void)presentPerform {
-    
+    //这里需要将window的背景置为白色，否则是黑色
+    [[UIApplication sharedApplication] keyWindow].backgroundColor = [UIColor whiteColor];
+
     UIViewController *sourceVc = self.sourceViewController;
     UIViewController *destinationVc = self.destinationViewController;
     
-    [[UIApplication sharedApplication] keyWindow].backgroundColor = [UIColor whiteColor];
 
-    [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+    [UIView animateWithDuration:0.1 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
             sourceVc.view.transform = CGAffineTransformMakeScale(0.9, 0.9);
                 [sourceVc presentViewController:destinationVc animated:YES completion:^{
                     sourceVc.view.transform = CGAffineTransformMakeScale(1, 1);

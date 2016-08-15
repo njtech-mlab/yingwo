@@ -13,6 +13,4 @@
 
 @interface YWHomeTableViewCellSixImage : YWHomeTableViewCellBase
 
-@property (nonatomic, strong) YWHomeCellMiddleViewSixImage *middleView;
-
 @end

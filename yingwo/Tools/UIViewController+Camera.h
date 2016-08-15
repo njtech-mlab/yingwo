@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
+/**
+ *  相册调用类
+ */
 @interface UIViewController(Camera)<UIImagePickerControllerDelegate,UINavigationControllerDelegate>
 
 - (BOOL) startMediaBrowserFromViewController: (UIViewController*) controller;

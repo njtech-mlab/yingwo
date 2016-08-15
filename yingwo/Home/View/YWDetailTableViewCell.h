@@ -11,6 +11,5 @@
 
 @interface YWDetailTableViewCell : YWDetailBaseTableViewCell
 
-
-
 @end
+

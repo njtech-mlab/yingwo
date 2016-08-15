@@ -6,6 +6,9 @@
 //  Copyright © 2016年 wangxiaofa. All rights reserved.
 //
 
+/*
+ *  头文件类，放入此文件的头文件具有公共访问的特点，即全局头文件
+ */
 #ifndef PrefixHeader_pch
 #define PrefixHeader_pch
 // Include any system framework and library headers here that should be included in all compilation units.
@@ -28,11 +31,17 @@
 #import "MagicalRecord.h"
 #import "QiniuSDK.h"
 #import "UIImageView+WebCache.h"
+#import "POP.h"
+#import "TTTAttributedLabel.h"
 
 //第三方框架vender
 #import "LSYNavigationController.h"
 #import "LSYAlbumCatalog.h"
 #import "CatZanButton.h"
+#import "GalleryView.h"
+
+//自定义宏
+#import "Macro.h"
 
 //自定义tools
 #import "InputTextField.h"
@@ -40,7 +49,6 @@
 #import "UIColor+Hex.h"
 #import "UIImage+(Copping).h"
 #import "MBProgressHUD+Dispaly.h"
-#import "Macro.h"
 #import "Validate.h"
 #import "Customer.h"
 #import "User.h"
@@ -55,12 +63,13 @@
 #import "CustomPresentSegue.h"
 #import "CustomDismissSegue.h"
 #import "YWQiNiuUploadTool.h"
-#import "YWDateTools.h"
-#import "NSString+Clean.h"
-
+#import "NSDate+String.h"
+#import "NSString+Url.h"
+#import "YWAvatarBrowser.h"
 //自定义控件
 #import "InputTextField.h"
 #import "YWInputButton.h"
+#import "YWAvatarBrowser.h"
 
 //controller
 #import "BaseViewController.h"

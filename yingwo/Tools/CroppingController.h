@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
+/**
+ *  头像裁剪类
+ */
 @interface CroppingController : UIViewController<UIGestureRecognizerDelegate>
 
 

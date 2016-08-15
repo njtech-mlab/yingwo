@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ *  字符串合法性检查类，主要用于登陆、注册时手机号、密码的验证
+ */
 @interface Validate : NSObject
 //手机号验证：0～9的数字,11位
 + (BOOL) validateMobile:(NSString *)mobile;

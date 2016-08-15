@@ -8,7 +8,9 @@
 
 #import <Foundation/Foundation.h>
 #import "TieZi.h"
-
+/**
+ *  网络获取的数据，先转化成 TieZiResult 的模型类，再将 info 数组转换成 TiZi 模型数组
+ */
 @interface TieZiResult : NSObject
 
 @property (nonatomic, strong) NSArray *info;

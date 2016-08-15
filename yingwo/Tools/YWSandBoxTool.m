@@ -99,4 +99,71 @@ static YWSandBoxTool *instance = nil;
     return nil;
 }
 
++ (BOOL)saveImageInCache:(UIImage *)image withName:(NSString *)name{
+    
+    NSFileManager *fileManager   = [NSFileManager defaultManager];
+    NSString *photoDirectoryPath = [[YWSandBoxTool libCachePath ]stringByAppendingString:@"/photo/"];
+    Boolean isExist              = [fileManager fileExistsAtPath:photoDirectoryPath];
+  
+    if (!isExist) {
+        [fileManager createDirectoryAtPath:photoDirectoryPath withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    
+    name                = [name stringByAppendingString:@".jpg"];
+    NSString *imagePath = [photoDirectoryPath stringByAppendingString:name];
+    Boolean isSave      = [UIImagePNGRepresentation(image) writeToFile:imagePath atomically:YES];
+
+    if (isSave) {
+        return YES;
+    }else
+    {
+        return NO;
+    }
+}
+
++ (BOOL)saveImageDataInCache:(NSData *)imageData withName:(NSString *)name{
+    
+    NSFileManager *fileManager   = [NSFileManager defaultManager];
+    NSString *photoDirectoryPath = [[YWSandBoxTool libCachePath ]stringByAppendingString:@"/photo/"];
+    Boolean isExist              = [fileManager fileExistsAtPath:photoDirectoryPath];
+    
+    if (!isExist) {
+        [fileManager createDirectoryAtPath:photoDirectoryPath withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    
+    NSString *imagePath = [photoDirectoryPath stringByAppendingString:name];
+    Boolean isSave      = [imageData writeToFile:imagePath atomically:YES];
+
+    if (isSave) {
+        return YES;
+    }else
+    {
+        return NO;
+    }
+}
+
++ (NSData *)loadImageDataByImageName:(NSString *)name {
+    
+    NSFileManager *fileManager   = [NSFileManager defaultManager];
+    NSString *photoDirectoryPath = [[YWSandBoxTool libCachePath ]stringByAppendingString:@"/photo/"];
+    NSString *photoImagePath     = [photoDirectoryPath stringByAppendingString:name];
+    Boolean isExist              = [fileManager fileExistsAtPath:photoImagePath];
+
+    if (isExist) {
+        NSData *imageData = [NSData dataWithContentsOfFile:photoImagePath];
+        return imageData;
+    }
+    return nil;
+}
+
++ (BOOL)isExistImageByName:(NSString *)name {
+    
+    NSFileManager *fileManager   = [NSFileManager defaultManager];
+    NSString *photoDirectoryPath = [[YWSandBoxTool libCachePath ]stringByAppendingString:@"/photo/"];
+    NSString *photoImagePath     = [photoDirectoryPath stringByAppendingString:name];
+    Boolean isExist              = [fileManager fileExistsAtPath:photoImagePath];
+    
+    return isExist;
+}
+
 @end

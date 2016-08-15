@@ -166,7 +166,11 @@
     {
         [_delegate tabBarController:self didSelectViewController:targetViewController];
      }
-
+    
+    if ([_delegate respondsToSelector:@selector(didSelectedViewController:AtIndex:)]) {
+        [_delegate didSelectedViewController:targetViewController AtIndex:index];
+    }
+    
 }
 
 - (void)showAnnounceViewAtIndex:(NSInteger)index {

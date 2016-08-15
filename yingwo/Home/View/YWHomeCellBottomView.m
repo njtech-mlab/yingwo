@@ -15,6 +15,7 @@
     if (self) {
         self.userInteractionEnabled = YES;
         [self createSubView];
+        
     }
     return self;
 }
@@ -22,26 +23,21 @@
 - (void)createSubView {
     
     _headImageView = [[UIImageView alloc] init];
-    _nickname = [[UILabel alloc] init];
+    _nickname      = [[UILabel alloc] init];
     _time          = [[UILabel alloc] init];
-    _favour        = [[UIButton alloc ]init];
-    _message       = [[UIButton alloc] init];
-    _more          = [[UIButton alloc] init];
-    _favourLabel = [[UILabel alloc] init];
-    _messageLabel = [[UILabel alloc] init];
     
-    //_favour = [[CatZanButton alloc] initWithFrame:CGRectMake(0, 0, 0, 0) zanImage:[UIImage imageNamed:@"heart_red"] unZanImage:[UIImage imageNamed:@"heart_gray"]];
-   // _favour = [[CatZanButton alloc] init];
-   // [_favour setType:CatZanButtonTypeFirework];
-
-//    _nickname.text = @"HaHa";
-//    _time.text = @"2小时前";
-//    _favourLabel.text = @"11";
-//    _messageLabel.text = @"22";
+    _favour        = [[YWSpringButton alloc ]initWithSelectedImage:[UIImage imageNamed:@"heart_red"]
+                                                    andCancelImage:[UIImage imageNamed:@"heart_gray"]];
+    _more          = [[YWAlertButton alloc] initWithNames:[NSArray arrayWithObjects:@"删除",@"复制",@"举报",nil]];
+    
+    _message       = [[UIButton alloc] init];
+    _favourLabel   = [[UILabel alloc] init];
+    _messageLabel  = [[UILabel alloc] init];
+    
     _headImageView.image = [UIImage imageNamed:@"touxiang"];
     
-    [_favour setBackgroundImage:[UIImage imageNamed:@"heart_red"] forState:UIControlStateNormal];
-    [_message setBackgroundImage:[UIImage imageNamed:@"bub"] forState:UIControlStateNormal];
+    [_favour setBackgroundImage:[UIImage imageNamed:@"heart_gray"] forState:UIControlStateNormal];
+    [_message setBackgroundImage:[UIImage imageNamed:@"bub_gray"] forState:UIControlStateNormal];
     [_more setBackgroundImage:[UIImage imageNamed:@"more_gray"] forState:UIControlStateNormal];
     
     _nickname.font = [UIFont systemFontOfSize:12];
@@ -51,7 +47,8 @@
     _time.textColor         = [UIColor colorWithHexString:THEME_COLOR_3];
     _favourLabel.textColor  = [UIColor colorWithHexString:THEME_COLOR_4];
     _messageLabel.textColor = [UIColor colorWithHexString:THEME_COLOR_4];
-    
+
+
     [self addSubview:_headImageView];
     [self addSubview:_nickname];
     [self addSubview:_time];
@@ -104,9 +101,59 @@
     }];
 
     
-
-    
 }
+
+/**
+ *  点赞
+ */
+//- (void)favourTheTieZi {
+//    
+//    [_favour setBackgroundImage:[UIImage imageNamed:@"heart_red"] forState:UIControlStateNormal];
+//    
+//    POPSpringAnimation *anim = [POPSpringAnimation animationWithPropertyNamed:kPOPViewScaleXY];
+//    anim.toValue = [NSValue valueWithCGPoint:CGPointMake(2, 2)];
+//    anim.springBounciness    = 0;
+//    anim.springSpeed         = 20;
+//    [_favour pop_addAnimation:anim forKey:@"Center"];
+//    
+//    anim.completionBlock = ^(POPAnimation *animation, BOOL finished){
+//        self.isFavour = YES;
+//        [_favour addTarget:self action:@selector(cancelFavour) forControlEvents:UIControlEventTouchUpInside];
+//        [self revivificationFavour];
+//    };
+//}
+//
+///**
+// *  取消点赞
+// */
+//- (void)cancelFavour {
+//    
+//    [_favour setBackgroundImage:[UIImage imageNamed:@"heart_gray"] forState:UIControlStateNormal];
+//
+//    POPSpringAnimation *anim = [POPSpringAnimation animationWithPropertyNamed:kPOPViewScaleXY];
+//    anim.toValue = [NSValue valueWithCGPoint:CGPointMake(2, 2)];
+//    anim.springBounciness    = 0;
+//    anim.springSpeed         = 20;
+//    [_favour pop_addAnimation:anim forKey:@"Center"];
+//    anim.completionBlock = ^(POPAnimation *animation, BOOL finished){
+//        self.isFavour = NO;
+//        [_favour addTarget:self action:@selector(favourTheTieZi) forControlEvents:UIControlEventTouchUpInside];
+//        [self revivificationFavour];
+//    };
+//}
+//
+///**
+// *  还原图片大小
+// */
+//- (void)revivificationFavour {
+//    
+//    POPSpringAnimation *anim = [POPSpringAnimation animationWithPropertyNamed:kPOPViewScaleXY];
+//    anim.toValue = [NSValue valueWithCGPoint:CGPointMake(1, 1)];
+//    anim.springBounciness    = 0;
+//    anim.springSpeed         = 20;
+//    [_favour pop_addAnimation:anim forKey:@"Center"];
+//    
+//}
 
 @end
 
