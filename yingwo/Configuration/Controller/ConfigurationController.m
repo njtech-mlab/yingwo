@@ -29,6 +29,7 @@
     if (_phoneBindedCell == nil) {
         _phoneBindedCell = [[YWConfigurationCell alloc] initWithLeftLabel:@"手机绑定" isHasRightView:YES];
         [_phoneBindedCell setBackgroundImage:[UIImage imageNamed:@"input_top"] forState:UIControlStateNormal];
+        [_phoneBindedCell setBackgroundImage:[UIImage imageNamed:@"input_top_selected"] forState:UIControlStateHighlighted];
     }
     return _phoneBindedCell;
 }
@@ -37,6 +38,7 @@
     if (_modifyPasswordCell == nil) {
         _modifyPasswordCell = [[YWConfigurationCell alloc] initWithLeftLabel:@"修改密码" isHasRightView:YES];
         [_modifyPasswordCell setBackgroundImage:[UIImage imageNamed:@"input_mid"] forState:UIControlStateNormal];
+        [_modifyPasswordCell setBackgroundImage:[UIImage imageNamed:@"input_mid_selected"] forState:UIControlStateHighlighted];
     }
     return _modifyPasswordCell;
 }
@@ -45,6 +47,7 @@
     if (_messagePushCell == nil) {
         _messagePushCell = [[YWConfigurationCell alloc] initWithLeftLabel:@"消息推送" isHasRightView:YES];
         [_messagePushCell setBackgroundImage:[UIImage imageNamed:@"input_mid"] forState:UIControlStateNormal];
+        [_messagePushCell setBackgroundImage:[UIImage imageNamed:@"input_mid_selected"] forState:UIControlStateHighlighted];
 
     }
     return _messagePushCell;
@@ -54,6 +57,7 @@
     if (_cleanCacheCell == nil) {
         _cleanCacheCell = [[YWConfigurationCell alloc] initWithLeftLabel:@"清除缓存" isHasRightView:NO];
         [_cleanCacheCell setBackgroundImage:[UIImage imageNamed:@"input_col"] forState:UIControlStateNormal];
+        [_cleanCacheCell setBackgroundImage:[UIImage imageNamed:@"input_col_selected"] forState:UIControlStateHighlighted];
 
     }
     return _cleanCacheCell;
@@ -63,7 +67,7 @@
     if (_userDelegateCell == nil) {
         _userDelegateCell = [[YWConfigurationCell alloc] initWithLeftLabel:@"用户协议" isHasRightView:YES];
         [_userDelegateCell setBackgroundImage:[UIImage imageNamed:@"input_top"] forState:UIControlStateNormal];
-
+        [_userDelegateCell setBackgroundImage:[UIImage imageNamed:@"input_top_selected"] forState:UIControlStateHighlighted];
     }
     return _userDelegateCell;
 }
@@ -72,7 +76,7 @@
     if (_adviceCell == nil) {
         _adviceCell = [[YWConfigurationCell alloc] initWithLeftLabel:@"意见反馈" isHasRightView:YES];
         [_adviceCell setBackgroundImage:[UIImage imageNamed:@"input_mid"] forState:UIControlStateNormal];
-
+        [_adviceCell setBackgroundImage:[UIImage imageNamed:@"input_mid_selected"] forState:UIControlStateHighlighted];
     }
     return _adviceCell;
 }
@@ -81,7 +85,7 @@
     if (_pointCell == nil) {
         _pointCell = [[YWConfigurationCell alloc] initWithLeftLabel:@"给APP评分" isHasRightView:YES];
         [_pointCell setBackgroundImage:[UIImage imageNamed:@"input_mid"] forState:UIControlStateNormal];
-
+        [_pointCell setBackgroundImage:[UIImage imageNamed:@"input_mid_selected"] forState:UIControlStateHighlighted];
     }
     return _pointCell;
 }
@@ -90,7 +94,7 @@
     if (_aboutUsCell == nil) {
         _aboutUsCell = [[YWConfigurationCell alloc] initWithLeftLabel:@"关于我们" isHasRightView:YES];
         [_aboutUsCell setBackgroundImage:[UIImage imageNamed:@"input_col"] forState:UIControlStateNormal];
-
+        [_aboutUsCell setBackgroundImage:[UIImage imageNamed:@"input_col_selected"] forState:UIControlStateHighlighted];
     }
     return _aboutUsCell;
 }
@@ -115,7 +119,7 @@
         _backgroundSrcView.showsHorizontalScrollIndicator = NO;
         _backgroundSrcView.showsVerticalScrollIndicator = NO;
         
-        //iphone 5需要扩张长度，否则屏幕不够用😢
+        //iphone 5需要扩张长度，否则屏幕不够用😢，布局太长了
         if (IS_IPHONE_5) {
             _backgroundSrcView.contentSize= CGSizeMake(320, 650);
             
@@ -216,7 +220,7 @@
 }
 
 - (void)jumpToModifyPasswordPage {
-    [self performSegueWithIdentifier:SEGUE_IDENTIFY_MODIFY sender:self];
+    [self performSegueWithIdentifier:SEGUE_IDENTIFY_RESET sender:self];
 }
 
 - (void)jumpToLoginPage {

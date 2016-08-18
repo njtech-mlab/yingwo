@@ -92,16 +92,37 @@
         for (int i = 0; i < model.imageUrlArr.count; i ++) {
             
             NSString *partUrl = [model.imageUrlArr objectAtIndex:i];
-            
+            //图片请求
             [self requestImageForCell:cell WithUrl:partUrl withModel:model imageViewTag:i+1];
         }
         
-        
+        if (model.imageUrlArr.count == 5 || model.imageUrlArr.count == 8) {
+            //count = 5 第6张不显示
+            //count = 8 第9张不显示
+            [self requestNullImageForCell:cell WithUrl:nil withModel:nil nullImageTag:model.imageUrlArr.count+1];
+        }
+        if (model.imageUrlArr.count == 7) {
+            //count = 7 第8、9张不显示
+            [self requestNullImageForCell:cell WithUrl:nil withModel:nil nullImageTag:model.imageUrlArr.count+1];
+            [self requestNullImageForCell:cell WithUrl:nil withModel:nil nullImageTag:model.imageUrlArr.count+2];
+
+        }
     }
     
 }
 
-- (void)requestImageForCell:(YWHomeTableViewCellBase *)cell WithUrl:(NSString *)partUrl withModel:(TieZi *)model imageViewTag:(NSInteger)tag{
+/**
+ *  cell上图片请求
+ *
+ *  @param cell    对应cell
+ *  @param partUrl 部分url
+ *  @param model   TiZi模型
+ *  @param tag     UIImageView的tag
+ */
+- (void)requestImageForCell:(YWHomeTableViewCellBase *)cell
+                    WithUrl:(NSString *)partUrl
+                  withModel:(TieZi *)model
+               imageViewTag:(NSInteger)tag{
     
     int imageWidth;
     
@@ -121,6 +142,23 @@
     UIImageView *imageView = [cell.middleView viewWithTag:tag];
     
     [imageView sd_setImageWithURL:imageUrl placeholderImage:[UIImage imageNamed:@"ying"]];
+    
+}
+
+/**
+ *  空图片显示,例如5张图片情况下，第6张图片是不显示图片的
+ *
+ *  @param cell    对应的cell
+ *  @param partUrl 部分url
+ *  @param model   TiZi模型
+ *  @param tag     UIImageView的tag
+ */
+- (void)requestNullImageForCell:(YWHomeTableViewCellBase *)cell
+                        WithUrl:(NSString *)partUrl
+                      withModel:(TieZi *)model nullImageTag:(NSInteger)tag {
+    
+    UIImageView *imageView = [cell.middleView viewWithTag:tag];
+    imageView.image = nil;
     
 }
 

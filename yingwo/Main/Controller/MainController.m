@@ -72,13 +72,23 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    //防止点击发布新鲜事后，跳转回来后，但前TabBar的颜色不见了
-    [_mainTabBarController.tabBar selectTabAtIndex:self.selectedIndex];
     //去掉导航栏下的下划线
     [self.navigationController.navigationBar hideNavigationBarBottomLine];
+
+    //防止点击发布新鲜事后，跳转回来后，但前TabBar的颜色不见了
+    [_mainTabBarController.tabBar showSelectedTabBarAtIndex:self.selectedIndex];
+    
+    //如果刚出现的是贴子页面，要刷新。
+    //发布完后回，若到回到贴子页面要刷新
+    //第一次加载app可能会有两次刷新，这里一次多余了，贴子的controller也有个刷新
+    if (self.selectedIndex == 0) {
+        [self refreshHomeVC];
+    }
 }
 
-
+- (void)refreshHomeVC {
+    [self.homeVC.homeTableview.mj_header beginRefreshing];
+}
 
 
 #pragma mark 禁止pop手势
@@ -94,10 +104,13 @@
 }
 
 - (void)didSelectedViewController:(UIViewController *)viewController AtIndex:(NSInteger)index {
-    self.selectedIndex = index;
+    
     if (index == 0) {
+        self.selectedIndex = index;
         //点击后刷新
         [self.homeVC.homeTableview.mj_header beginRefreshing];
+    }else if(index == 1) {
+        self.selectedIndex = index;
     }
     else if (index == 2) {
         

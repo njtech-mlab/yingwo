@@ -8,6 +8,9 @@
 
 #import "YWSpringButton.h"
 
+//按钮缩放倍数
+static CGFloat scaleXY = 1.3;
+
 @implementation YWSpringButton
 
 
@@ -32,7 +35,7 @@
     [self setBackgroundImage:self.seletedImage forState:UIControlStateNormal];
     
     POPSpringAnimation *anim = [POPSpringAnimation animationWithPropertyNamed:kPOPViewScaleXY];
-    anim.toValue = [NSValue valueWithCGPoint:CGPointMake(2, 2)];
+    anim.toValue = [NSValue valueWithCGPoint:CGPointMake(scaleXY, scaleXY)];
     anim.springBounciness    = 0;
     anim.springSpeed         = 20;
     [self pop_addAnimation:anim forKey:@"Center"];
@@ -52,7 +55,7 @@
     [self setBackgroundImage:self.cancelImage forState:UIControlStateNormal];
     
     POPSpringAnimation *anim = [POPSpringAnimation animationWithPropertyNamed:kPOPViewScaleXY];
-    anim.toValue = [NSValue valueWithCGPoint:CGPointMake(2, 2)];
+    anim.toValue = [NSValue valueWithCGPoint:CGPointMake(scaleXY, scaleXY)];
     anim.springBounciness    = 0;
     anim.springSpeed         = 20;
     [self pop_addAnimation:anim forKey:@"Center"];

@@ -7,7 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-
+/**
+ *  完善信息
+ */
 @interface PerfectInfoController : UIViewController
 
 @property (nonatomic, copy)NSString *signature;

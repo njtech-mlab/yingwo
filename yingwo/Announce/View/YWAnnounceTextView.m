@@ -15,7 +15,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.delegate = self;
+      //  self.delegate = self;
         
         [self createSubview];
     }
@@ -23,22 +23,25 @@
 }
 
 - (void)createSubview {
+//
+//    _placeholder         = [[UILabel alloc] init];
+//    _placeholder.font    = [UIFont systemFontOfSize:15];
+//    _placeholder.enabled = NO;
+//    _placeholder.text    = @"请输入内容...";
+    self.backgroundColor = [UIColor whiteColor];
     
-    _placeholder         = [[UILabel alloc] init];
-    _placeholder.font    = [UIFont systemFontOfSize:15];
-    _placeholder.enabled = NO;
-    _placeholder.text    = @"请输入内容...";
+    _contentTextView     = [[HPGrowingTextView alloc] init];
+    _keyboardToolView    = [[YWKeyboardToolView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 45)];
 
-    _keyboardToolView = [[YWKeyboardToolView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 45)];
-    
     [_keyboardToolView.returnKeyBoard addTarget:self action:@selector(resignKeyboard) forControlEvents:UIControlEventTouchUpInside];
-    self.inputAccessoryView = _keyboardToolView;
+    _contentTextView.internalTextView.inputAccessoryView = _keyboardToolView;
+    [self addSubview:_contentTextView];
     
-    [self addSubview:_placeholder];
-    
-    [_placeholder mas_makeConstraints:^(MASConstraintMaker *make) {
+    [_contentTextView mas_updateConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.mas_left).offset(15);
         make.top.equalTo(self.mas_top).offset(10);
+        make.right.equalTo(self.mas_right).offset(-15);
+        make.height.equalTo(@30);
     }];
     
 }
@@ -51,26 +54,26 @@
 - (void)textViewDidChange:(UITextView *)textView {
 
     
-    if (textView.text.length == 0) {
-        self.placeholder.hidden = NO;
-    }
-    else {
-        self.placeholder.hidden = YES;
-    }
+//    if (textView.text.length == 0) {
+//        self.placeholder.hidden = NO;
+//    }
+//    else {
+//        self.placeholder.hidden = YES;
+//    }
     
     //TextView 首行缩进
-    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-    paragraphStyle.firstLineHeadIndent      = 15.0;
-    paragraphStyle.lineSpacing              = 3;//行间距
-    paragraphStyle.alignment                = NSTextAlignmentJustified;
-
-    NSDictionary *attributes                = @{NSParagraphStyleAttributeName:paragraphStyle,NSFontAttributeName:[UIFont systemFontOfSize:15]};
-    self.attributedText                     = [[NSAttributedString alloc] initWithString:textView.text attributes:attributes];
+//    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+// //   paragraphStyle.firstLineHeadIndent      = 15.0;
+//    paragraphStyle.lineSpacing              = 3;//行间距
+//    paragraphStyle.alignment                = NSTextAlignmentJustified;
+//
+//    NSDictionary *attributes                = @{NSParagraphStyleAttributeName:paragraphStyle,NSFontAttributeName:[UIFont systemFontOfSize:15]};
+//    self.attributedText                     = [[NSAttributedString alloc] initWithString:textView.text attributes:attributes];
 
 }
 //收起键盘
 - (void)resignKeyboard {
-    [self resignFirstResponder];
+    [_contentTextView resignFirstResponder];
 }
 
 @end

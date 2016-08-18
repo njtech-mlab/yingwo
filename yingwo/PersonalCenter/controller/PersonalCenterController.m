@@ -47,6 +47,7 @@
     if (_cellView1 == nil) {
         _cellView1 = [[YWPersonCenterCell alloc] initWithLeftImage:[UIImage imageNamed:@"#"] labelText:@"我的话题"];
         [_cellView1 setBackgroundImage:[UIImage imageNamed:@"input_top"] forState:UIControlStateNormal];
+        [_cellView1 setBackgroundImage:[UIImage imageNamed:@"input_top_selected"] forState:UIControlStateHighlighted];
     }
     return _cellView1;
 }
@@ -56,6 +57,7 @@
     if (_cellView2 == nil) {
         _cellView2 = [[YWPersonCenterCell alloc] initWithLeftImage:[UIImage imageNamed:@"note"] labelText:@"我的贴子"];
         [_cellView2 setBackgroundImage:[UIImage imageNamed:@"input_mid"] forState:UIControlStateNormal];
+        [_cellView2 setBackgroundImage:[UIImage imageNamed:@"input_mid_selected"] forState:UIControlStateHighlighted];
 
     }
     return _cellView2;
@@ -65,7 +67,7 @@
     if (_cellView3 == nil) {
         _cellView3 = [[YWPersonCenterCell alloc] initWithLeftImage:[UIImage imageNamed:@"mes"] labelText:@"我的评论"];
         [_cellView3 setBackgroundImage:[UIImage imageNamed:@"input_mid"] forState:UIControlStateNormal];
-
+        [_cellView3 setBackgroundImage:[UIImage imageNamed:@"input_mid_selected"] forState:UIControlStateHighlighted];
     }
     return _cellView3;
 }
@@ -74,6 +76,7 @@
     if (_cellView4 == nil) {
         _cellView4 = [[YWPersonCenterCell alloc] initWithLeftImage:[UIImage imageNamed:@"heart"] labelText:@"我的点赞"];
         [_cellView4 setBackgroundImage:[UIImage imageNamed:@"input_col"] forState:UIControlStateNormal];
+        [_cellView4 setBackgroundImage:[UIImage imageNamed:@"input_col_selected"] forState:UIControlStateHighlighted];
     }
     return _cellView4;
 }

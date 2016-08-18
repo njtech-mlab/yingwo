@@ -195,7 +195,7 @@
                     </view>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <connections>
-                        <segue destination="Aoa-kk-pYN" kind="custom" identifier="announce" customClass="CustomPresentSegue" id="Nef-8B-Qaf"/>
+                        <segue destination="Aoa-kk-pYN" kind="show" identifier="announce" id="Nef-8B-Qaf"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="O8R-cx-NP0" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -236,7 +236,7 @@
                     </view>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <connections>
-                        <segue destination="ZeY-dO-UgV" kind="show" identifier="modify" id="Y8E-6y-CjI"/>
+                        <segue destination="Ozm-0W-3EJ" kind="show" identifier="reset" id="MUA-MQ-PjB"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="S6W-L4-N8m" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -368,6 +368,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="Y8E-6y-CjI"/>
+        <segue reference="MUA-MQ-PjB"/>
     </inferredMetricsTieBreakers>
 </document>

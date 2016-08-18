@@ -33,12 +33,14 @@
 #import "UIImageView+WebCache.h"
 #import "POP.h"
 #import "TTTAttributedLabel.h"
+#import "HPGrowingTextView.h"
 
-//第三方框架vender
+//第三方框架vender,这里的第三方框架后做改动
 #import "LSYNavigationController.h"
 #import "LSYAlbumCatalog.h"
 #import "CatZanButton.h"
 #import "GalleryView.h"
+#import "ISEmojiView.h"
 
 //自定义宏
 #import "Macro.h"

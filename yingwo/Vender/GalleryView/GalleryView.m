@@ -137,11 +137,15 @@
 
 - (void)removeImageView{
     
-    UIImageView *currentView      = [self.imageViews objectAtIndex:self.currentPage];
-    UIImageView *currentImageView = [self viewWithTag:self.currentPage+1];
-
+    //获取被放大的小图
+    UIImageView *currentSmallView      = [self.imageViews objectAtIndex:self.currentPage];
+    //获取放大后的图
+    UIImageView *currentBigImageView = [self viewWithTag:self.currentPage+1];
+    //先去除背景色
+    self.backgroundColor = [UIColor clearColor];
+    
     [UIView animateWithDuration:0.3 animations:^{
-        currentImageView.frame = currentView.frame;
+        currentBigImageView.frame = currentSmallView.frame;
     }completion:^(BOOL finished) {
         [self removeFromSuperview];
         [self.delegate galleryView:self removePageAtIndex:self.currentPage];

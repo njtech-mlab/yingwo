@@ -25,6 +25,8 @@
 		1803C1211D541F350078EF0F /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1803C1201D541F350078EF0F /* AssetsLibrary.framework */; };
 		1803C1231D541F580078EF0F /* AlbumPicker.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1803C1221D541F580078EF0F /* AlbumPicker.bundle */; };
 		1803C1271D54356F0078EF0F /* PhotoUnitView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1803C1261D54356E0078EF0F /* PhotoUnitView.m */; };
+		180CD0271D64B2B10047F624 /* ISEmojiList.plist in Resources */ = {isa = PBXBuildFile; fileRef = 180CD0241D64B2B10047F624 /* ISEmojiList.plist */; };
+		180CD0281D64B2B10047F624 /* ISEmojiView.m in Sources */ = {isa = PBXBuildFile; fileRef = 180CD0261D64B2B10047F624 /* ISEmojiView.m */; };
 		180DB1351D421B38007786A0 /* MainNavController.m in Sources */ = {isa = PBXBuildFile; fileRef = 180DB1341D421B38007786A0 /* MainNavController.m */; };
 		180DB13B1D424348007786A0 /* UINavigationBar+HideBottomLine.m in Sources */ = {isa = PBXBuildFile; fileRef = 180DB13A1D424348007786A0 /* UINavigationBar+HideBottomLine.m */; };
 		180F091D1D3777E700F3DD11 /* PerfectInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = 180F091C1D3777E700F3DD11 /* PerfectInfoController.m */; };
@@ -172,6 +174,9 @@
 		1803C1221D541F580078EF0F /* AlbumPicker.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AlbumPicker.bundle; path = Support/AlbumPicker.bundle; sourceTree = "<group>"; };
 		1803C1251D54356E0078EF0F /* PhotoUnitView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhotoUnitView.h; path = Announce/View/PhotoUnitView.h; sourceTree = "<group>"; };
 		1803C1261D54356E0078EF0F /* PhotoUnitView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhotoUnitView.m; path = Announce/View/PhotoUnitView.m; sourceTree = "<group>"; };
+		180CD0241D64B2B10047F624 /* ISEmojiList.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = ISEmojiList.plist; path = Vender/ISEmojiView/ISEmojiList.plist; sourceTree = "<group>"; };
+		180CD0251D64B2B10047F624 /* ISEmojiView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ISEmojiView.h; path = Vender/ISEmojiView/ISEmojiView.h; sourceTree = "<group>"; };
+		180CD0261D64B2B10047F624 /* ISEmojiView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ISEmojiView.m; path = Vender/ISEmojiView/ISEmojiView.m; sourceTree = "<group>"; };
 		180DB1331D421B38007786A0 /* MainNavController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainNavController.h; path = Main/Controller/MainNavController.h; sourceTree = "<group>"; };
 		180DB1341D421B38007786A0 /* MainNavController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MainNavController.m; path = Main/Controller/MainNavController.m; sourceTree = "<group>"; };
 		180DB1391D424348007786A0 /* UINavigationBar+HideBottomLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UINavigationBar+HideBottomLine.h"; path = "Tools/UINavigationBar+HideBottomLine.h"; sourceTree = "<group>"; };
@@ -410,6 +415,7 @@
 		1803C0F41D541D7C0078EF0F /* Vender */ = {
 			isa = PBXGroup;
 			children = (
+				180CD0231D64B2A20047F624 /* ISEmojiView */,
 				184BC11D1D5F219F00125448 /* GalleryView */,
 				187D2F861D55B48A006C5C5F /* CatZanButton  */,
 				1803C0F51D541DD30078EF0F /* LSYAlbumPicker_OC */,
@@ -471,6 +477,16 @@
 				1803C1191D541E530078EF0F /* LSYNavigationController.m */,
 			);
 			name = ViewController;
+			sourceTree = "<group>";
+		};
+		180CD0231D64B2A20047F624 /* ISEmojiView */ = {
+			isa = PBXGroup;
+			children = (
+				180CD0241D64B2B10047F624 /* ISEmojiList.plist */,
+				180CD0251D64B2B10047F624 /* ISEmojiView.h */,
+				180CD0261D64B2B10047F624 /* ISEmojiView.m */,
+			);
+			name = ISEmojiView;
 			sourceTree = "<group>";
 		};
 		180F091A1D3777A000F3DD11 /* PerfectInfo */ = {
@@ -806,9 +822,9 @@
 		18AFE5E61D30B7E1007BEBDE /* yingwo */ = {
 			isa = PBXGroup;
 			children = (
+				188F12951D40BF3B0013B0A0 /* README */,
 				1803C0F41D541D7C0078EF0F /* Vender */,
 				18AF9E641D4F367A0063D81F /* BaseController */,
-				188F12951D40BF3B0013B0A0 /* README */,
 				18D100CF1D3E12A100D75968 /* CoreData */,
 				18B926D51D390A8B0067FE24 /* User */,
 				186191A91D33622600804CB2 /* Prefix */,
@@ -1183,6 +1199,7 @@
 				1803C1231D541F580078EF0F /* AlbumPicker.bundle in Resources */,
 				18AFE5F71D30B7E2007BEBDE /* Assets.xcassets in Resources */,
 				18AFE5F21D30B7E2007BEBDE /* Main.storyboard in Resources */,
+				180CD0271D64B2B10047F624 /* ISEmojiList.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1268,6 +1285,7 @@
 				181A00E31D56E9F200D96DC9 /* YWHomeCellMiddleViewSixImage.m in Sources */,
 				18AF9E901D503D810063D81F /* YWKeyboardToolView.m in Sources */,
 				18E74CB21D3CA2A800176142 /* LoginNavController.m in Sources */,
+				180CD0281D64B2B10047F624 /* ISEmojiView.m in Sources */,
 				18AF9E761D4F3A370063D81F /* YWHomeCellMiddleViewOneImage.m in Sources */,
 				18B926DC1D39270C0067FE24 /* MBProgressHUD+Dispaly.m in Sources */,
 				18FAE9AF1D49D0EC00DE92AB /* UIBarButtonItem+Left.m in Sources */,

@@ -52,12 +52,12 @@
             //分钟差
             int minuteReduce = (int)(nowMinute.integerValue - minute.integerValue);
             
-            if (minuteReduce < 1) {
+            if (minuteReduce <= 1) {
                 
                 dateString = @"刚刚";
 
             }else {
-                dateString = [NSString stringWithFormat:@"%d分钟前",(int)(nowHour.integerValue - hour.integerValue)];
+                dateString = [NSString stringWithFormat:@"%d分钟前",minuteReduce];
             }
         }
         else {

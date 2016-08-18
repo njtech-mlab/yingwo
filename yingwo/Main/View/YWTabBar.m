@@ -110,6 +110,22 @@
 
 }
 
+- (void)showSelectedTabBarAtIndex:(NSInteger)index {
+    
+    YWButton *btn;
+    for (int i = 0; i < self.buttons.count; i ++ ) {
+        btn = [self.buttons objectAtIndex:i];
+        [btn setBackgroundImage:btn.backgroundImage forState:UIControlStateNormal];
+    }
+    
+    
+    btn = [self.buttons objectAtIndex:index];
+    [btn setBackgroundImage:btn.selectedImage forState:UIControlStateNormal];
+
+    NSLog(@"show Selected index: %ld",(long)btn.tag);
+
+}
+
 - (void)insertTabWithImageDic:(NSDictionary *)dict atIndex:(NSUInteger)index {
     
     CGFloat width = self.frame.size.width / ([self.buttons count] + 1);

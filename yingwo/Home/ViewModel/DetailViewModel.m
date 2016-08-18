@@ -55,26 +55,6 @@
     return nil;
 }
 
-/**
- *  网络请求图片图片
- *
- *  @param urlArr 图片链接
-
-- (void)requestImageWithUrl:(NSString *)partUrl ForCell:(YWDetailBaseTableViewCell *)cell addToArr:(NSMutableArray *)photoArr{
-    
-        partUrl = [NSString replaceIllegalStringForUrl:partUrl];
-    
-        UIImageView *imageView = [[UIImageView alloc] init];
-
-        NSString *imageMode    = [NSString stringWithFormat:QINIU_PROPORTION_IMAGE_MODEL,(int)SCREEN_WIDTH*2,(int)SCREEN_HEIGHT*2];
-        NSString *fullUrl      = [partUrl stringByAppendingString:imageMode];
-        NSURL *imageUrl        = [NSURL URLWithString:fullUrl];
-    
-        [imageView sd_setImageWithURL:imageUrl placeholderImage:[UIImage imageNamed:@"yingwo"]];
-        
-        [photoArr addObject:imageView];
-        
-} */
 
 - (void)requestImageWithUrls:(NSArray *)urls ForCell:(YWDetailBaseTableViewCell *)cell {
     

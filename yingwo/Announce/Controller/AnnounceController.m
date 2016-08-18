@@ -12,9 +12,11 @@
 #import "YWKeyboardToolView.h"
 #import "PhotoUnitView.h"
 
-@interface AnnounceController ()<LSYAlbumCatalogDelegate>
+@interface AnnounceController ()<LSYAlbumCatalogDelegate,ISEmojiViewDelegate,YWKeyboardToolViewProtocol>
 
 @property (nonatomic, strong) YWAnnounceTextView *announceTextView;
+@property (nonatomic, strong) YWKeyboardToolView *keyboardTooView;
+
 @property (nonatomic, strong) UIScrollView       *photosBgSrcollView;
 @property (nonatomic, strong) UIButton           *addMorePhotosBtn;
 @property (nonatomic, strong) UIBarButtonItem    *leftBarItem;
@@ -34,12 +36,24 @@ static int ADD_MORE_PHOTOS = 2;
 
 - (YWAnnounceTextView *)announceTextView {
     if (_announceTextView == nil ) {
-        _announceTextView = [[YWAnnounceTextView alloc] init];
-        _announceTextView.layer.masksToBounds = YES;
-        _announceTextView.layer.cornerRadius = 10;
+        _announceTextView                             = [[YWAnnounceTextView alloc] init];
+        _announceTextView.layer.masksToBounds         = YES;
+        _announceTextView.layer.cornerRadius          = 10;
+        _announceTextView.contentTextView.placeholder = @"分享身边有趣、有料、有用的校园新鲜事～";
+        _announceTextView.keyboardToolView.delegate   = self;
+        _announceTextView.contentTextView.maxHeight   = SCREEN_HEIGHT * 0.32;
+
         [_announceTextView.keyboardToolView.photo addTarget:self action:@selector(enterIntoAlbumsSelectPhotos) forControlEvents:UIControlEventTouchUpInside];
     }
     return _announceTextView;
+}
+
+- (YWKeyboardToolView *)keyboardTooView {
+    if (_keyboardTooView == nil) {
+        _keyboardTooView          = [[YWKeyboardToolView alloc] init];
+        _keyboardTooView.delegate = self;
+    }
+    return _keyboardTooView;
 }
 
 - (UIBarButtonItem *)rightBarItem {
@@ -103,13 +117,17 @@ static int ADD_MORE_PHOTOS = 2;
 
 - (void)releaseContent {
     
-    if (self.photoImageViewsArr.count == 0 && [self.announceTextView.text isEqualToString:@""]) {
+    //发布之前，先小时键盘
+    [self.announceTextView.contentTextView resignFirstResponder];
+    [self.keyboardTooView removeFromSuperview];
+    
+    if (self.photoImageViewsArr.count == 0 && [self.announceTextView.contentTextView.text isEqualToString:@""]) {
         
     }else if (self.photoImageViewsArr.count == 0) {
         
-        [self postFreshThingWithContentWithoutImages:self.announceTextView.text];
+        [self postFreshThingWithContentWithoutImages:self.announceTextView.contentTextView.text];
         
-    }else if ([self.announceTextView.text isEqualToString:@""]) {
+    }else if ([self.announceTextView.contentTextView.text isEqualToString:@""]) {
         
         [self putPhotosToImagesArr];
         [self postFreshThingWithImagesWithoutContent:self.photoImageArr];
@@ -117,7 +135,7 @@ static int ADD_MORE_PHOTOS = 2;
     }else {
         
         [self putPhotosToImagesArr];
-        [self postFreshThingWithImages:self.photoImageArr andContent:self.announceTextView.text];
+        [self postFreshThingWithImages:self.photoImageArr andContent:self.announceTextView.contentTextView.text];
         
     }
 
@@ -152,7 +170,7 @@ CGFloat delay = 1.5f;
 
     [YWQiNiuUploadTool uploadImages:photoArr progress:^(CGFloat progress) {
         
-        hud.progress = YES;
+        hud.progress = progress;
         
     } success:^(NSArray *arr) {
         
@@ -242,6 +260,7 @@ CGFloat delay = 1.5f;
     LSYAlbumCatalog *albumCatalog              = [[LSYAlbumCatalog alloc] init];
     albumCatalog.delegate                      = self;
     LSYNavigationController *navigation        = [[LSYNavigationController alloc] initWithRootViewController:albumCatalog];
+    //最多选择15张照片
     albumCatalog.maximumNumberOfSelectionMedia = 15;
     
     [self presentViewController:navigation animated:YES completion:^{
@@ -259,7 +278,7 @@ CGFloat delay = 1.5f;
     LSYAlbumCatalog *albumCatalog              = [[LSYAlbumCatalog alloc] init];
     albumCatalog.delegate                      = self;
     LSYNavigationController *navigation        = [[LSYNavigationController alloc] initWithRootViewController:albumCatalog];
-    albumCatalog.maximumNumberOfSelectionMedia = 15;
+    albumCatalog.maximumNumberOfSelectionMedia = 15-self.photoImagesCount;
     
     [self presentViewController:navigation animated:YES completion:^{
         
@@ -268,7 +287,9 @@ CGFloat delay = 1.5f;
 }
 
 - (void)backToMainView {
+    [self.keyboardTooView removeFromSuperview];
     [self dismissViewControllerAnimated:YES completion:nil];
+
 }
 
 #pragma mark setLayout
@@ -281,18 +302,26 @@ CGFloat delay = 1.5f;
         make.height.equalTo(@(self.view.height * 0.33));
     }];
     
+    [self.keyboardTooView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.bottom.equalTo(self.view);
+        make.height.equalTo(@45);
+    }];
+    
     [self.photosBgSrcollView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.announceTextView.mas_bottom).offset(20);
         make.left.equalTo(self.announceTextView.mas_left);
         make.right.equalTo(self.announceTextView.mas_right);
         make.height.equalTo(@100);
     }];
+    
+    
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
     [self.view addSubview:self.announceTextView];
+    [self.view addSubview:self.keyboardTooView];
     [self.view addSubview:self.photosBgSrcollView];
     [self.view addSubview:self.addMorePhotosBtn];
     
@@ -311,6 +340,8 @@ CGFloat delay = 1.5f;
     self.title = @"新鲜事";
     self.navigationItem.rightBarButtonItem = self.rightBarItem;
     self.navigationItem.leftBarButtonItem  = self.leftBarItem;
+    
+    [self.announceTextView.contentTextView becomeFirstResponder];
 }
 
 #pragma mark -- LSYAlbumCatalogDelegate
@@ -474,10 +505,42 @@ static CGFloat photoWidth = 80;
     
 }
 
+#pragma mark ISEmojiViewDelegate
 
-//- (void)updateViewConstraints {
-//    
-//}
+-(void)emojiView:(ISEmojiView *)emojiView didSelectEmoji:(NSString *)emoji{
+    self.announceTextView.contentTextView.text = [self.announceTextView.contentTextView.text stringByAppendingString:emoji];
+}
+
+-(void)emojiView:(ISEmojiView *)emojiView didPressDeleteButton:(UIButton *)deletebutton{
+    if (self.announceTextView.contentTextView.text.length > 0) {
+        NSRange lastRange = [self.announceTextView.contentTextView.text rangeOfComposedCharacterSequenceAtIndex:self.announceTextView.contentTextView.text.length-1];
+        self.announceTextView.contentTextView.text = [self.announceTextView.contentTextView.text substringToIndex:lastRange.location];
+    }
+}
+
+
+#pragma mark YWKeyboardToolViewProtocol
+
+- (void)didSelectedEmoji {
+    
+    [self.announceTextView.contentTextView becomeFirstResponder];
+
+    ISEmojiView *emojiView = [[ISEmojiView alloc] initWithTextField:self.announceTextView.contentTextView delegate:self];
+    self.announceTextView.contentTextView.internalTextView.inputView = emojiView;
+    [self.announceTextView.contentTextView.internalTextView reloadInputViews];
+}
+
+- (void)didSelectedKeyboard {
+    
+    [self.announceTextView.contentTextView becomeFirstResponder];
+    
+    //先去出表情包的所占的inputView，否则弹不出键盘
+    self.announceTextView.contentTextView.internalTextView.inputView = nil;
+    
+    self.announceTextView.contentTextView.internalTextView.keyboardType = UIKeyboardTypeDefault;
+    [self.announceTextView.contentTextView.internalTextView reloadInputViews];
+
+}
 
 
 - (void)didReceiveMemoryWarning {

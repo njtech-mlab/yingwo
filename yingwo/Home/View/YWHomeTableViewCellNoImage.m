@@ -36,11 +36,11 @@
     [self.contentText mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.backgroundView.mas_left).offset(15);
         make.right.equalTo(self.backgroundView.mas_right).offset(-15);
-        make.top.equalTo(self.labelView.mas_bottom).offset(5);
+        make.top.equalTo(self.labelView.mas_bottom).offset(10);
     }];
     
     [self.bottemView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.contentText.mas_bottom).offset(5);
+        make.top.equalTo(self.contentText.mas_bottom).offset(10);
         make.left.equalTo(self.backgroundView.mas_left).offset(15);
         make.right.equalTo(self.backgroundView.mas_right).offset(-15);
         make.bottom.mas_equalTo(self.backgroundView.mas_bottom).offset(-10);

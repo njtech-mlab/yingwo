@@ -16,7 +16,11 @@
         self.font = [UIFont systemFontOfSize:14];
         self.numberOfLines = 4;
         self.lineSpacing = 5.f;
+        self.enabledTextCheckingTypes = NSTextCheckingTypeLink;
+
         self.textColor = [UIColor colorWithHexString:THEME_COLOR_2];
+  //      self.linkAttributes = @{(NSString *)kCTUnderlineStyleAttributeName : [NSNumber numberWithBool:YES],
+     //                                 (NSString*)kCTForegroundColorAttributeName : (id)[[UIColor blueColor] CGColor]};
     }
     return self;
 }

@@ -9,9 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "YWKeyboardToolView.h"
 
-@interface YWAnnounceTextView : UITextView<UITextViewDelegate>
+@interface YWAnnounceTextView : UIView<UITextViewDelegate>
 
-@property (nonatomic, strong)UILabel *placeholder;
-@property (nonatomic, strong)YWKeyboardToolView *keyboardToolView;
+@property (nonatomic, strong) HPGrowingTextView  *contentTextView;
+@property (nonatomic, strong) YWKeyboardToolView *keyboardToolView;
 
 @end
