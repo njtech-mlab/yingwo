@@ -46,6 +46,8 @@
 
 }
 
+static CGFloat ANIMATION_TIME = 0.3;
+
 - (void)showDropDownView {
    
     self.hidden = NO;
@@ -54,14 +56,14 @@
     [self.superview addSubview:_tableView];
 
     
-    [UIView animateWithDuration:0.5 animations:^{
+    [UIView animateWithDuration:ANIMATION_TIME animations:^{
         _tableView.frame = CGRectMake(10, 10, _tableViewWidth, _tableViewHeight);
     }];
 }
 
 - (void)hideDropDownView{
     
-    [UIView animateWithDuration:0.5 animations:^{
+    [UIView animateWithDuration:ANIMATION_TIME animations:^{
         _tableView.frame = CGRectMake(10, 10, _tableViewWidth, 0);
 
     } completion:^(BOOL finished) {

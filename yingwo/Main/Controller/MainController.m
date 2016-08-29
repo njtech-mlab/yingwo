@@ -11,12 +11,16 @@
 #import "PersonalCenterController.h"
 #import "HomeController.h"
 #import "AnnounceController.h"
+#import "DiscoveryController.h"
 
 @interface MainController ()
 
-@property (nonatomic, strong) YWTabBarController *mainTabBarController;
-@property (nonatomic, strong) HomeController     *homeVC;
-@property (nonatomic, assign) NSInteger          selectedIndex;
+@property (nonatomic, strong) YWTabBarController       *mainTabBarController;
+@property (nonatomic, strong) HomeController           *homeVC;
+@property (nonatomic, strong) DiscoveryController      *discoveryVC;
+@property (nonatomic, strong) PersonalCenterController *personCenterVC;
+
+@property (nonatomic, assign) NSInteger           selectedIndex;
 
 @end
 
@@ -31,13 +35,15 @@
     
     
     self.homeVC = [self.storyboard instantiateViewControllerWithIdentifier:CONTROLLER_OF_HOME_IDENTIFIER];
-    MainNavController *nav1 = [[MainNavController alloc] initWithRootViewController:self.homeVC];
+    MainNavController *homeNav = [[MainNavController alloc] initWithRootViewController:self.homeVC];
     
+    self.discoveryVC = [self.storyboard instantiateViewControllerWithIdentifier:CONTROLLER_OF_DISCOVERY_IDENTIFIER];
+    UINavigationController *discoveryNav = [[UINavigationController alloc] initWithRootViewController:self.discoveryVC];
 
-    PersonalCenterController *pcVc2 = [self.storyboard instantiateViewControllerWithIdentifier:CONTROLLER_OF_PERSONNAL_CENTER_IDENTIFY];
-    MainNavController *nav2 = [[MainNavController alloc] initWithRootViewController:pcVc2];
+    self.personCenterVC = [self.storyboard instantiateViewControllerWithIdentifier:CONTROLLER_OF_PERSONNAL_CENTER_IDENTIFY];
+    MainNavController *personCenterNav = [[MainNavController alloc] initWithRootViewController:self.personCenterVC];
     
-    NSArray *controllerArr = [NSArray arrayWithObjects:nav1,nav2,nav1,nav1,nav2, nil];
+    NSArray *controllerArr = [NSArray arrayWithObjects:homeNav,discoveryNav,homeNav,discoveryNav,personCenterNav, nil];
     
     NSMutableDictionary *imgDic1 = [NSMutableDictionary dictionaryWithCapacity:2];
     [imgDic1 setObject:[UIImage imageNamed:@"home_G"] forKey:@"Default"];

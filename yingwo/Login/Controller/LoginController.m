@@ -149,7 +149,7 @@
     RAC(self.loginBtn,enabled) = [RACSignal combineLatest:@[self.phoneText.rightTextField.rac_textSignal,self.passwordText.rightTextField.rac_textSignal] reduce:^id(NSString *phoneText, NSString *passwordText){
         return @([Validate validateMobile:phoneText] && [Validate validatePassword:passwordText]);
     }];
-    
+
 }
 
 #pragma mark 所有按钮的的action
@@ -184,22 +184,17 @@
      *  登录参数分为
      *  username
      *  password
-     *  verfifcation  这个改为魔数，防止恶意请求
      */
     
     [self.view addSubview:self.hud];
     
-    NSString *password               = self.passwordText.rightTextField.text;
-    NSString *md5Passowrd            = [MD5 getmd5WithString:password];
-    NSString *passAppendVerification = [md5Passowrd stringByAppendingString:MOSHU];
-    NSString *md5passAndVerfifcation = [MD5 getmd5WithString:passAppendVerification];
+    NSString *username = self.phoneText.rightTextField.text;
+    NSString *password = self.passwordText.rightTextField.text;
 
-  //  NSLog(@"%@",md5passAndVerfifcation);
     NSMutableDictionary *paramaters = [NSMutableDictionary dictionary];
     
-    paramaters[USERNAME]     = self.phoneText.rightTextField.text;
-    paramaters[PASSWORD]     = md5passAndVerfifcation;
-    paramaters[VERFIFCATION] = MOSHU;
+    paramaters[USERNAME]     = username;
+    paramaters[PASSWORD]     = password;
     
     [self requestForLoginWithUrl:LOGIN_URL paramaters:paramaters];
     
@@ -216,7 +211,9 @@
             [self requestForHeadImageWithUrl:log.customer.head_img];
             
         }else if(log.status == 0){
-            
+            [self.hud hide:YES];
+            [MBProgressHUD showErrorHUDToAddToView:self.view labelText:@"账号或密码错误" animated:YES afterDelay:1];
+
         }else{
             
         }
@@ -225,7 +222,8 @@
 //        NSLog(@"%@",log.customer.username);
 
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        
+        [self.hud hide:YES];
+        [MBProgressHUD showErrorHUDToAddToView:self.view labelText:@"账号或密码错误" animated:YES afterDelay:1];
     }];
 }
 
@@ -321,7 +319,7 @@
     
     [self setUILayout];
     
-    [User saveLoginInformationWithUsernmae:@"15295732669" password:@"123456"];
+  //  [User saveLoginInformationWithUsernmae:@"15295732669" password:@"123456"];
     
     NSLog(@"%@",NSHomeDirectory());
 }

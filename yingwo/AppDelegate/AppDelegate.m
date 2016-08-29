@@ -28,7 +28,7 @@
     
     UIStoryboard *storyboard       = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     MainNavController *mainNav ;
-    /*
+    
     //如果有账号，则直接登录
     if ([User haveExistedLoginInformation]) {
         
@@ -44,7 +44,7 @@
     }
     
     [self.window makeKeyAndVisible];
-*/
+
     return YES;
 }
 

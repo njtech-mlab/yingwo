@@ -16,8 +16,7 @@
                        failure:(void (^)(NSURLSessionDataTask *task,NSError *error))failure {
     
     NSString *fullUrl = [BASE_URL stringByAppendingString:url];
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    YWHTTPManager *manager = [YWHTTPManager manager];
     
     [manager POST:fullUrl
        parameters:parameters
@@ -25,11 +24,7 @@
           success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
              
             NSString *result      = [[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
-              
-            NSString *subString   = [result substringWithRange:NSMakeRange(1, result.length-2)];//去掉外面的括号
-
-            NSData *data          = [subString dataUsingEncoding:NSUTF8StringEncoding];
-            NSDictionary *content = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+            NSDictionary *content = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
            //    NSLog(@"%@",content);
             Login *loginInfo      = [Login mj_objectWithKeyValues:content];
             success(loginInfo);
@@ -42,7 +37,7 @@
 
 - (void)requestForHeadImageWithUrl:(NSString *)imageUrl{
     
-    NSString *partUrlString = [BASE_URL2 stringByAppendingString:HEADIMAGE_URL];
+    NSString *partUrlString = [BASE_URL stringByAppendingString:HEADIMAGE_URL];
     NSString *fullUrl       = [partUrlString stringByAppendingString:imageUrl];
 
     NSURL *url              = [NSURL URLWithString:fullUrl];

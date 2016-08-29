@@ -33,7 +33,7 @@
 #define CONTROLLER_OF_MAINVC_IDENTIFIER         @"MainController"
 #define CONTROLLER_OF_LOGINVC_IDENTIFIER        @"LoginController"
 #define CONTROLLER_OF_HOME_IDENTIFIER           @"HomeController"
-
+#define CONTROLLER_OF_DISCOVERY_IDENTIFIER      @"DiscoveryController"
 #define CONTROLLER_OF_PERSONNAL_CENTER_IDENTIFY @"PersonalCenter"
 #define CONTROLLER_OF_ANNOUNCE_IDENTIFIER       @"AnnounceController"
 /********************************storyboard identifier************************************************/
@@ -55,13 +55,12 @@
 
 
 /********************************* URL ******************************************************/
-#define BASE_URL2 @"http://yw.zhibaizhi.com/yingwophp2"
-#define BASE_URL @"http://yw.zhibaizhi.com/yingwophp"
-#define LOGIN_URL @"/login/login"
-#define REGISTER_URL @"/login/register"
-#define SMS_URL  @"/login/getRegisterSMS"
-#define HEADIMAGE_URL @"/Public/uploads/"
-#define TIEZI_URL @"/post/post_get_list"
+#define BASE_URL        @"http://yw.zhibaizhi.com/yingwophp/api/v1"
+#define LOGIN_URL       @"/User/Login"
+#define REGISTER_URL    @"/login/register"
+#define SMS_URL         @"/login/getRegisterSMS"
+#define HEADIMAGE_URL   @"/Public/uploads/"
+#define TIEZI_URL       @"/post/post_get_list"
 #define ANNOUNCE_FRESH_THING_URL @"/post/post_add"
 
 #define QINIU_BASE_URL @"http://obabu2buy.bkt.clouddn.com"
@@ -84,7 +83,7 @@
 
 /********************************* key ******************************************************/
 //登录、注册
-#define USERNAME     @"username"
+#define USERNAME     @"name"
 #define PASSWORD     @"password"
 #define VERFIFCATION @"verification"
 #define MOBILE       @"mobile"
