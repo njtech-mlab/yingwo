@@ -12,7 +12,7 @@
 
 - (void)requestForLoginWithUrl:(NSString *)url
                     parameters:(id)parameters
-                       success:(void (^)(Login *log))success
+                       success:(void (^)(User *user))success
                        failure:(void (^)(NSURLSessionDataTask *task,NSError *error))failure {
     
     NSString *fullUrl = [BASE_URL stringByAppendingString:url];
@@ -22,12 +22,20 @@
        parameters:parameters
          progress:nil
           success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-             
-            NSString *result      = [[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
-            NSDictionary *content = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
-           //    NSLog(@"%@",content);
-            Login *loginInfo      = [Login mj_objectWithKeyValues:content];
-            success(loginInfo);
+            
+              NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)task.response;
+              
+              if (httpResponse.statusCode == SUCCESS_STATUS) {
+                  
+                  NSDictionary *content = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
+                  User *customer = [User mj_objectWithKeyValues:content[@"info"]];
+                  success(customer);
+              }
+              else
+              {
+                  
+              }
+
         
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         failure(task,error);

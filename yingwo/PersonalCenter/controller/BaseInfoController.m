@@ -19,6 +19,7 @@
 @property (nonatomic, strong) UIButton       *male;
 @property (nonatomic, strong) UIButton       *female;
 
+@property (nonatomic, strong)Customer *user;
 
 @end
 
@@ -28,8 +29,11 @@
 - (YWInputButton *)signatureText {
     
     if (_signatureText == nil) {
-        _signatureText = [[YWInputButton alloc] initWithFrame:CGRectMake(0, 0, 0, 0) leftLabel:@"个性签名" centerLabel:@"一句话让你更加不一样"];
-        [_signatureText setBackgroundImage:[UIImage imageNamed:@"input_text"] forState:UIControlStateNormal];
+        _signatureText = [[YWInputButton alloc] initWithFrame:CGRectMake(0, 0, 0, 0)
+                                                    leftLabel:@"个性签名"
+                                                  centerLabel:self.user.signature];
+        [_signatureText setBackgroundImage:[UIImage imageNamed:@"input_text"]
+                                  forState:UIControlStateNormal];
         [_signatureText showRightView];
     }
     return _signatureText;
@@ -38,8 +42,11 @@
 - (YWInputButton *)nicknameText {
     
     if (_nicknameText == nil) {
-        _nicknameText = [[YWInputButton alloc] initWithFrame:CGRectMake(0, 0, 0, 0) leftLabel:@"昵称" centerLabel:@"必填"];
-        [_nicknameText setBackgroundImage:[UIImage imageNamed:@"input_top"] forState:UIControlStateNormal];
+        _nicknameText = [[YWInputButton alloc] initWithFrame:CGRectMake(0, 0, 0, 0)
+                                                   leftLabel:@"昵称"
+                                                 centerLabel:self.user.name];
+        [_nicknameText setBackgroundImage:[UIImage imageNamed:@"input_top"]
+                                 forState:UIControlStateNormal];
         [_nicknameText showRightView];
     }
     return _nicknameText;
@@ -48,8 +55,12 @@
 - (YWInputButton *)sexText {
     
     if (_sexText == nil) {
-        _sexText = [[YWInputButton alloc] initWithFrame:CGRectMake(0, 0, 0, 0) leftLabel:@"性别" centerLabel:@""];
-        [_sexText setBackgroundImage:[UIImage imageNamed:@"input_mid"] forState:UIControlStateNormal];
+        _sexText = [[YWInputButton alloc] initWithFrame:CGRectMake(0, 0, 0, 0)
+                                              leftLabel:@"性别"
+                                            centerLabel:@""];
+        
+        [_sexText setBackgroundImage:[UIImage imageNamed:@"input_mid"]
+                            forState:UIControlStateNormal];
     }
     return _sexText;
 }
@@ -57,8 +68,11 @@
 - (YWInputButton *)schoolText {
     
     if (_schoolText == nil) {
-        _schoolText = [[YWInputButton alloc] initWithFrame:CGRectMake(0, 0, 0, 0) leftLabel:@"学校" centerLabel:@"必填"];
-        [_schoolText setBackgroundImage:[UIImage imageNamed:@"input_mid"] forState:UIControlStateNormal];
+        _schoolText = [[YWInputButton alloc] initWithFrame:CGRectMake(0, 0, 0, 0)
+                                                 leftLabel:@"学校"
+                                               centerLabel:self.user.school_name];
+        [_schoolText setBackgroundImage:[UIImage imageNamed:@"input_mid"]
+                               forState:UIControlStateNormal];
         [_schoolText showRightView];
     }
     return _schoolText;
@@ -67,8 +81,11 @@
 - (YWInputButton *)academyText {
     
     if (_academyText == nil) {
-        _academyText = [[YWInputButton alloc] initWithFrame:CGRectMake(0, 0, 0, 0) leftLabel:@"学院" centerLabel:@"选填"];
-        [_academyText setBackgroundImage:[UIImage imageNamed:@"input_mid"] forState:UIControlStateNormal];
+        _academyText = [[YWInputButton alloc] initWithFrame:CGRectMake(0, 0, 0, 0)
+                                                  leftLabel:@"学院"
+                                                centerLabel:self.user.academy_name];
+        [_academyText setBackgroundImage:[UIImage imageNamed:@"input_mid"]
+                                forState:UIControlStateNormal];
         [_academyText showRightView];
     }
     return _academyText;
@@ -77,8 +94,11 @@
 - (YWInputButton *)gradeText {
     
     if (_gradeText == nil) {
-        _gradeText = [[YWInputButton alloc] initWithFrame:CGRectMake(0, 0, 0, 0) leftLabel:@"年级" centerLabel:@"选填"];
-        [_gradeText setBackgroundImage:[UIImage imageNamed:@"input_col"] forState:UIControlStateNormal];
+        _gradeText = [[YWInputButton alloc] initWithFrame:CGRectMake(0, 0, 0, 0)
+                                                leftLabel:@"年级"
+                                              centerLabel:self.user.grade];
+        [_gradeText setBackgroundImage:[UIImage imageNamed:@"input_col"]
+                              forState:UIControlStateNormal];
     }
     return _gradeText;
 }
@@ -86,7 +106,8 @@
 - (UIButton *)male {
     if (_male == nil) {
         _male = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
-        [_male setBackgroundImage:[UIImage imageNamed:@"male-show"] forState:UIControlStateNormal];
+        [_male setBackgroundImage:[UIImage imageNamed:@"male-show"]
+                         forState:UIControlStateNormal];
     }
     return _male;
 }
@@ -94,9 +115,17 @@
 - (UIButton *)female {
     if (_female == nil) {
         _female = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
-        [_female setBackgroundImage:[UIImage imageNamed:@"female-hide"] forState:UIControlStateNormal];
+        [_female setBackgroundImage:[UIImage imageNamed:@"female-hide"]
+                           forState:UIControlStateNormal];
     }
     return _female;
+}
+
+- (Customer *)user {
+    if (_user == nil) {
+        _user = [User findCustomer];
+    }
+    return _user;
 }
 
 #pragma mark -----初始化UI布局,布局约束
@@ -177,6 +206,16 @@
 - (void)back {
     [self.navigationController popViewControllerAnimated:YES];
 }
+
+//action跳转
+- (void)jumpToWriteSignaturePage {
+    [self performSegueWithIdentifier:SEGUE_IDENTIFY_WRITESIGNATURE sender:self];
+}
+
+- (void)jumpToWirteNicknamePage {
+    [self performSegueWithIdentifier:SEGUE_IDENTIFY_WRITENICKNAME sender:self];
+}
+
 
 
 

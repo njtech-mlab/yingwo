@@ -12,7 +12,7 @@
 @interface YWHomeCellLabelView : UIView
 
 @property (nonatomic, strong) UIImageView *labelImage;
-@property (nonatomic, strong) YWLabel     *label;
+@property (nonatomic, strong) YWLabel     *title;
 
 
 @end

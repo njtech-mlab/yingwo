@@ -37,6 +37,8 @@
 
     NSString *fullUrl = [BASE_URL stringByAppendingString:url];
     YWHTTPManager *manager = [YWHTTPManager manager];
+    //加载cookie
+    [YWNetworkTools loadCookiesWithKey:LOGIN_COOKIE];
     
     [manager POST:fullUrl
        parameters:paramaters

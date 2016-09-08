@@ -7,6 +7,8 @@
 //
 
 #import "PersonalCenterController.h"
+#import "PerfectInfoController.h"
+
 #import "YWPersonCenterCell.h"
 #import "YWPersonCenterTopView.h"
 #import "YWPersonCenterMidCell.h"
@@ -139,8 +141,8 @@
     Customer *customer = [User findCustomer];
     if (customer != nil) {
         
-        self.headView.usernameLabel.text  = customer.nickname;
-        self.headView.signatureLabel.text = customer.username;
+        self.headView.usernameLabel.text  = customer.mobile;
+        self.headView.signatureLabel.text = customer.signature;
         NSString *imagePath               = [YWSandBoxTool getHeadPortraitPathFromCache];
         
         if (imagePath != nil) {
@@ -149,7 +151,7 @@
 
         }
         
-        if ([customer.gender isEqualToString:@"0"]) {
+        if ([customer.sex isEqualToString:@"0"]) {
             self.headView.genderImageView.image = [UIImage imageNamed:@"woman"];
         }
 
@@ -163,9 +165,9 @@
     [self.headView addTarget:self action:@selector(jumpToBaseInfoPage) forControlEvents:UIControlEventTouchUpInside];
 }
 
+//跳转到完善信息的界面
 - (void)jumpToBaseInfoPage {
-  //  [super.navigationController performSegueWithIdentifier:SEGUE_IDENTIFY_BASEINFO sender:self];
-    [self performSegueWithIdentifier:SEGUE_IDENTIFY_BASEINFO sender:self];
+    [self performSegueWithIdentifier:SEGUE_IDENTIFY_PERFECTINFO sender:self];
 }
 
 - (void)jumpToConfigurationPage {
@@ -201,6 +203,23 @@
  */
 - (void)judgeNetworkStatus {
     [YWNetworkTools networkStauts];
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.destinationViewController isKindOfClass:[PerfectInfoController class]]) {
+        if ([segue.identifier isEqualToString: SEGUE_IDENTIFY_PERFECTINFO]) {
+            PerfectInfoController *perfectInfo = segue.destinationViewController;
+            Customer *user                     = [User findCustomer];
+            perfectInfo.signature              = user.signature;
+            perfectInfo.name                   = user.name;
+            perfectInfo.academy_id             = user.academy_id;
+            perfectInfo.school_id              = user.school_id;
+            perfectInfo.gender                 = user.sex;
+            perfectInfo.grade                  = user.grade;
+            perfectInfo.headImagePath          = [YWSandBoxTool getHeadPortraitPathFromCache];
+            perfectInfo.isModfiyInfo           = YES;
+        }
+    }
 }
 
 - (void)didReceiveMemoryWarning {

@@ -108,6 +108,33 @@ static BOOL networkStatus = YES;
     }] ;
 }
 
++ (void)cookiesValueWithKey:(NSString *)key{
+    NSData *saveCookiesData      = [NSKeyedArchiver archivedDataWithRootObject: [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies]];
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    [userDefaults setObject: saveCookiesData forKey: key];
+}
 
++ (void)loadCookiesWithKey:(NSString *)key {
+    
+    NSArray *loadCookies               = [NSKeyedUnarchiver unarchiveObjectWithData: [[NSUserDefaults standardUserDefaults] objectForKey:key]];
+    NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    
+    for (NSHTTPCookie *cookies in loadCookies){
+        [cookieStorage setCookie: cookies];
+    }
+}
+
++ (void)deleteCookiesWithKey:(NSString *)key
+{
+    NSHTTPCookieStorage *cookieJar = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    
+    NSArray *cookies = [NSArray arrayWithArray:[cookieJar cookies]];
+    
+    for (NSHTTPCookie *cookie in cookies) {
+        if ([[cookie name] isEqualToString:key]) {
+            [cookieJar deleteCookie:cookie];
+        }
+    }
+}
 
 @end

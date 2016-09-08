@@ -23,4 +23,7 @@
 //用户名验证：数字、字母、中文、长度1～24
 +(BOOL) validateUserName:(NSString *)name;
 
+//验证是否全为空格
++ (BOOL) validateIsEmpty:(NSString *) str;
+
 @end

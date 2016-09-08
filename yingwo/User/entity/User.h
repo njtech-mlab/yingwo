@@ -16,20 +16,17 @@
 @interface User : NSObject
 
 @property (nonatomic, copy)NSString *userId;
-@property (nonatomic, copy)NSString *username;
-@property (nonatomic, copy)NSString *nickname;
-@property (nonatomic, copy)NSString *nickname_py;
-@property (nonatomic, copy)NSString *head_img;
-@property (nonatomic, copy)NSString *age;
-@property (nonatomic, copy)NSString *telphone;
-@property (nonatomic, copy)NSString *address;
-@property (nonatomic, copy)NSString *register_time;
-@property (nonatomic, copy)NSString *status;
-@property (nonatomic, copy)NSString *college;
-@property (nonatomic, copy)NSString *major;
+@property (nonatomic, copy)NSString *mobile;
+@property (nonatomic, copy)NSString *name;
+@property (nonatomic, copy)NSString *sex;
+@property (nonatomic, copy)NSString *signature;
+@property (nonatomic, copy)NSString *face_img;
+@property (nonatomic, copy)NSString *school_name;
+@property (nonatomic, copy)NSString *academy_name;
+@property (nonatomic, copy)NSString *school_id;
+@property (nonatomic, copy)NSString *academy_id;
+@property (nonatomic, copy)NSString *register_status;
 @property (nonatomic, copy)NSString *grade;
-@property (nonatomic, copy)NSString *gender;
-@property (nonatomic, copy)NSString *school;
-@property (nonatomic, copy)NSString *sessionid;
+@property (nonatomic, copy)NSString *create_time;
 
 @end

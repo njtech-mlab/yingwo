@@ -9,6 +9,8 @@
 #import "YWTabBar.h"
 #import "YWButton.h"
 
+#define TABVIEW_MARGIN 10
+
 @implementation YWTabBar
 
 - (id)initWithFrame:(CGRect)frame buttonImages:(NSArray *)imageArray {
@@ -51,23 +53,23 @@
         [self addSubview:headBtn];
 
         [homeBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(self.mas_left).offset(20);
+            make.left.equalTo(self.mas_left).offset(TABVIEW_MARGIN);
             make.centerY.equalTo(self);
         }];
         
         [findBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(homeBtn.mas_right).offset(20);
+            make.left.equalTo(homeBtn.mas_right).offset(TABVIEW_MARGIN);
             make.centerY.equalTo(self);
         }];
         [addBtn mas_makeConstraints:^(MASConstraintMaker *make) {
             make.center.equalTo(self);
         }];
         [bubBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.right.equalTo(headBtn.mas_left).offset(-20);
+            make.right.equalTo(headBtn.mas_left).offset(-TABVIEW_MARGIN);
             make.centerY.equalTo(self);
         }];
         [headBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.right.equalTo(self.mas_right).offset(-20);
+            make.right.equalTo(self.mas_right).offset(-TABVIEW_MARGIN);
             make.centerY.equalTo(self);
         }];
         

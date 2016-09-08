@@ -11,6 +11,8 @@
 #import "RegisterController.h"
 #import "LoginModel.h"
 
+#import "Test.h"
+
 @interface LoginController ()
 
 @property (nonatomic, strong) UIImageView    *headImage;
@@ -188,13 +190,13 @@
     
     [self.view addSubview:self.hud];
     
-    NSString *username = self.phoneText.rightTextField.text;
-    NSString *password = self.passwordText.rightTextField.text;
+    NSString *mobile                = self.phoneText.rightTextField.text;
+    NSString *password              = self.passwordText.rightTextField.text;
 
     NSMutableDictionary *paramaters = [NSMutableDictionary dictionary];
-    
-    paramaters[USERNAME]     = username;
-    paramaters[PASSWORD]     = password;
+
+    paramaters[MOBILE]              = mobile;
+    paramaters[PASSWORD]            = password;
     
     [self requestForLoginWithUrl:LOGIN_URL paramaters:paramaters];
     
@@ -202,20 +204,23 @@
 //登录网路请求
 - (void)requestForLoginWithUrl:(NSString *)url paramaters:(id)paramaters {
     
-    [self.model requestForLoginWithUrl:url parameters:paramaters success:^(Login *log) {
-        if (log.status == 1) {
+    [self.model requestForLoginWithUrl:url
+                            parameters:paramaters
+                               success:^(User *user) {
+                                   
+        if (user != nil) {
             
+            //登录成功后保存cookie
+            [YWNetworkTools cookiesValueWithKey:LOGIN_COOKIE];
             //登录后本地保存数据
-            [self saveDataAfterSuccessLogin:log.customer];
+            [self saveDataAfterSuccessLogin:user];
             //头像
-            [self requestForHeadImageWithUrl:log.customer.head_img];
+            [self requestForHeadImageWithUrl:user.face_img];
             
-        }else if(log.status == 0){
+        }else{
             [self.hud hide:YES];
             [MBProgressHUD showErrorHUDToAddToView:self.view labelText:@"账号或密码错误" animated:YES afterDelay:1];
 
-        }else{
-            
         }
 //        NSLog(@"%d",log.status);
 //        NSLog(@"%@",log.customer.userId);
@@ -234,7 +239,12 @@
  */
 - (void)requestForHeadImageWithUrl:(NSString *)url {
     
-    [self.model requestForHeadImageWithUrl:url];
+    if (url.length > 0) {
+        
+        [self.model requestForHeadImageWithUrl:url];
+        
+    }
+    
     
 }
 
@@ -244,7 +254,10 @@
     [User saveCustomerByUser:user];
     
     //登录信息保存    
-    [self saveLoginInfoWith:self.phoneText.rightTextField.text password:self.passwordText.rightTextField.text success:^(int successCode) {
+    [self saveLoginInfoWith:self.phoneText.rightTextField.text
+                   password:self.passwordText.rightTextField.text
+                    success:^(int successCode) {
+                        
         if (successCode == SUCCESS_STATUS) {
             
             [self.hud hide:YES];
@@ -266,7 +279,10 @@
  *  @param password 登录密码
  *  @param success  成功后的回调
  */
-- (void)saveLoginInfoWith:(NSString *)phone password:(NSString *)password success:(void (^)(int successCode))success failure:(void (^)(int errorCode))failure{
+- (void)saveLoginInfoWith:(NSString *)phone
+                 password:(NSString *)password
+                  success:(void (^)(int successCode))success
+                  failure:(void (^)(int errorCode))failure{
     
     BOOL isSave = [User saveLoginInformationWithUsernmae:phone password:password];
     if (isSave) {
@@ -322,6 +338,7 @@
   //  [User saveLoginInformationWithUsernmae:@"15295732669" password:@"123456"];
     
     NSLog(@"%@",NSHomeDirectory());
+
 }
 
 - (void)viewWillAppear:(BOOL)animated {

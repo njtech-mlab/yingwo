@@ -19,7 +19,7 @@
     [super setSelected:selected animated:animated];
 }
 
-- (void)createSubviewBy:(NSMutableArray *)imageViewArr {
+- (void)createSubview {
     
     self.backgroundView = [[UIView alloc] init];
     self.labelView      = [[YWHomeCellLabelView alloc] init];

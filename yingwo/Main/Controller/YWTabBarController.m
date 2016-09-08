@@ -12,7 +12,7 @@
 #import "HomeController.h"
 
 #define kTabBarHeight 49.0f
-
+#define TAB_BAR_MARGIN_TOP 10.0f
 @interface YWTabBarController ()
 
 @property (nonatomic, strong) UIView *containerView;
@@ -83,7 +83,7 @@
             [UIView animateWithDuration:0.3 animations:^{
                 [self.tabBar mas_updateConstraints:^(MASConstraintMaker *make) {
                     make.centerX.equalTo(self.view);
-                    make.top.equalTo(self.view.mas_bottom).offset(20);
+                    make.top.equalTo(self.view.mas_bottom).offset(TAB_BAR_MARGIN_TOP);
                 }];
                 [self.tabBar layoutIfNeeded];
             }];
@@ -91,7 +91,7 @@
         }else {
                 [self.tabBar mas_updateConstraints:^(MASConstraintMaker *make) {
                     make.centerX.equalTo(self.view);
-                    make.bottom.equalTo(self.view.mas_bottom).offset(20);
+                    make.bottom.equalTo(self.view.mas_bottom).offset(TAB_BAR_MARGIN_TOP);
                 }];
                 [self.tabBar layoutIfNeeded];
         }
@@ -101,7 +101,7 @@
         {
             [self.tabBar mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.centerX.equalTo(self.view);
-                make.top.equalTo(self.view.mas_bottom).offset(20);
+                make.top.equalTo(self.view.mas_bottom).offset(TAB_BAR_MARGIN_TOP);
             }];
             [self.tabBar layoutIfNeeded];
         }
@@ -214,10 +214,9 @@
         [self showAnnounceViewAtIndex:index];
 
     }else {
-        if (index > 2) {
-            index -= index;
-        }
+
         [self displayViewAtIndex:index];
+
     }
 }
 

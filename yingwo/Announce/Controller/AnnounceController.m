@@ -10,27 +10,22 @@
 #import "YWAnnounceTextView.h"
 #import "AnnounceModel.h"
 #import "YWKeyboardToolView.h"
-#import "PhotoUnitView.h"
+#import "YWPhotoDisplayView.h"
 
 @interface AnnounceController ()<LSYAlbumCatalogDelegate,ISEmojiViewDelegate,YWKeyboardToolViewProtocol>
 
 @property (nonatomic, strong) YWAnnounceTextView *announceTextView;
 @property (nonatomic, strong) YWKeyboardToolView *keyboardTooView;
 
-@property (nonatomic, strong) UIScrollView       *photosBgSrcollView;
-@property (nonatomic, strong) UIButton           *addMorePhotosBtn;
 @property (nonatomic, strong) UIBarButtonItem    *leftBarItem;
 @property (nonatomic, strong) UIBarButtonItem    *rightBarItem;
+
+@property (nonatomic, strong) YWPhotoDisplayView *photoDisplayView;
+
 @property (nonatomic, strong) AnnounceModel      *viewModel;
 @property (nonatomic, assign) UIImageView        *lastPhoto;
-@property (nonatomic, assign) NSInteger          photoSelectKind;
 @property (nonatomic, assign) NSInteger          photoImagesCount;
-@property (nonatomic, strong) NSMutableArray     *photoImageViewsArr;
-@property (nonatomic, strong) NSMutableArray     *photoImageArr;
 @end
-
-static int SELECT_PHOTOS   = 1;
-static int ADD_MORE_PHOTOS = 2;
 
 @implementation AnnounceController
 
@@ -43,7 +38,6 @@ static int ADD_MORE_PHOTOS = 2;
         _announceTextView.keyboardToolView.delegate   = self;
         _announceTextView.contentTextView.maxHeight   = SCREEN_HEIGHT * 0.32;
 
-        [_announceTextView.keyboardToolView.photo addTarget:self action:@selector(enterIntoAlbumsSelectPhotos) forControlEvents:UIControlEventTouchUpInside];
     }
     return _announceTextView;
 }
@@ -51,6 +45,15 @@ static int ADD_MORE_PHOTOS = 2;
 - (YWKeyboardToolView *)keyboardTooView {
     if (_keyboardTooView == nil) {
         _keyboardTooView          = [[YWKeyboardToolView alloc] init];
+        
+        [_keyboardTooView.returnKeyBoard addTarget:self
+                                            action:@selector(resignKeyboard)
+                                  forControlEvents:UIControlEventTouchUpInside];
+        
+        [_keyboardTooView.photo addTarget:self
+                                   action:@selector(enterIntoAlbumsSelectPhotos)
+                         forControlEvents:UIControlEventTouchUpInside];
+
         _keyboardTooView.delegate = self;
     }
     return _keyboardTooView;
@@ -78,135 +81,107 @@ static int ADD_MORE_PHOTOS = 2;
     return _viewModel;
 }
 
-- (UIScrollView *)photosBgSrcollView {
-    if (_photosBgSrcollView == nil) {
-        
-        _photosBgSrcollView = [[UIScrollView alloc] init];
-        _photosBgSrcollView.showsVerticalScrollIndicator = NO;
-        _photosBgSrcollView.showsHorizontalScrollIndicator = YES;
-  //      _photosBgSrcollView.backgroundColor = [UIColor greenColor];
-        
+- (YWPhotoDisplayView *)photoDisplayView {
+    if (_photoDisplayView == nil) {
+        _photoDisplayView = [[YWPhotoDisplayView alloc] init];
+        _photoDisplayView.photoWidth = 80;
+        [_photoDisplayView.addMorePhotosBtn addTarget:self
+                                               action:@selector(addMorePhotos)
+                                     forControlEvents:UIControlEventTouchUpInside];
     }
-    return _photosBgSrcollView;
-}
-
-- (UIButton *)addMorePhotosBtn {
-    if (_addMorePhotosBtn == nil) {
-        _addMorePhotosBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_addMorePhotosBtn setBackgroundImage:[UIImage imageNamed:@"+_gray"] forState:UIControlStateNormal];
-        [_addMorePhotosBtn addTarget:self action:@selector(addMorePhotos) forControlEvents:UIControlEventTouchUpInside];
-    }
-    return _addMorePhotosBtn;
-}
-
-- (NSMutableArray *)photoImageViewsArr {
-    if (_photoImageViewsArr == nil) {
-        _photoImageViewsArr = [[NSMutableArray alloc] init];
-    }
-    return _photoImageViewsArr;
-}
-
-- (NSMutableArray *)photoImageArr {
-    if (_photoImageArr == nil) {
-        _photoImageArr = [[NSMutableArray alloc] init];
-    }
-    return _photoImageArr;
+    return _photoDisplayView;
 }
 
 #pragma mark button action 
 
 - (void)releaseContent {
     
+    [self.photoDisplayView putPhotosToImagesArr];
     //发布之前，先小时键盘
     [self.announceTextView.contentTextView resignFirstResponder];
-    [self.keyboardTooView removeFromSuperview];
     
-    if (self.photoImageViewsArr.count == 0 && [self.announceTextView.contentTextView.text isEqualToString:@""]) {
+    if (self.photoDisplayView.photoImagesCount != 0 || ![self.announceTextView.contentTextView.text isEqualToString:@""]) {
         
-    }else if (self.photoImageViewsArr.count == 0) {
+//    }else if (self.photoDisplayView.photoImagesCount == 0) {
+//        
+//        [self postTieZiWithContentWithoutImages:self.announceTextView.contentTextView.text];
+//        
+//    }else if ([self.announceTextView.contentTextView.text isEqualToString:@""]) {
+//        
+//        [self postTieZiWithImagesWithoutContent:self.photoDisplayView.photoImageArr];
+//        
+//    }else {
         
-        [self postFreshThingWithContentWithoutImages:self.announceTextView.contentTextView.text];
-        
-    }else if ([self.announceTextView.contentTextView.text isEqualToString:@""]) {
-        
-        [self putPhotosToImagesArr];
-        [self postFreshThingWithImagesWithoutContent:self.photoImageArr];
-        
-    }else {
-        
-        [self putPhotosToImagesArr];
-        [self postFreshThingWithImages:self.photoImageArr andContent:self.announceTextView.contentTextView.text];
+        [self postTieZiWithImages:self.photoDisplayView.photoImageArr andContent:self.announceTextView.contentTextView.text];
         
     }
 
     
 }
 
-/**
- *  将photo放入数组中
- */
-- (void)putPhotosToImagesArr {
-    
-    for (int i = 0; i < self.photoImageViewsArr.count; i++) {
-        
-        PhotoUnitView *photo = [self.photoImageViewsArr objectAtIndex:i];
-        UIImage *image       = photo.photoImageView.image;
-        
-        [self.photoImageArr addObject:image];
-    }
-    
-}
 
-CGFloat delay = 1.5f;
+CGFloat delay = 2.0f;
 
 /**
  *  只有图片发布
  *
  *  @param photoArr 图片数组
  */
-- (void)postFreshThingWithImagesWithoutContent:(NSArray *)photoArr {
-    
-    MBProgressHUD *hud = [MBProgressHUD showProgressViewToView:self.view animated:YES];
-
-    [YWQiNiuUploadTool uploadImages:photoArr progress:^(CGFloat progress) {
-        
-        hud.progress = progress;
-        
-    } success:^(NSArray *arr) {
-        
-        hud.hidden = YES;
-        [MBProgressHUD showHUDToAddToView:self.view labelText:@"发布成功" animated:YES afterDelay:delay success:^{
-            [self backToMainView];
-        }];
-    } failure:^{
-        
-    }];
-}
+//- (void)postTieZiWithImagesWithoutContent:(NSArray *)photoArr {
+//    
+//    MBProgressHUD *hud = [MBProgressHUD showProgressViewToView:self.view
+//                                                      animated:YES];
+//
+//    [YWQiNiuUploadTool uploadImages:photoArr
+//                           progress:^(CGFloat progress) {
+//        
+//        hud.progress = progress;
+//        
+//    } success:^(NSArray *arr) {
+//        
+//        hud.hidden = YES;
+//        [MBProgressHUD showHUDToAddToView:self.view
+//                                labelText:@"发布成功"
+//                                 animated:YES
+//                               afterDelay:delay
+//                                  success:^{
+//            [self backToMainView];
+//        }];
+//    } failure:^{
+//        
+//    }];
+//}
 
 /**
  *  只有文字内容
  *
  *  @param content 贴子内容
  */
-- (void)postFreshThingWithContentWithoutImages:(NSString *)content {
-    
-    
-    NSMutableDictionary *paramaters = [[NSMutableDictionary alloc] init];
-    paramaters[@"user_id"]          = @123;
-    paramaters[@"cat_id"]           = @0;
-    paramaters[@"content"]          = content;
-    
-    [self.viewModel postFreshThingWithUrl:ANNOUNCE_FRESH_THING_URL paramaters:paramaters success:^(NSString *result) {
-        
-        [MBProgressHUD showHUDToAddToView:self.view labelText:@"发布成功" animated:YES afterDelay:delay success:^{
-            [self backToMainView];
-        }];
-        
-    } failure:^(NSError *error) {
-        
-    }];
-    
-}
+//- (void)postTieZiWithContentWithoutImages:(NSString *)content {
+//    
+//    
+//    NSMutableDictionary *paramaters = [[NSMutableDictionary alloc] init];
+//
+//    paramaters[@"topic_id"]         = @0;
+//    paramaters[@"content"]          = content;
+//
+//    [self.viewModel postFreshThingWithUrl:ANNOUNCE_FRESH_THING_URL
+//                               paramaters:paramaters
+//                                  success:^(NSString *result) {
+//        
+//        [MBProgressHUD showHUDToAddToView:self.view
+//                                labelText:@"发布成功"
+//                                 animated:YES
+//                               afterDelay:delay
+//                                  success:^{
+//            [self backToMainView];
+//        }];
+//        
+//    } failure:^(NSError *error) {
+//        
+//    }];
+//    
+//}
 
 /**
  *  既有图片又有内容
@@ -214,28 +189,45 @@ CGFloat delay = 1.5f;
  *  @param photoArr 图片数组
  *  @param content  贴子内容
  */
-- (void)postFreshThingWithImages:(NSArray *)photoArr andContent:(NSString *)content {
+- (void)postTieZiWithImages:(NSArray *)photoArr andContent:(NSString *)content {
     
     MBProgressHUD *hud = [MBProgressHUD showProgressViewToView:self.view animated:YES];
     
-    [YWQiNiuUploadTool uploadImages:photoArr progress:^(CGFloat progress) {
+    [YWQiNiuUploadTool uploadImages:photoArr
+                           progress:^(CGFloat progress) {
         
         hud.progress = progress;
         
     } success:^(NSArray *arr) {
         
+        NSString *allUrlString          = [NSArray appendElementToString:arr];
+
         NSMutableDictionary *paramaters = [[NSMutableDictionary alloc] init];
-        
-        paramaters[@"user_id"]          = @123;
-        paramaters[@"cat_id"]           = @0;
+        NSString *requestUrl            = @"";
+
+        if (self.isFollowTieZi == YES) {
+            paramaters[@"post_id"] = @(self.post_id);
+            requestUrl             = TIEZI_REPLY;
+        }
+        else
+        {
+            paramaters[@"topic_id"] = @0;
+            requestUrl              = ANNOUNCE_FRESH_THING_URL;
+        }
         paramaters[@"content"]          = content;
-        paramaters[@"img"]              = arr;
+        paramaters[@"img"]              = allUrlString;
         
-        [self.viewModel postFreshThingWithUrl:ANNOUNCE_FRESH_THING_URL paramaters:paramaters success:^(NSString *result) {
+        [self.viewModel postFreshThingWithUrl:requestUrl
+                                   paramaters:paramaters
+                                      success:^(NSString *result) {
           
             hud.hidden = YES;
             
-            [MBProgressHUD showHUDToAddToView:self.view labelText:@"发布成功" animated:YES afterDelay:delay success:^{
+            [MBProgressHUD showHUDToAddToView:self.view
+                                    labelText:@"发布成功"
+                                     animated:YES
+                                   afterDelay:delay
+                                      success:^{
                 
                 [self backToMainView];
             }];
@@ -255,8 +247,8 @@ CGFloat delay = 1.5f;
  */
 - (void)enterIntoAlbumsSelectPhotos {
 
-    _photoSelectKind = SELECT_PHOTOS;
-    
+    self.photoDisplayView.selectModel           = FirstSelectPhoto;
+
     LSYAlbumCatalog *albumCatalog              = [[LSYAlbumCatalog alloc] init];
     albumCatalog.delegate                      = self;
     LSYNavigationController *navigation        = [[LSYNavigationController alloc] initWithRootViewController:albumCatalog];
@@ -273,12 +265,12 @@ CGFloat delay = 1.5f;
  */
 - (void)addMorePhotos {
     
-    _photoSelectKind = ADD_MORE_PHOTOS;
-    
+    self.photoDisplayView.selectModel          = AddMorePhoto;
+
     LSYAlbumCatalog *albumCatalog              = [[LSYAlbumCatalog alloc] init];
     albumCatalog.delegate                      = self;
     LSYNavigationController *navigation        = [[LSYNavigationController alloc] initWithRootViewController:albumCatalog];
-    albumCatalog.maximumNumberOfSelectionMedia = 15-self.photoImagesCount;
+    albumCatalog.maximumNumberOfSelectionMedia = 15-self.photoDisplayView.photoImagesCount;
     
     [self presentViewController:navigation animated:YES completion:^{
         
@@ -287,7 +279,9 @@ CGFloat delay = 1.5f;
 }
 
 - (void)backToMainView {
-    [self.keyboardTooView removeFromSuperview];
+    
+    [self resignKeyboard];
+
     [self dismissViewControllerAnimated:YES completion:nil];
 
 }
@@ -302,12 +296,12 @@ CGFloat delay = 1.5f;
         make.height.equalTo(@(self.view.height * 0.33));
     }];
     
-    [self.keyboardTooView mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.keyboardTooView mas_updateConstraints:^(MASConstraintMaker *make) {
         make.left.right.bottom.equalTo(self.view);
         make.height.equalTo(@45);
     }];
     
-    [self.photosBgSrcollView mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.photoDisplayView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.announceTextView.mas_bottom).offset(20);
         make.left.equalTo(self.announceTextView.mas_left);
         make.right.equalTo(self.announceTextView.mas_right);
@@ -321,13 +315,15 @@ CGFloat delay = 1.5f;
     [super viewDidLoad];
     
     [self.view addSubview:self.announceTextView];
+    [self.view addSubview:self.photoDisplayView];
+    //特别注意！！
+    //这里布局的顺序不能乱了，keyboardTooView 要在photoDisplayView上面，否则键盘弹出时无法点击keyboardTooView
     [self.view addSubview:self.keyboardTooView];
-    [self.view addSubview:self.photosBgSrcollView];
-    [self.view addSubview:self.addMorePhotosBtn];
-    
+
     [self setAllLayout];
-  
-//    
+    
+
+//
   /*  [self.viewModel requestForQiNiuCertificateSerialNumberWithUrl:QINIU_CERTIFICSTE_URL sucess:^(NSString *certfifcate) {
         
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
@@ -337,173 +333,87 @@ CGFloat delay = 1.5f;
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    self.title = @"新鲜事";
+    
+    if (self.isFollowTieZi == YES) {
+        self.title = @"跟贴";
+    }
+    else
+    {
+        self.title = @"新鲜事";
+    }
+    
     self.navigationItem.rightBarButtonItem = self.rightBarItem;
     self.navigationItem.leftBarButtonItem  = self.leftBarItem;
     
+    
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+
+    //监听键盘frame改变事件
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillChangeFrame:)
+                                                 name:UIKeyboardWillChangeFrameNotification
+                                               object:nil];
+    //进入页面直接弹出键盘
     [self.announceTextView.contentTextView becomeFirstResponder];
 }
+
+//收起键盘
+- (void)resignKeyboard {
+    [self.announceTextView.contentTextView resignFirstResponder];
+}
+
+//键盘弹出后调用
+- (void)keyboardWillChangeFrame:(NSNotification *)note {
+    
+    //获取键盘的frame
+    CGRect endFrame = [note.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    
+    //获取键盘弹出时长
+    CGFloat duration = [note.userInfo[UIKeyboardAnimationDurationUserInfoKey]floatValue];
+    
+    //修改底部视图高度
+    CGFloat bottom = endFrame.origin.y != SCREEN_HEIGHT ? endFrame.size.height:0;
+    
+    [self.keyboardTooView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.bottom.mas_equalTo(bottom);
+    }];
+    
+    // 告诉self.view约束需要更新
+    [self.view setNeedsUpdateConstraints];
+    // 调用此方法告诉self.view检测是否需要更新约束，若需要则更新，下面添加动画效果才起作用
+    [self.view updateConstraintsIfNeeded];
+    
+    [self.keyboardTooView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.bottom.equalTo(self.view.mas_bottom).offset(-bottom);
+    }];
+    
+    // 约束动画
+    [UIView animateWithDuration:duration animations:^{
+        [self.view layoutIfNeeded];
+    }];
+    
+}
+
+
 
 #pragma mark -- LSYAlbumCatalogDelegate
 
 -(void)AlbumDidFinishPick:(NSArray *)assets {
     
-    if (_photoSelectKind == SELECT_PHOTOS) {
+    if (self.photoDisplayView.selectModel == FirstSelectPhoto) {
         
-        [self addImages:assets onPhotoBgSrcollView:self.photosBgSrcollView];
+        [self.photoDisplayView addImages:assets];
         
-    }else if (_photoSelectKind == ADD_MORE_PHOTOS) {
+    }else if (self.photoDisplayView.selectModel == AddMorePhoto) {
         
-        [self addMoreImages:assets onPhotoBgSrcollView:self.photosBgSrcollView];
+        [self.photoDisplayView addMoreImages:assets];
         
     }
 }
 
-/**
- *  添加照片
- *
- *  @param assets     照片数组
- *  @param scrollView 滑动背景
- */
-- (void)addImages:(NSArray *)assets onPhotoBgSrcollView:(UIScrollView *)scrollView {
-    
-    for (ALAsset *asset in assets) {
-        
-        if ([[asset valueForProperty:@"ALAssetPropertyType"] isEqual:@"ALAssetTypePhoto"]) {
-
-            UIImage * photoImage    = [UIImage imageWithCGImage:asset.defaultRepresentation.fullResolutionImage];
-            PhotoUnitView *photo    = [[PhotoUnitView alloc] initWithImage:photoImage];
-            photo.deleteViewBtn.tag = _photoImagesCount;
-            
-            [photo.deleteViewBtn addTarget:self action:@selector(deletePhotoImageView:) forControlEvents:UIControlEventTouchUpInside];
-            
-            [self.photoImageViewsArr addObject:photo];
-            
-            [self setPhotoImageViewLayout:photo byPhotoImagesCount:_photoImagesCount];
-
-        }
-        else if ([[asset valueForProperty:@"ALAssetPropertyType"] isEqual:@"ALAssetTypeVideo"]){
-            //  NSURL *url = asset.defaultRepresentation.url;
-            //  视频不处理
-        }
-    }
-    
-    if (_photoImagesCount != 0) {
-        
-        [self.addMorePhotosBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(self.photosBgSrcollView.mas_left);
-            make.top.equalTo(self.photosBgSrcollView.mas_bottom);
-        }];
-        
-        if (_photoImagesCount > 4) {
-            //photosBgSrcollView 滑动
-            self.photosBgSrcollView.contentSize = CGSizeMake(SCREEN_WIDTH + (_photoImagesCount-4) * 80, 100);
-
-        }
-    }
-    
-}
-
-static CGFloat photoWidth = 80;
-
-/**
- *  继续添加图片
- *
- *  @param assets     图片数组
- *  @param scrollView 滑动背景
- */
-- (void)addMoreImages:(NSArray *)assets onPhotoBgSrcollView:(UIScrollView *)scrollView {
-    
-    for (ALAsset *asset in assets) {
-        
-        if ([[asset valueForProperty:@"ALAssetPropertyType"] isEqual:@"ALAssetTypePhoto"]) {
-            
-            UIImage * photoImage    = [UIImage imageWithCGImage:asset.defaultRepresentation.fullResolutionImage];
-            PhotoUnitView *photo    = [[PhotoUnitView alloc] initWithImage:photoImage];
-            photo.deleteViewBtn.tag = _photoImagesCount;
-
-            [photo.deleteViewBtn addTarget:self action:@selector(deletePhotoImageView:) forControlEvents:UIControlEventTouchUpInside];
-            
-            [self.photoImageViewsArr addObject:photo];
-
-            [self setPhotoImageViewLayout:photo byPhotoImagesCount:_photoImagesCount];
-            
-        }
-        else if ([[asset valueForProperty:@"ALAssetPropertyType"] isEqual:@"ALAssetTypeVideo"]){
-            //  NSURL *url = asset.defaultRepresentation.url;
-            //  视频不处理
-        }
-    }
-    
-    
-    if (_photoImagesCount > 4) {
-        //photosBgSrcollView 滑动
-        self.photosBgSrcollView.contentSize = CGSizeMake(SCREEN_WIDTH + (_photoImagesCount-4) * photoWidth, 100);
-            
-        }
-}
-
-/**
- *  将照片显示在UIScrollView上
- *
- *  @param photo            图片
- *  @param photoImagesCount 图片数量
- */
-- (void)setPhotoImageViewLayout:(PhotoUnitView *)photo byPhotoImagesCount:(NSInteger)photoImagesCount {
-    
-    [self.photosBgSrcollView addSubview:photo];
-    
-    [photo mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.photosBgSrcollView.mas_left).offset(_photoImagesCount * photoWidth).priorityLow();
-        make.width.height.equalTo(@(photoWidth));
-        make.centerY.equalTo(self.photosBgSrcollView.mas_centerY);
-    }];
-    _photoImagesCount ++;
-}
-
-/**
- *  删除选中的照片
- *
- *  @param sender 删除按钮
- */
-- (void)deletePhotoImageView:(UIButton *)sender {
-    
-    PhotoUnitView *photo = (PhotoUnitView *)sender.superview;
-    [photo removeFromSuperview];
-    
-    NSUInteger index = [self.photoImageViewsArr indexOfObject:photo];
-    
-    [self.photoImageViewsArr removeObject:photo];
-    
-    _photoImagesCount--;
-    
-    [self removeAllPhotos:self.photoImageViewsArr AtIndex:index];
-    
-}
-
-/**
- *  重新排列图片
- *
- *  @param photosArr 图片数组
- *  @param index     index 后的全部重新排列
- */
-- (void)removeAllPhotos:(NSMutableArray *)photosArr AtIndex:(NSUInteger)index {
-    
-    
-
-    for (NSInteger i = index; i < photosArr.count; i++) {
-        PhotoUnitView *photo = [photosArr objectAtIndex:i];
-        
-        [photo mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(@(photoWidth*i)).priorityLow();
-        }];
-        
-        [UIView animateWithDuration:0.3 animations:^{
-            [photo layoutIfNeeded];
-        }];
-    }
-    
-}
 
 #pragma mark ISEmojiViewDelegate
 

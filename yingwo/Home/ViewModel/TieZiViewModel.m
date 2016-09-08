@@ -52,7 +52,7 @@
                 
             }else if (model == FreshThingModel) {
                 
-                NSDictionary *paramaters = @{@"cat_id":@0};
+                NSDictionary *paramaters = @{@"topic_id":@0};
                 
                 [self requestFreshThingWithUrl:TIEZI_URL
                                     paramaters:paramaters
@@ -81,30 +81,47 @@
 
 - (void)setupModelOfCell:(YWHomeTableViewCellBase *)cell model:(TieZi *)model {
     
-    //cell.model = model;
-    cell.contentText.text         = model.content;
-    cell.bottemView.nickname.text = model.nickname;
-    NSString *dataString          = [NSString stringWithFormat:@"%d",model.create_time];
-    cell.bottemView.time.text     = [NSDate getDateString:dataString];
+    //新鲜事无topic_title
+    if (model.topic_title.length != 0) {
+        cell.labelView.title.label.text = model.topic_title;
+    }
+    cell.contentText.text             = model.content;
+    cell.bottemView.nickname.text     = model.user_name;
+    cell.bottemView.favourLabel.text  = model.like_cnt;
+    cell.bottemView.messageLabel.text = model.reply_cnt;
+    NSString *dataString              = [NSString stringWithFormat:@"%d",model.create_time];
+    cell.bottemView.time.text         = [NSDate getDateString:dataString];
     
-    if (model.imageUrlArr.count > 0) {
+    [cell.bottemView.headImageView sd_setImageWithURL:[NSURL URLWithString:model.user_face_img]
+                                     placeholderImage:[UIImage imageNamed:@"touxiang"]];
+    cell.bottemView.headImageView.layer.cornerRadius = 20;
+    if (model.imageUrlArrEntity.count > 0) {
         
-        for (int i = 0; i < model.imageUrlArr.count; i ++) {
+        for (int i = 0; i < model.imageUrlArrEntity.count; i ++) {
             
-            NSString *partUrl = [model.imageUrlArr objectAtIndex:i];
+            ImageViewEntity *imageEntity = [model.imageUrlArrEntity objectAtIndex:i];
             //图片请求
-            [self requestImageForCell:cell WithUrl:partUrl withModel:model imageViewTag:i+1];
+            [self requestImageForCell:cell WithUrl:imageEntity.imageName withModel:model imageViewTag:i+1];
         }
         
-        if (model.imageUrlArr.count == 5 || model.imageUrlArr.count == 8) {
+        if (model.imageUrlArrEntity.count == 5 || model.imageUrlArrEntity.count == 8) {
             //count = 5 第6张不显示
             //count = 8 第9张不显示
-            [self requestNullImageForCell:cell WithUrl:nil withModel:nil nullImageTag:model.imageUrlArr.count+1];
+            [self requestNullImageForCell:cell
+                                  WithUrl:nil
+                                withModel:nil
+                             nullImageTag:model.imageUrlArrEntity.count+1];
         }
-        if (model.imageUrlArr.count == 7) {
+        if (model.imageUrlArrEntity.count == 7) {
             //count = 7 第8、9张不显示
-            [self requestNullImageForCell:cell WithUrl:nil withModel:nil nullImageTag:model.imageUrlArr.count+1];
-            [self requestNullImageForCell:cell WithUrl:nil withModel:nil nullImageTag:model.imageUrlArr.count+2];
+            [self requestNullImageForCell:cell
+                                  WithUrl:nil withModel:nil
+                             nullImageTag:model.imageUrlArrEntity.count+1];
+            
+            [self requestNullImageForCell:cell
+                                  WithUrl:nil
+                                withModel:nil
+                             nullImageTag:model.imageUrlArrEntity.count+2];
 
         }
     }
@@ -165,21 +182,21 @@
 - (NSString *)idForRowByModel:(TieZi *)model {
     
     //不能用model.imageUrlArr.count 返回的是<nil>,系统默认为1😭
-    if (model.imageUrlArr == nil) {
+    if (model.imageUrlArrEntity == nil) {
         return @"noImageCell";
-    }else if (model.imageUrlArr.count == 1) {
+    }else if (model.imageUrlArrEntity.count == 1) {
         return @"oneImageCell";
-    }else if (model.imageUrlArr.count == 2) {
+    }else if (model.imageUrlArrEntity.count == 2) {
         return @"twoImageCell";
-    }else if (model.imageUrlArr.count == 3) {
+    }else if (model.imageUrlArrEntity.count == 3) {
         return @"threeImageCell";
-    }else if (model.imageUrlArr.count == 4) {
+    }else if (model.imageUrlArrEntity.count == 4) {
         return @"fourImageCell";
-    }else if (model.imageUrlArr.count <= 6) {
+    }else if (model.imageUrlArrEntity.count <= 6) {
         return @"sixImageCell";
-    }else if (model.imageUrlArr.count <= 9) {
+    }else if (model.imageUrlArrEntity.count <= 9) {
         return @"nineImageCell";
-    }else if (model.imageUrlArr.count > 9) {
+    }else if (model.imageUrlArrEntity.count > 9) {
         return @"moreNineImageCell";
     }
     
@@ -200,8 +217,8 @@
          progress:nil
           success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
               
-              NSDictionary *content = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
-              
+              NSDictionary *content    = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
+
               TieZiResult *tieZiResult = [TieZiResult mj_objectWithKeyValues:content];
               NSArray *tieZiArr        = [TieZi mj_objectArrayWithKeyValuesArray:tieZiResult.info];
               
@@ -233,6 +250,8 @@
     NSString *fullUrl      = [BASE_URL stringByAppendingString:url];
     YWHTTPManager *manager =[YWHTTPManager manager];
     
+    [YWNetworkTools loadCookiesWithKey:LOGIN_COOKIE];
+    
     [manager POST:fullUrl
        parameters:paramaters
          progress:nil
@@ -259,63 +278,30 @@
     }];
 }
 
-/**
- *  过滤image的url数组
- *  服务器放回的URL数组不能直接使用，需要过滤
- *  @param tieZiArr image url数组
- */
+
 - (void)changeImageUrlModelFor:(NSArray *)tieZiArr {
     
     for (TieZi *tie in tieZiArr) {
+        tie.imageUrlArrEntity = [NSString separateImageViewURLString:tie.img];
         
-        if ([tie.img containsString:@","]) {
-            
-            NSArray *imageUrls = [tie.img componentsSeparatedByString:@","];
-            tie.imageUrlArr    = [self changeImageUrlsFor:imageUrls];
-            
-        }else if( [tie.img containsString:@"http"]){
-            
-            NSString *urlString  = [NSString replaceIllegalStringForUrl:tie.img];
-            NSArray *imageUrlArr = [NSArray arrayWithObject:urlString];
-            tie.imageUrlArr      = imageUrlArr;
-            
-        }
+    //    tie.imageUrlArrEntity = [tie.img componentsSeparatedByString:@","];
     }
-
+    
 }
 
-/**
- *  过滤image url
- *
- *  @param imageUrls url数组
- *
- *  @return 返回过滤后的数组
- */
-- (NSArray *)changeImageUrlsFor:(NSArray *)imageUrls {
-    
-    NSMutableArray *urlsArr = [[NSMutableArray alloc] init];
-    
-    for (NSString *urlString in imageUrls) {
-        
-       NSString *url = [NSString replaceIllegalStringForUrl:urlString];
-        
-        [urlsArr addObject:url];
-    }
-    return urlsArr;
-}
-
-- (void)downloadCompletedImageViewByUrls:(NSArray *)imageUrls
+- (void)downloadCompletedImageViewByUrls:(NSArray *)imageEntities
                                 progress:(void (^)(CGFloat))progress
                                  success:(void (^)(NSMutableArray *imageArr))imageArr
                                  failure:(void (^)(NSString *error))failure{
     
     
-   NSString *imageName    = [imageUrls objectAtIndex:0];
-   imageName              = [imageName lastPathComponent];
-   Boolean hasExsitImages = [YWSandBoxTool isExistImageByName:imageName];
+   ImageViewEntity *imageEntity = [imageEntities objectAtIndex:0];
+   NSMutableArray *imageUrls    = [ImageViewEntity getImageUrlsFromImageEntities:imageEntities];
+   Boolean hasExsitImages       = [YWSandBoxTool isExistImageByName:imageEntity.imageName];
+
     //先从沙盒中找图片
     if (hasExsitImages) {
-        imageArr([self getImagesFromCacheByUrlsArr:imageUrls]);
+        imageArr([YWSandBoxTool getImagesFromCacheByUrlsArr:imageUrls]);
         progress(1);
     }
     else
@@ -337,27 +323,5 @@
 
 }
 
-/**
- *  从缓存中读取图片
- *
- *  @param urlArr 图片url数组
- *
- *  @return 返回保存UIImage的数组
- */
-- (NSMutableArray *)getImagesFromCacheByUrlsArr:(NSArray *)urlArr {
-    
-    NSMutableArray *cacheimageArr = [NSMutableArray arrayWithCapacity:urlArr.count];
-    
-    for (NSString *url in urlArr) {
-        
-        NSString *name    = [url lastPathComponent];
-        NSData *imageData = [YWSandBoxTool loadImageDataByImageName:name];
-        UIImage *image    = [UIImage imageWithData:imageData];
-
-        [cacheimageArr addObject:image];
-    }
-    
-    return cacheimageArr;
-}
 
 @end

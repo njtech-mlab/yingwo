@@ -7,30 +7,31 @@
 //
 
 #import "User+CURD.h"
-
+#import "Test.h"
 @implementation User (CURD)
 
 + (void)saveCustomerByUser:(User *)user {
     
-    Customer *customer = [Customer MR_createEntity];
-
-    customer.userId        = user.userId;
-    customer.username      = user.username;
-    customer.nickname      = user.nickname;
-    customer.nickname_py   = user.nickname_py;
-    customer.head_img      = user.head_img;
-    customer.age           = user.age;
-    customer.telphone      = user.telphone;
-    customer.address       = user.address;
-    customer.register_time = user.register_time;
-    customer.status        = user.status;
-    customer.college       = user.college;
-    customer.major         = user.major;
-    customer.grade         = user.grade;
-    customer.gender        = user.gender;
-    customer.school        = user.school;
-    customer.sessionid     = user.sessionid;
+    Customer *customer = [Customer MR_findFirst];
     
+    if (customer == nil) {
+        customer = [Customer MR_createEntity];
+    }
+
+    customer.userId          = user.userId;
+    customer.mobile          = user.mobile;
+    customer.name            = user.name;
+    customer.signature       = user.signature;
+    customer.sex             = user.sex;
+    customer.face_img        = user.face_img;
+    customer.academy_id      = user.academy_id;
+    customer.academy_name    = user.academy_name;
+    customer.school_id       = user.school_id;
+    customer.school_name     = user.school_name;
+    customer.register_status = user.register_status;
+    customer.grade           = user.grade;
+    customer.create_time     = user.create_time;
+
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 }
 
@@ -41,9 +42,9 @@
 }
 
 + (Customer *)findCustomer {
-    
+
     Customer *customer = [Customer MR_findFirst];
-    
+
     return customer;
 }
 

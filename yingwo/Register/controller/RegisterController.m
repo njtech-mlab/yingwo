@@ -47,7 +47,7 @@ static NSString *notAgreen = @"不同意";
 - (UIButton *)selectBtn {
     if (_selectBtn == nil) {
         _selectBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_selectBtn setBackgroundImage:[UIImage imageNamed:@"unselect"] forState:UIControlStateNormal];
+        [_selectBtn setBackgroundImage:[UIImage imageNamed:@"select"] forState:UIControlStateNormal];
     }
     return _selectBtn;
 }
@@ -142,14 +142,23 @@ static NSString *notAgreen = @"不同意";
     [self.loginBtn addTarget:self action:@selector(backToLoginPage) forControlEvents:UIControlEventTouchUpInside];
 }
 
+/**
+ *  跳转去获取短信页面
+ */
 - (void)jumpToVerificationPage {
     [self performSegueWithIdentifier:SEGUE_IDENTIFY_VERFIFCATION sender:self];
 }
 
+/**
+ *  返回登录界面，已有账号直接登录
+ */
 - (void)backToLoginPage {
     [self.navigationController popViewControllerAnimated:YES];
 }
 
+/**
+ *  判断协议是否同意
+ */
 - (void)changeClause {
     if (self.isAgreen == agreen) {
         [self.selectBtn setBackgroundImage:[UIImage imageNamed:@"unselect"] forState:UIControlStateNormal];
@@ -184,7 +193,8 @@ static NSString *notAgreen = @"不同意";
     [self setUILayout];
     [self setAllAction];
     [self validateNextBtn];
-    self.isAgreen = notAgreen;
+    //初始化协议为同意
+    self.isAgreen = agreen;
     
 }
 
@@ -195,6 +205,7 @@ static NSString *notAgreen = @"不同意";
     
 }
 
+#pragma mark segue 传值
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:SEGUE_IDENTIFY_VERFIFCATION]) {
         if ([segue.destinationViewController isKindOfClass:[VerificationController class]]) {

@@ -68,7 +68,7 @@
    fullUrl             = [fullUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 
    YWHTTPManager *manager = [YWHTTPManager manager];
-    
+    NSLog(@"%@",fullUrl);
     [manager GET:fullUrl
        parameters:nil
          progress:nil
@@ -79,15 +79,17 @@
               if (httpResponse.statusCode == SUCCESS_STATUS) {
                   
                   UIImage *downloadImage = [UIImage imageWithData:responseObject];
-                  NSString *imageName = [url lastPathComponent];
-                  [YWSandBoxTool saveImageDataInCache:responseObject withName:imageName];
+                  NSString *imageName    = [url lastPathComponent];
+                  
+                  [YWSandBoxTool saveImageDataInCache:responseObject
+                                             withName:imageName];
                   success(downloadImage);
               }
 
               
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-         NSLog(@"图片下载失败！error:%@",error);
-       failure(@"failure");
+        NSLog(@"图片下载失败！error:%@",error);
+        failure(@"failure");
     }];
     
 }

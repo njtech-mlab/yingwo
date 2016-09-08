@@ -166,4 +166,21 @@ static YWSandBoxTool *instance = nil;
     return isExist;
 }
 
++ (NSMutableArray *)getImagesFromCacheByUrlsArr:(NSArray *)urlArr {
+    
+    NSMutableArray *cacheimageArr = [NSMutableArray arrayWithCapacity:urlArr.count];
+    
+    for (NSString *url in urlArr) {
+        
+        NSString *name    = [url lastPathComponent];
+        NSData *imageData = [YWSandBoxTool loadImageDataByImageName:name];
+        UIImage *image    = [UIImage imageWithData:imageData];
+        
+        [cacheimageArr addObject:image];
+    }
+    
+    return cacheimageArr;
+}
+
+
 @end

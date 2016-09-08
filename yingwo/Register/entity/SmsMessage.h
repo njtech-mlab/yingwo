@@ -14,7 +14,7 @@
 @interface SmsMessage : NSObject
 
 @property (nonatomic, assign) Boolean  status;
-@property (nonatomic, copy  ) NSString *message;
-@property (nonatomic, copy  ) NSString *mobile;
+@property (nonatomic, copy  ) NSString *info;
+@property (nonatomic, copy  ) NSString *url;
 
 @end

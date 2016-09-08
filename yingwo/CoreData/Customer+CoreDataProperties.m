@@ -2,7 +2,7 @@
 //  Customer+CoreDataProperties.m
 //  
 //
-//  Created by apple on 16/7/19.
+//  Created by apple on 16/9/5.
 //
 //
 //  Choose "Create NSManagedObject Subclass…" from the Core Data editor menu
@@ -13,21 +13,18 @@
 
 @implementation Customer (CoreDataProperties)
 
-@dynamic sessionid;
-@dynamic school;
-@dynamic gender;
+@dynamic create_time;
 @dynamic grade;
-@dynamic major;
-@dynamic college;
-@dynamic status;
-@dynamic register_time;
-@dynamic address;
-@dynamic telphone;
-@dynamic age;
-@dynamic head_img;
-@dynamic nickname_py;
-@dynamic nickname;
-@dynamic username;
+@dynamic register_status;
+@dynamic academy_id;
+@dynamic school_id;
+@dynamic academy_name;
+@dynamic school_name;
+@dynamic face_img;
+@dynamic signature;
+@dynamic sex;
+@dynamic name;
+@dynamic mobile;
 @dynamic userId;
 
 @end

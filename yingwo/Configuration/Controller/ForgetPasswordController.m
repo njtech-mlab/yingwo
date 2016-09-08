@@ -99,7 +99,7 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-
+#pragma mark segue 传值
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:SEGUE_IDENTIFY_RESETPASSWORD]) {
         if ([segue.destinationViewController isKindOfClass:[ResetPasswordController class]]) {

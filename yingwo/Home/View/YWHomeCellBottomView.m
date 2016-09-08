@@ -36,7 +36,6 @@
     
     _headImageView.image = [UIImage imageNamed:@"touxiang"];
     
-    [_favour setBackgroundImage:[UIImage imageNamed:@"heart_gray"] forState:UIControlStateNormal];
     [_message setBackgroundImage:[UIImage imageNamed:@"bub_gray"] forState:UIControlStateNormal];
     [_more setBackgroundImage:[UIImage imageNamed:@"more_gray"] forState:UIControlStateNormal];
     
@@ -62,7 +61,8 @@
         make.top.equalTo(self.mas_top);
         make.bottom.equalTo(self.mas_bottom);
         make.left.equalTo(self.mas_left);
-        make.height.with.equalTo(@40);
+        make.width.equalTo(@40);
+        make.height.equalTo(@40);
     }];
     
     [_nickname mas_makeConstraints:^(MASConstraintMaker *make) {

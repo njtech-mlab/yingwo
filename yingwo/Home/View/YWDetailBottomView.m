@@ -15,6 +15,7 @@
     self =[super init];
     
     if (self) {
+        self.backgroundColor = [UIColor whiteColor];
         [self createSubview];
     }
     return self;
@@ -22,26 +23,40 @@
 
 - (void)createSubview {
     
-    self.messageField = [[UITextField alloc] init];
-    self.favorBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.backgroundView = [[UIView alloc] init];
+    self.messageField   = [[UITextField alloc] init];
+    self.favorBtn       = [UIButton buttonWithType:UIButtonTypeCustom];
     
-    self.messageField.placeholder = @"还没有留言～";
-    self.messageField.layer.masksToBounds = YES;
-    self.messageField.layer.cornerRadius = 10;
-    self.messageField.backgroundColor = [UIColor colorWithHexString:THEME_COLOR_5];
-    [self.favorBtn setBackgroundImage:[UIImage imageNamed:@"heart_gray"] forState:UIControlStateNormal];
+    self.backgroundView.layer.cornerRadius  = 10;
+    self.backgroundView.layer.masksToBounds = YES;
+    self.backgroundView.backgroundColor     = [UIColor colorWithHexString:THEME_COLOR_5 alpha:0.5];
+
+    self.messageField.placeholder         = @"还没有留言～";
+    self.messageField.font                = [UIFont systemFontOfSize:14];
+    [self.favorBtn setBackgroundImage:[UIImage imageNamed:@"heart_gray"]
+                             forState:UIControlStateNormal];
     
+    [self addSubview:self.backgroundView];
     [self addSubview:self.messageField];
     [self addSubview:self.favorBtn];
     
-    [self.messageField mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.mas_left);
+    [self.backgroundView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.mas_left).offset(10);
+        make.height.equalTo(@30);
         make.right.equalTo(self.favorBtn.mas_left).offset(-10);
         make.centerY.equalTo(self.mas_centerY);
     }];
     
+    [self.messageField mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.backgroundView).offset(10);
+        make.right.equalTo(self.backgroundView).offset(-10);
+        make.height.equalTo(@15);
+        make.centerY.equalTo(self.mas_centerY);
+
+    }];
+    
     [self.favorBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(self.mas_right);
+        make.right.equalTo(self.mas_right).offset(-10);
         make.centerY.equalTo(self.mas_centerY);
     }];
     

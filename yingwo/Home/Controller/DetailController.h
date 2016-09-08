@@ -15,6 +15,7 @@
  */
 @interface DetailController : BaseViewController
 
+//点击的贴子
 @property (nonatomic, strong) TieZi           *model;
 
 @end

@@ -22,4 +22,13 @@
  */
 + (NSString *)replaceIllegalStringForUrl:(NSString *)urlString;
 
+/**
+ *  将图片数组的url解析出来，
+ *
+ *  @param urlString 拼接的字符串链接
+ *
+ *  @return 返回保存ImageViewEntity的数组
+ */
++ (NSMutableArray *)separateImageViewURLString:(NSString *)urlString;
+
 @end

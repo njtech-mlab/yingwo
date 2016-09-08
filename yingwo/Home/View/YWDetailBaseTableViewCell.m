@@ -10,7 +10,9 @@
 
 @implementation YWDetailBaseTableViewCell
 
-- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
+- (instancetype)initWithStyle:(UITableViewCellStyle)style
+              reuseIdentifier:(NSString *)reuseIdentifier {
+    
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         
@@ -30,6 +32,10 @@
 
 - (void)addImageViewByImageArr:(NSMutableArray *)imageArr {
     
+}
+
+- (void)addCommentViewByCommentArr:(NSMutableArray *)commentArr withMasterId:(NSInteger)master_id {
+
 }
 
 - (void)awakeFromNib {

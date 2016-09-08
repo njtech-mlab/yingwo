@@ -27,8 +27,6 @@
     _labelImage.image         = [UIImage imageNamed:@"#_gray"];
     _label.label.text         = @"新鲜事";
     _label.layer.cornerRadius = 12;
-
-    [_moreBtn setBackgroundImage:[UIImage imageNamed:@"more_gray"] forState:UIControlStateNormal];
     
     [self addSubview:_labelImage];
     [self addSubview:_label];

@@ -11,9 +11,7 @@
 
 @interface Register : NSObject
 
-@property (nonatomic, strong)Customer *custoer;
-
-@property (nonatomic, assign)Boolean  result;
-@property (nonatomic, copy)NSString *info;
+@property (nonatomic, assign) Boolean  status;
+@property (nonatomic, copy  ) NSString *info;
 
 @end

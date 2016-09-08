@@ -10,6 +10,7 @@
 
 @interface YWDetailBottomView : UIView
 
+@property (nonatomic, strong) UIView      *backgroundView;
 @property (nonatomic, strong) UITextField *messageField;
 @property (nonatomic, strong) UIButton    *favorBtn;
 

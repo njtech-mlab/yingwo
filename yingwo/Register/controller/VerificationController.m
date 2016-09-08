@@ -143,6 +143,7 @@
     [self.eyesView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.equalTo(self.passwordText).offset(-15-18);
         make.centerY.equalTo(self.passwordText);
+        make.height.equalTo(@10);
     }];
     
     [self.finishedBtn mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -158,7 +159,7 @@
 - (void)validateFinishedBtn {
     
     RAC(self.finishedBtn,enabled) = [RACSignal combineLatest:@[self.passwordText.rightTextField.rac_textSignal,self.verificationText.rightTextField.rac_textSignal] reduce:^id(NSString *password, NSString *verification){
-        return @([Validate validateVerification:verification]);
+        return @([Validate validateVerification:verification] && password.length > 0);
     }];
     
 }
@@ -171,11 +172,13 @@
 #pragma mark 所有按钮的的action
 - (void) setAllAction {
     [self.retransmitBtn addTarget:self action:@selector(sendSmsRequest) forControlEvents:UIControlEventTouchUpInside];
-    [self.finishedBtn addTarget:self action:@selector(jumpToPerfectInfoPage) forControlEvents:UIControlEventTouchUpInside];
+    [self.finishedBtn addTarget:self action:@selector(finishedRegister) forControlEvents:UIControlEventTouchUpInside];
     [self.eyesView addTarget:self action:@selector(shouldShowPassword) forControlEvents:UIControlEventTouchUpInside];
 }
 
-//一下重发按钮的事件处理函数
+/**
+ *  触发定时器
+ */
 - (void)setCountDownTimer {
     
     [self unableFinishedBtn];
@@ -206,7 +209,7 @@
 }
 
 /**
- *  定时器  60秒
+ *  定时器计时  60秒
  */
 - (void)countDown {
     
@@ -232,6 +235,15 @@
 }
 
 /**
+ *  点击注册
+ */
+- (void)finishedRegister {
+    
+    //先验证手机号、验证码
+    [self checkSMS:self.verificationText.rightTextField.text moblie:self.phone];
+}
+
+/**
  *  短信验证请求
  *
  *  @param url        关键url
@@ -246,23 +258,69 @@
             [self setCountDownTimer];
             
         }else if(sms.status == NO){
-            [MBProgressHUD showHUDToAddToView:self.view labelText:sms.message animated:YES afterDelay:0.7 success:^{
-                
-            }];
+            
+            [MBProgressHUD showErrorHUDToAddToView:self.view labelText:@"验证码获取失败" animated:YES afterDelay:2];
         }else {
-            [MBProgressHUD showHUDToAddToView:self.view labelText:@"请查看网络" animated:YES afterDelay:0.7 success:^{
-                
-            }];
+            [MBProgressHUD showErrorHUDToAddToView:self.view labelText:@"请查看网络" animated:YES afterDelay:2];
         }
         
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
         NSLog(@"%@",error);
-        [MBProgressHUD showHUDToAddToView:self.view labelText:@"请查看网络" animated:YES afterDelay:0.7 success:^{
-            
-        }];
+        [MBProgressHUD showErrorHUDToAddToView:self.view labelText:@"请查看网络" animated:YES afterDelay:0.7];
 
     }];
     
+}
+
+/**
+ *  短信验证
+ *
+ *  @param sms    验证码
+ *  @param mobile 手机号
+ */
+- (void)checkSMS:(NSString *)sms moblie:(NSString *)mobile{
+    
+    NSDictionary *paramaters = @{SMS_CODE:sms,MOBILE:self.phone};
+    
+    [self.regisetrModel requestSMSForCheckMobleWithUrl:SMS_CHECK
+                                            paramaters:paramaters
+                                               success:^(SmsMessage *sms) {
+                                                   
+                                                   if (sms.status == YES) {
+                                                       //验证码正确
+                                                       //完成注册
+                                                       [self requestForRegister];
+                                                       
+                                                   }else if (sms.status == NO) {
+                                                       //验证码错误
+                                                       [MBProgressHUD showErrorHUDToAddToView:self.view labelText:@"验证码输入错误" animated:YES afterDelay:1.5];
+                                                       
+                                                   }
+                                               } failure:^(NSURLSessionDataTask *task, NSError *error) {
+                                                   [MBProgressHUD showErrorHUDToAddToView:self.view labelText:@"网络错误" animated:YES afterDelay:1];
+                                               }];
+}
+
+/**
+ *  完成注册
+ */
+- (void)requestForRegister {
+    
+    NSDictionary *paramaters = @{PASSWORD:self.passwordText.rightTextField.text,MOBILE:self.phone};
+    [self.regisetrModel requestForRegisterWithUrl:REGISTER_URL
+                                       parameters:paramaters
+                                          success:^(Register *reg) {
+                                              
+                                              if (reg.status == YES) {
+                                                  //注册成功后跳转到完善信息页面
+                                                  [self jumpToPerfectInfoPage];
+                                              }else if (reg.status == NO) {
+                                                  [MBProgressHUD showErrorHUDToAddToView:self.view labelText:@"注册失败" animated:YES afterDelay:1];
+                                              }
+                                          } failure:^(NSURLSessionDataTask *task, NSError *error) {
+                                              NSLog(@"error:%@",error);
+                                              [MBProgressHUD showErrorHUDToAddToView:self.view labelText:@"注册失败" animated:YES afterDelay:1];
+                                          }];
 }
 
 //密码查看
@@ -343,6 +401,7 @@
     [self setAllAction];
     [self validatePasswordText];
     [self validateFinishedBtn];
+    [self dispalyHintLabel];
 
 }
 
@@ -361,8 +420,6 @@
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nva_con"] style:UIBarButtonItemStylePlain target:self action:@selector(backToRegister)];
     //去除导航栏下的一条横线
     [self.navigationController.navigationBar hideNavigationBarBottomLine];
-//    [self.navigationController.navigationBar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
-//    [self.navigationController.navigationBar setShadowImage:[UIImage new]];
 }
 
 

@@ -35,9 +35,9 @@
     self.floorLabel.textColor       = [UIColor colorWithHexString:THEME_COLOR_5];
     self.timeLabel.textColor        = [UIColor colorWithHexString:THEME_COLOR_5];
 
-    self.identifierLabel.label.height = 14;
+    self.identifierLabel.label.height       = 14;
     self.identifierLabel.layer.cornerRadius = 10;
-    self.identifierLabel.alpha = 0.5;
+    self.identifierLabel.alpha              = 0.5;
     self.identifierLabel.backgroundColor    = [UIColor colorWithHexString:THEME_COLOR_1];
     self.identifierLabel.label.textColor    = [UIColor whiteColor];
 
@@ -53,7 +53,8 @@
     [self.headImageView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.mas_left);
         make.top.equalTo(self.mas_top);
-        make.height.with.equalTo(@40);
+        make.height.equalTo(@40);
+        make.width.equalTo(@40);
         make.bottom.equalTo(self.mas_bottom);
     }];
     

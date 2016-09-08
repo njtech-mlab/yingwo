@@ -21,7 +21,7 @@
 + (BOOL) validateVerification:(NSString *)verification
 {
     //手机号数字字符
-    NSString *Regex = @"^[0-9]{5}$";
+    NSString *Regex = @"^[0-9]{4}$";
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",Regex];
     return [predicate evaluateWithObject:verification];
 }
@@ -39,6 +39,26 @@
     NSPredicate *userNamePredicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",userNameRegex];
     BOOL B = [userNamePredicate evaluateWithObject:name];
     return B;
+}
+
+//判断内容是否全部为空格  yes 全部为空格  no 不是
++ (BOOL) validateIsEmpty:(NSString *) str {
+    
+    if (!str) {
+        return true;
+    } else {
+        //A character set containing only the whitespace characters space (U+0020) and tab (U+0009) and the newline and nextline characters (U+000A–U+000D, U+0085).
+        NSCharacterSet *set = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+        
+        //Returns a new string made by removing from both ends of the receiver characters contained in a given character set.
+        NSString *trimedString = [str stringByTrimmingCharactersInSet:set];
+        
+        if ([trimedString length] == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
 
 @end

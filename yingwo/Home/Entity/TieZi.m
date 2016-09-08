@@ -11,7 +11,7 @@
 @implementation TieZi
 
 + (NSDictionary *)mj_replacedKeyFromPropertyName {
-    return @{@"post_id":@"id"};
+    return @{@"tieZi_id":@"id"};
 }
 
 @end

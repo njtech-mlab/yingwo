@@ -6,8 +6,8 @@
 //  Copyright © 2016年 wangxiaofa. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-
-@interface LoginNavController : UINavigationController
-
-@end
+//#import <UIKit/UIKit.h>
+//
+//@interface LoginNavController : UINavigationController
+//
+//@end

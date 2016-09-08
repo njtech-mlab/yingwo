@@ -22,6 +22,7 @@
 
 @protocol YWKeyboardToolViewProtocol <NSObject>
 
+@optional
 - (void)didSelectedEmoji;
 - (void)didSelectedKeyboard;
 

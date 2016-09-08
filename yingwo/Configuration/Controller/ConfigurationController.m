@@ -132,7 +132,7 @@
 - (void)loadDataFromLocalForCustomer {
     
     Customer *customer = [User findCustomer];
-    [self dispalyPhone:customer.username];
+    [self dispalyPhone:customer.mobile];
 }
 
 - (void)dispalyPhone:(NSString *)phone {

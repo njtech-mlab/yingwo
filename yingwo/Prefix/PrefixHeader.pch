@@ -22,6 +22,7 @@
 //pod第三方库
 #import "AFNetworking.h"
 #import "MBProgressHUD.h"
+#import "SVProgressHUD.h"
 #import "UINavigationController+FDFullscreenPopGesture.h"
 #import "Masonry.h"
 #import "MJExtension.h"
@@ -45,12 +46,19 @@
 //自定义宏
 #import "Macro.h"
 
+//common 共享文件
+#import "RequestEntity.h"
+#import "StatusEntity.h"
+#import "ImageViewEntity.h"
+
+
 //自定义tools
 #import "InputTextField.h"
 #import "UIView+Frame.h"
 #import "UIColor+Hex.h"
 #import "UIImage+(Copping).h"
 #import "MBProgressHUD+Dispaly.h"
+#import "SVProgressHUD+Display.h"
 #import "Validate.h"
 #import "Customer.h"
 #import "User.h"
@@ -68,6 +76,8 @@
 #import "NSDate+String.h"
 #import "NSString+Url.h"
 #import "YWAvatarBrowser.h"
+#import "NSArray+(String).h"
+
 //自定义控件
 #import "InputTextField.h"
 #import "YWInputButton.h"

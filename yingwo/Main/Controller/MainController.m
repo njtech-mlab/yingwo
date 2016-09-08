@@ -34,16 +34,15 @@
     
     
     
-    self.homeVC = [self.storyboard instantiateViewControllerWithIdentifier:CONTROLLER_OF_HOME_IDENTIFIER];
-    MainNavController *homeNav = [[MainNavController alloc] initWithRootViewController:self.homeVC];
-    
-    self.discoveryVC = [self.storyboard instantiateViewControllerWithIdentifier:CONTROLLER_OF_DISCOVERY_IDENTIFIER];
-    UINavigationController *discoveryNav = [[UINavigationController alloc] initWithRootViewController:self.discoveryVC];
+    self.homeVC                          = [self.storyboard instantiateViewControllerWithIdentifier:CONTROLLER_OF_HOME_IDENTIFIER];
+    self.discoveryVC                     = [self.storyboard instantiateViewControllerWithIdentifier:CONTROLLER_OF_DISCOVERY_IDENTIFIER];
+    self.personCenterVC                  = [self.storyboard instantiateViewControllerWithIdentifier:CONTROLLER_OF_PERSONNAL_CENTER_IDENTIFY];
 
-    self.personCenterVC = [self.storyboard instantiateViewControllerWithIdentifier:CONTROLLER_OF_PERSONNAL_CENTER_IDENTIFY];
+    MainNavController *homeNav         = [[MainNavController alloc] initWithRootViewController:self.homeVC];
+    MainNavController *discoveryNav    = [[MainNavController alloc] initWithRootViewController:self.discoveryVC];
     MainNavController *personCenterNav = [[MainNavController alloc] initWithRootViewController:self.personCenterVC];
-    
-    NSArray *controllerArr = [NSArray arrayWithObjects:homeNav,discoveryNav,homeNav,discoveryNav,personCenterNav, nil];
+
+    NSArray *controllerArr = [NSArray arrayWithObjects:homeNav,discoveryNav,@"",discoveryNav,personCenterNav, nil];
     
     NSMutableDictionary *imgDic1 = [NSMutableDictionary dictionaryWithCapacity:2];
     [imgDic1 setObject:[UIImage imageNamed:@"home_G"] forKey:@"Default"];
@@ -78,6 +77,7 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
+    self.navigationController.navigationBar.hidden = YES;
     //去掉导航栏下的下划线
     [self.navigationController.navigationBar hideNavigationBarBottomLine];
 

@@ -31,10 +31,6 @@
     self.backgroundColor = [UIColor whiteColor];
     
     _contentTextView     = [[HPGrowingTextView alloc] init];
-    _keyboardToolView    = [[YWKeyboardToolView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 45)];
-
-    [_keyboardToolView.returnKeyBoard addTarget:self action:@selector(resignKeyboard) forControlEvents:UIControlEventTouchUpInside];
-    _contentTextView.internalTextView.inputAccessoryView = _keyboardToolView;
     [self addSubview:_contentTextView];
     
     [_contentTextView mas_updateConstraints:^(MASConstraintMaker *make) {
@@ -46,34 +42,5 @@
     
 }
 
-- (void)textViewDidBeginEditing:(UITextView *)textView {
-
-
-}
-
-- (void)textViewDidChange:(UITextView *)textView {
-
-    
-//    if (textView.text.length == 0) {
-//        self.placeholder.hidden = NO;
-//    }
-//    else {
-//        self.placeholder.hidden = YES;
-//    }
-    
-    //TextView 首行缩进
-//    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-// //   paragraphStyle.firstLineHeadIndent      = 15.0;
-//    paragraphStyle.lineSpacing              = 3;//行间距
-//    paragraphStyle.alignment                = NSTextAlignmentJustified;
-//
-//    NSDictionary *attributes                = @{NSParagraphStyleAttributeName:paragraphStyle,NSFontAttributeName:[UIFont systemFontOfSize:15]};
-//    self.attributedText                     = [[NSAttributedString alloc] initWithString:textView.text attributes:attributes];
-
-}
-//收起键盘
-- (void)resignKeyboard {
-    [_contentTextView resignFirstResponder];
-}
 
 @end

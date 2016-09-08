@@ -28,4 +28,25 @@
  */
 + (BOOL)networkStauts;
 
+/*
+ *  cookie解释：AFNetwoking在请求之前会去NSHTTPCookieStorage里找cookie并自动带上
+ *  不需要手动设置请求cookie
+ */
+
+/**
+ *  保存cookie
+ */
++ (void)cookiesValueWithKey:(NSString *)key;
+
+/**
+ *  加载cookie
+ */
++ (void)loadCookiesWithKey:(NSString *)key;
+/**
+ *  删除置顶cookie
+ *
+ *  @param key 根据的指定key删除cookie
+ */
++ (void)deleteCookiesWithKey:(NSString *)key;
+
 @end

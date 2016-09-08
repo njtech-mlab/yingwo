@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "Login.h"
 
 @interface LoginModel : NSObject
 
@@ -21,7 +20,7 @@
  */
 - (void)requestForLoginWithUrl:(NSString *)url
                     parameters:(id)parameters
-                       success:(void (^)(Login *log))success
+                       success:(void (^)(User *user))success
                        failure:(void (^)(NSURLSessionDataTask *task,NSError *error))failure;
 
 /**

@@ -39,4 +39,17 @@
                   paramaters:(id)paramaters
                      success:(void (^)(SmsMessage *sms))success
                      failure:(void (^)(NSURLSessionDataTask *task,NSError *error))failure;
+
+/**
+ *  短信验证
+ *
+ *  @param url        验证url
+ *  @param paramaters 验证码和手机号
+ *  @param success    status = 1
+ *  @param failure    status = 0
+ */
+- (void)requestSMSForCheckMobleWithUrl:(NSString *)url
+                            paramaters:(id)paramaters
+                               success:(void (^)(SmsMessage *sms))success
+                               failure:(void (^)(NSURLSessionDataTask *task,NSError *error))failure;
 @end

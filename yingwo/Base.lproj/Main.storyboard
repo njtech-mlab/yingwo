@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="yH6-1b-M5c">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Wie-Sp-0Za">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
@@ -44,7 +44,7 @@
                     <navigationItem key="navigationItem" id="NYg-C3-pVG"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <connections>
-                        <segue destination="obn-eG-WU9" kind="show" identifier="perfectInfo" id="alO-ee-gSz"/>
+                        <segue destination="S1O-tp-gai" kind="show" identifier="perfectInfo" id="duJ-kS-85f"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="e6X-Ht-uxd" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -64,6 +64,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.95294117647058818" green="0.95294117647058818" blue="0.95294117647058818" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
+                    <navigationItem key="navigationItem" id="opJ-Gs-Dl6"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <connections>
                         <segue destination="ktx-lh-EAW" kind="show" identifier="writeNickname" id="iEm-DS-4rb"/>
@@ -72,7 +73,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="yTU-zJ-tUp" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2310.5" y="246.5"/>
+            <point key="canvasLocation" x="3040.5" y="246.5"/>
         </scene>
         <!--Write Signature Controller-->
         <scene sceneID="BgE-LT-6LE">
@@ -91,7 +92,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="v7r-4n-pl7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2817.5" y="589.5"/>
+            <point key="canvasLocation" x="3727.5" y="581.5"/>
         </scene>
         <!--Write Nickname Controller-->
         <scene sceneID="1fm-1U-dGZ">
@@ -111,7 +112,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TL2-zi-sRw" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2817.5" y="-145.5"/>
+            <point key="canvasLocation" x="3727.5" y="-141.5"/>
         </scene>
         <!--Login Controller-->
         <scene sceneID="Q8w-4r-4Uj">
@@ -202,25 +203,6 @@
             </objects>
             <point key="canvasLocation" x="439.5" y="2121.5"/>
         </scene>
-        <!--Base Info Controller-->
-        <scene sceneID="KTL-31-rTY">
-            <objects>
-                <viewController id="lX7-lh-M0t" customClass="BaseInfoController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="eSu-A8-7R6"/>
-                        <viewControllerLayoutGuide type="bottom" id="9pd-8Q-ses"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="VPC-kA-fUQ">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" red="0.95294117647058818" green="0.95294117647058818" blue="0.95294117647058818" alpha="1" colorSpace="calibratedRGB"/>
-                    </view>
-                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="PPP-vd-gtr" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2946.5" y="3211.5"/>
-        </scene>
         <!--Configuration Controller-->
         <scene sceneID="dmZ-V7-NOj">
             <objects>
@@ -241,7 +223,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="S6W-L4-N8m" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2904.5" y="2465.5"/>
+            <point key="canvasLocation" x="2324.5" y="2269.5"/>
         </scene>
         <!--Discovery Controller-->
         <scene sceneID="rUY-00-jak">
@@ -285,25 +267,6 @@
             </objects>
             <point key="canvasLocation" x="1794.5" y="3079.5"/>
         </scene>
-        <!--View Controller-->
-        <scene sceneID="5HO-Sf-zo7">
-            <objects>
-                <viewController id="fji-yh-KUT" customClass="ViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="Dic-mA-hX1"/>
-                        <viewControllerLayoutGuide type="bottom" id="v6W-XN-vOx"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="g5S-aw-VFz">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
-                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="UQl-mz-GBu" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-279.5" y="4127.5"/>
-        </scene>
         <!--Detail Controller-->
         <scene sceneID="8WE-Lv-Owf">
             <objects>
@@ -321,7 +284,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wEq-dC-10s" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="982.5" y="3907.5"/>
+            <point key="canvasLocation" x="1794.5" y="3919.5"/>
         </scene>
         <!--Announce Controller-->
         <scene sceneID="84x-f8-DTx">
@@ -341,7 +304,25 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Fu3-BL-Pfw" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-715.5" y="3073.5"/>
+            <point key="canvasLocation" x="-240.5" y="4005.5"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="JBh-hL-zbH">
+            <objects>
+                <viewController id="Wie-Sp-0Za" customClass="ViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="YsX-UA-zj8"/>
+                        <viewControllerLayoutGuide type="bottom" id="Lo1-5W-suQ"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Qh9-Ng-9iG">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="AEd-Xd-06n" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="6" y="4826"/>
         </scene>
         <!--Personal Center Controller-->
         <scene sceneID="CiF-iJ-nFV">
@@ -359,8 +340,8 @@
                     <navigationItem key="navigationItem" id="lOi-JD-hvc"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <connections>
-                        <segue destination="lX7-lh-M0t" kind="show" identifier="baseInfo" id="qUy-j6-odo"/>
                         <segue destination="LrX-Vt-5Ma" kind="show" identifier="cofiguration" id="FJU-Vc-UcC"/>
+                        <segue destination="obn-eG-WU9" kind="show" identifier="perfectInfo" id="gXB-c9-GK2"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Grr-Sz-WP8" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -405,8 +386,27 @@
             </objects>
             <point key="canvasLocation" x="393" y="3096"/>
         </scene>
+        <!--Main Nav Controller-->
+        <scene sceneID="35l-Ma-yoh">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="S1O-tp-gai" customClass="MainNavController" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="JOb-U2-E3n">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="obn-eG-WU9" kind="relationship" relationship="rootViewController" id="yLb-xd-C1n"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="LE1-vR-Lkc" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2477.5" y="246.5"/>
+        </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="q7d-3y-7Bc"/>
+        <segue reference="gXB-c9-GK2"/>
+        <segue reference="MUA-MQ-PjB"/>
     </inferredMetricsTieBreakers>
 </document>

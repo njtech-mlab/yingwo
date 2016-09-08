@@ -13,6 +13,8 @@
 #import "TieZi.h"
 #import "TieZiViewModel.h"
 #import "YWDropDownView.h"
+#import "YWPhotoCotentView.h"
+
 #import "YWHomeTableViewCellNoImage.h"
 #import "YWHomeTableViewCellOneImage.h"
 #import "YWHomeTableViewCellTwoImage.h"
@@ -32,18 +34,20 @@
 @property (nonatomic, strong) TieZiViewModel    *viewModel;
 
 @property (nonatomic, strong) YWDropDownView    *drorDownView;
+@property (nonatomic, strong) YWPhotoCotentView *contentView;
 
 @property (nonatomic, strong) NSMutableArray    *tieZiList;
+@property (nonatomic,strong ) NSArray           *images;
 
 @property (nonatomic, strong) UIAlertController *compliantAlertView;
 
-@property (nonatomic, strong)GalleryView *galleryView;
+@property (nonatomic, strong) GalleryView       *galleryView;
 
 //avatarImageView
 //保存首页的小图的数组(UIImageView数组)
-@property (nonatomic, strong) NSMutableArray *cellNewImageArr;
+@property (nonatomic, strong) NSMutableArray    *cellNewImageArr;
 
-@property (nonatomic,assign ) CGFloat        navgationBarHeight;
+@property (nonatomic,assign ) CGFloat           navgationBarHeight;
 @end
 
 @implementation HomeController
@@ -89,7 +93,6 @@ static NSString *YWHomeCellMoreNineImageIdentifier = @"moreNineImageCell";
     if (_model == nil) {
         
         _model = [[TieZi alloc] init];
-        _model.topic = @"新鲜事";
     }
     return _model;
 }
@@ -126,7 +129,7 @@ static NSString *YWHomeCellMoreNineImageIdentifier = @"moreNineImageCell";
         [titles addObject:@"关注的话题"];
         [titles addObject:@"好友动态"];
 
-        _drorDownView = [[YWDropDownView alloc] initWithTitlesArr:titles height:140 width:100];
+        _drorDownView = [[YWDropDownView alloc] initWithTitlesArr:titles height:120 width:100];
     }
     return _drorDownView;
 }
@@ -349,8 +352,9 @@ static NSString *YWHomeCellMoreNineImageIdentifier = @"moreNineImageCell";
 
 #pragma mark -- UIScrollViewDelegate
 
+//tabar隐藏滑动距离设置
 //滑动100pt后隐藏TabBar
-CGFloat scrollHiddenSpace = 100;
+CGFloat scrollHiddenSpace = 150;
 CGFloat lastPosition = 0;
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
@@ -408,14 +412,14 @@ CGFloat lastPosition = 0;
             
             [UIView animateWithDuration:0.3 animations:^{
                 
-                self.tabBar.center = CGPointMake(self.view.center.x, SCREEN_HEIGHT-self.tabBar.height*2-10);
+                self.tabBar.center = CGPointMake(self.view.center.x, SCREEN_HEIGHT-self.tabBar.height*2+10);
             }];
             
         }
     }else {
         if (yesOrNo == YES)
         {
-            self.tabBar.center = CGPointMake(self.view.center.x, SCREEN_HEIGHT-self.tabBar.height*2-20);
+            self.tabBar.center = CGPointMake(self.view.center.x, SCREEN_HEIGHT-self.tabBar.height*2+10);
 
         }
         
@@ -472,7 +476,7 @@ CGFloat lastPosition = 0;
     
     [self.cellNewImageArr removeAllObjects];
     
-    [self requestForImageByImageUrls:selectedModel.imageUrlArr showImageView:imageView oldImageArr:imageArr];
+    [self requestForImageByImageUrls:selectedModel.imageUrlArrEntity showImageView:imageView oldImageArr:imageArr];
 }
 
 #pragma mark avatarImageView 下面全是点击图片方法过成的方法函数

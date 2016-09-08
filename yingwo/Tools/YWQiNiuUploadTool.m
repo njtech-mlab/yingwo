@@ -17,9 +17,11 @@
     
     [manger POST:fullUrl parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         
-        NSDictionary *tokenDic = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableLeaves error:nil];
-        token(tokenDic[@"info"]);
-        NSLog(@"tokenDic:%@",tokenDic);
+        NSDictionary *resultDic = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableLeaves error:nil];
+        NSDictionary *tokenDic = resultDic[@"info"];
+      //  NSLog(@"tokenDic:%@",tokenDic);
+
+        token(tokenDic[@"uploadu_token"]);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         NSLog(@"token 获取失败");
     }];
@@ -72,8 +74,16 @@
             [YWQiNiuUploadTool uploadImage:imageArr[currentIndex] progress:nil success:weakself.singleSuccessBlock failure:weakself.singleFailureBlock];
         }
     };
-    //开始上传第一个文件,imageArr[0]
-    [YWQiNiuUploadTool uploadImage:imageArr[0] progress:nil success:weakself.singleSuccessBlock failure:weakself.singleFailureBlock];
+    //没有图片不上传任何东西
+    if (imageArr.count != 0) {
+        //开始上传第一个文件,imageArr[0]
+        [YWQiNiuUploadTool uploadImage:imageArr[0] progress:nil success:weakself.singleSuccessBlock failure:weakself.singleFailureBlock];
+    }
+    else
+    {
+        progress(1);
+        success(nil);
+    }
 
 }
 
@@ -94,6 +104,12 @@
     [YWQiNiuUploadTool getQiNiuUploadToken:^(NSString *token) {
         
         QNUploadManager *upManager = [[QNUploadManager alloc] init];
+        
+        //获取图片的长和宽
+        //上传图片链接时需要拼接上去
+        CGFloat imageWidth  = image.size.width;
+        CGFloat imageHeight = image.size.height;
+
         //将图片压缩后以二进制形式上传
         NSData *imageData          = UIImageJPEGRepresentation(image, 0.01);
         
@@ -103,7 +119,8 @@
             if (info.statusCode == SUCCESS_STATUS) {
                 
                 //获取上传成功后的key（文件后缀名）
-                NSString *url = [NSString stringWithFormat:@"%@/%@",QINIU_BASE_URL,resp[@"key"]];
+                //url形式：http://域名/key&w&h,其中w为图片宽度，h为图片高度，单位都是像素px
+                NSString *url = [NSString stringWithFormat:@"%@/%@&%f&%f",QINIU_BASE_URL,resp[@"key"],imageWidth,imageHeight];
                 //成功后调用singleSuccessBlock（匿名block实现）
                 success(url);
                 

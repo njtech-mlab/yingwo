@@ -23,8 +23,8 @@
 /********************************Color************************************************/
 
 
-/********************************Count************************************************/
-#define COUNT_DOWN_TIME 5
+/********************************短信验证的定时器Count****************************************/
+#define COUNT_DOWN_TIME 59
 /********************************Count************************************************/
 
 
@@ -51,20 +51,29 @@
 #define SEGUE_IDENTIFY_CONFIGURATION  @"cofiguration"
 #define SEGUE_IDENTIFY_MODIFY         @"modify"
 #define SEGUE_IDENTIFY_BASEINFO       @"baseInfo"
+#define SEGUE_IDENTIFY_FOLLOW_TIEZI   @"followTieZi"
 /********************************segue identify************************************************/
 
 
 /********************************* URL ******************************************************/
 #define BASE_URL        @"http://yw.zhibaizhi.com/yingwophp/api/v1"
 #define LOGIN_URL       @"/User/Login"
-#define REGISTER_URL    @"/login/register"
-#define SMS_URL         @"/login/getRegisterSMS"
+#define REGISTER_URL    @"/User/Register"
+#define SMS_URL         @"/Sms/Send"
+#define SMS_CHECK       @"/Sms/Check"
 #define HEADIMAGE_URL   @"/Public/uploads/"
-#define TIEZI_URL       @"/post/post_get_list"
-#define ANNOUNCE_FRESH_THING_URL @"/post/post_add"
-
-#define QINIU_BASE_URL @"http://obabu2buy.bkt.clouddn.com"
-#define QINIU_TOKEN_URL @"/qiniu/getAT"
+#define SCHOOL_URL      @"/school/school_list"
+#define ACADEMY_URL     @"/school/academy_list"
+#define BASE_INFO_URL   @"/User/Base_info"
+#define UPDATE_INFO_URL @"/User/Update"
+#define TIEZI_URL       @"/Post/get_list"
+#define ANNOUNCE_FRESH_THING_URL @"/Post/add_new"
+#define TIEZI_REPLY     @"/Post/reply"
+#define TIEZI_COMMENT_LIST_URL @"/Post/Comment_list"
+#define TIEZI_COMMENT_URL @"/Post/Comment"
+#define TIEZI_RELPY_URL @"/Post/reply_list"
+#define QINIU_BASE_URL  @"http://obabu2buy.bkt.clouddn.com"
+#define QINIU_TOKEN_URL @"/Qiniu/UploadToken"
 /********************************* URL ******************************************************/
 
 /********************************* 七牛图片模式 imageView2 model**************************/
@@ -87,10 +96,15 @@
 #define PASSWORD     @"password"
 #define VERFIFCATION @"verification"
 #define MOBILE       @"mobile"
-
+#define SMS_MODEL    @"model"
+#define SMS_CODE     @"code"
 //贴子
 #define CAT_ID @"cat_id"
 /********************************* key ******************************************************/
+
+/********************************* cookie ******************************************************/
+#define LOGIN_COOKIE @"loginCookie"
+/********************************* cookie ******************************************************/
 
 /********************************* 魔数 ******************************************************/
 #define MOSHU @"123456789"

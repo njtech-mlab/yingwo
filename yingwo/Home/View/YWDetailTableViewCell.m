@@ -60,14 +60,16 @@
     
 }
 
-- (void)addImageViewByImageArr:(NSMutableArray *)imageArr {
+- (void)addImageViewByImageArr:(NSMutableArray *)entities {
     
     UIImageView *lastView;
     
-    for (int i = 0; i < imageArr.count; i ++) {
+    for (int i = 0; i < entities.count; i ++) {
         
-        UIImage *image                   = [imageArr objectAtIndex:i];
-        UIImageView *imageView           = [[UIImageView alloc] initWithImage:image];
+        ImageViewEntity *entity           = [entities objectAtIndex:i];
+        CGFloat imageHeight = SCREEN_WIDTH/entity.width *entity.height;
+        
+        UIImageView *imageView           = [[UIImageView alloc] init];
         imageView.tag                    = i+1;
         imageView.userInteractionEnabled = YES;
         
@@ -90,7 +92,7 @@
                 make.top.equalTo(self.contentLabel.mas_bottom).offset(10);
                 make.left.equalTo(self.bgImageView.mas_left);
                 make.right.equalTo(self.bgImageView.mas_right);
-                make.height.equalTo(@(imageView.image.size.height)).priorityHigh();
+                make.height.equalTo(@(imageHeight)).priorityHigh();
             }];
             lastView = imageView;
             
@@ -98,10 +100,13 @@
             [imageView mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.left.right.equalTo(lastView);
                 make.top.equalTo(lastView.mas_bottom).offset(10).priorityHigh();
-                make.height.equalTo(@(imageView.image.size.height)).priorityHigh();
+                make.height.equalTo(@(imageHeight)).priorityHigh();
             }];
             lastView = imageView;
         }
+        
+        [imageView sd_setImageWithURL:[NSURL URLWithString:entity.imageName]
+                     placeholderImage:[UIImage imageNamed:@"ying"]];
     }
     
     [lastView mas_updateConstraints:^(MASConstraintMaker *make) {

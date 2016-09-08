@@ -18,6 +18,7 @@ NSInteger cancelCode = -1;
     self = [super init];
     if (self) {
         _names = names;
+        [self setBackgroundImage:[UIImage imageNamed:@"more_gray"] forState:UIControlStateNormal];
         [self addTarget:self action:@selector(showAlertViewController) forControlEvents:UIControlEventTouchUpInside];
     }
     return self;

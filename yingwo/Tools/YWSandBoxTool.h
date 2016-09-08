@@ -64,4 +64,14 @@
  *  @return 返回YES或NO
  */
 + (BOOL)isExistImageByName:(NSString *)name;
+
+/**
+ *  从缓存中读取图片
+ *
+ *  @param urlArr 图片url数组
+ *
+ *  @return 返回保存UIImage的数组
+ */
++ (NSMutableArray *)getImagesFromCacheByUrlsArr:(NSArray *)urlArr;
+
 @end
