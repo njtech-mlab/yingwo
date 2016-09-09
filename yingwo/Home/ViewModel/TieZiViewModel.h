@@ -88,4 +88,40 @@
                                 progress:(void (^)(CGFloat))progress
                                  success:(void (^)(NSMutableArray *imageArr))imageArr
                                  failure:(void (^)(NSString *failure))failure;
+
+/**
+ *  点赞请求
+ *
+ *  @param url        /Post/like
+ *  @param paramaters post_id（帖子ID）、value（	0为取消喜欢 1为喜欢）
+ *  @param success    成功回调StatusEntity
+ *  @param failure    失败
+ */
+- (void)postTieZiLIkeWithUrl:(NSString *)url
+                  paramaters:(NSDictionary *)paramaters
+                     success:(void (^)(StatusEntity *statusEntity))success
+                     failure:(void (^)(NSString *error))failure;
+
+/**
+ *  本地保存点赞记录
+ *
+ *  @param postId 贴子id
+ */
+- (void)saveLikeCookieWithPostId:(NSNumber *) postId;
+
+/**
+ *  取消点赞记录
+ *
+ *  @param postId 贴子id
+ */
+- (void)deleteLikeCookieWithPostId:(NSNumber *) postId;
+
+/**
+ *  判断是否有点赞过
+ *
+ *  @param postId 贴子id
+ *
+ *  @return YES or NO
+ */
+- (BOOL)isLikedTieZiWithTieZiId:(NSNumber *)postId;
 @end

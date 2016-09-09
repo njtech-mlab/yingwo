@@ -10,8 +10,8 @@
 
 @interface StatusEntity : NSObject
 
-@property (nonatomic, strong) NSArray   *info;
-@property (nonatomic, assign) NSInteger status;
-@property (nonatomic, copy  ) NSString  *url;
+@property (nonatomic, strong) NSArray  *info;
+@property (nonatomic, assign) int      status;
+@property (nonatomic, copy  ) NSString *url;
 
 @end

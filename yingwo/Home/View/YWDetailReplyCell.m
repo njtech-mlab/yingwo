@@ -15,7 +15,13 @@
 
 - (void)createSubview {
     
-    self.backgroundView             = [[UIView alloc] init];
+    self.backgroundView                     = [[UIView alloc] init];
+    self.backgroundColor                    = [UIColor clearColor];
+    self.backgroundView.backgroundColor     = [UIColor whiteColor];
+    self.backgroundView.layer.masksToBounds = YES;
+    self.backgroundView.layer.cornerRadius  = 10;
+
+    
     self.masterView                 = [[YWDetailMasterView alloc] init];
     self.contentLabel               = [[YWContentLabel alloc] initWithFrame:CGRectZero];
     self.bgImageView                = [[UIView alloc] init];
@@ -46,7 +52,7 @@
     }];
     
     [self.masterView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.backgroundView.mas_left).offset(10);
+        make.left.equalTo(self.backgroundView.mas_left).offset(20);
         make.right.equalTo(self.backgroundView.mas_right).offset(-10);
         make.top.equalTo(self.backgroundView.mas_top).offset(10);
     }];
@@ -155,16 +161,16 @@
         if ([entity.user_id integerValue] == master_id) {
             
             commentView                      = [[YWCommentView alloc] init];
-            commentView.leftName.text        = [entity.user_name stringByAppendingString:@":"];
-            commentView.content.text         = entity.content;
+            commentView.leftName.text        = entity.user_name;
+            commentView.content.text         = [NSString stringWithFormat:@":%@",entity.content];
             commentView.identfier.label.text = @"楼主";
 
         }
         else
         {
-            commentView               = [[YWCommentReplyView alloc] init];
-            commentView.leftName.text = [entity.user_name stringByAppendingString:@":"];
-            commentView.content.text  = entity.content;
+            commentView                      = [[YWCommentReplyView alloc] init];
+            commentView.leftName.text        = entity.user_name;
+            commentView.content.text         = [NSString stringWithFormat:@":%@",entity.content];
         }
 
         [self.bgCommentView addSubview:commentView];

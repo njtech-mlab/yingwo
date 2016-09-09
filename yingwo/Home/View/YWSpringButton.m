@@ -23,29 +23,51 @@ static CGFloat scaleXY = 1.3;
         self.seletedImage = seletedImage;
         self.cancelImage  = cancelImage;
         [self setBackgroundImage:cancelImage forState:UIControlStateNormal];
-        [self addTarget:self action:@selector(selectedScale) forControlEvents:UIControlEventTouchUpInside];
+        
+        [self addTarget:self action:@selector(select) forControlEvents:UIControlEventTouchUpInside];
+
     }
     return self;
 }
+
+- (void)select {
+    
+    if (self.isSpring == NO) {
+        
+        [self selectedScale];
+    }
+    else
+    {
+        [self cancelScale];;
+    }
+
+}
+
 /**
  *  选择放大，当用户确定为选择时的状态
  */
 - (void)selectedScale {
     
-    [self setBackgroundImage:self.seletedImage forState:UIControlStateNormal];
     
+    [self setBackgroundImage:self.seletedImage forState:UIControlStateNormal];
+        
     POPSpringAnimation *anim = [POPSpringAnimation animationWithPropertyNamed:kPOPViewScaleXY];
-    anim.toValue = [NSValue valueWithCGPoint:CGPointMake(scaleXY, scaleXY)];
+    anim.toValue             = [NSValue valueWithCGPoint:CGPointMake(scaleXY, scaleXY)];
     anim.springBounciness    = 0;
     anim.springSpeed         = 20;
     [self pop_addAnimation:anim forKey:@"Center"];
-    
+        
     anim.completionBlock = ^(POPAnimation *animation, BOOL finished){
         self.isSpring = YES;
-        [self addTarget:self action:@selector(cancelScale) forControlEvents:UIControlEventTouchUpInside];
+            
+        if ([self.delegate respondsToSelector:@selector(didSelectSpringButtonOnView:postId:model:)]) {
+            [self.delegate didSelectSpringButtonOnView:self.superview postId:self.post_id model:YES];
+        }
+            
         [self revivificationFavour];
     };
 }
+
 
 /**
  *  取消放大，当用户为取消状态的放大
@@ -61,7 +83,11 @@ static CGFloat scaleXY = 1.3;
     [self pop_addAnimation:anim forKey:@"Center"];
     anim.completionBlock = ^(POPAnimation *animation, BOOL finished){
         self.isSpring = NO;
-        [self addTarget:self action:@selector(selectedScale) forControlEvents:UIControlEventTouchUpInside];
+        
+        if ([self.delegate respondsToSelector:@selector(didSelectSpringButtonOnView:postId:model:)]) {
+            [self.delegate didSelectSpringButtonOnView:self.superview postId:self.post_id model:NO];
+        }
+        
         [self revivificationFavour];
     };
 }

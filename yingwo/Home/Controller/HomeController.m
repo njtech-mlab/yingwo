@@ -25,13 +25,15 @@
 #import "YWHomeTableViewCellMoreNineImage.h"
 @protocol  YWHomeCellMiddleViewBaseProtocol;
 
-@interface HomeController ()<UITableViewDataSource,UITableViewDelegate,YWDropDownViewDelegate,YWHomeCellMiddleViewBaseProtocol,GalleryViewDelegate,YWAlertButtonProtocol>
+@interface HomeController ()<UITableViewDataSource,UITableViewDelegate,YWDropDownViewDelegate,YWHomeCellMiddleViewBaseProtocol,GalleryViewDelegate,YWAlertButtonProtocol,YWSpringButtonDelegate>
 
 @property (nonatomic, strong) UIBarButtonItem   *rightBarItem;
 @property (nonatomic, strong) UIBarButtonItem   *leftBarItem;
 
 @property (nonatomic, strong) TieZi             *model;
 @property (nonatomic, strong) TieZiViewModel    *viewModel;
+
+@property (nonatomic, strong) RequestEntity     *requestEntity;
 
 @property (nonatomic, strong) YWDropDownView    *drorDownView;
 @property (nonatomic, strong) YWPhotoCotentView *contentView;
@@ -106,16 +108,35 @@ static NSString *YWHomeCellMoreNineImageIdentifier = @"moreNineImageCell";
     return _viewModel;
 }
 
+- (RequestEntity *)requestEntity {
+    if (_requestEntity  == nil) {
+        _requestEntity            = [[RequestEntity alloc] init];
+        //贴子请求url
+        _requestEntity.requestUrl = TIEZI_URL;
+        //请求的事新鲜事
+        _requestEntity.topic_id   = FreshThingModel;
+        //偏移量开始为0
+        _requestEntity.offset_id  = 0;
+    }
+    return _requestEntity;
+}
+
 - (UIBarButtonItem *)leftBarItem {
     if (_leftBarItem == nil) {
-        _leftBarItem = [[UIBarButtonItem alloc ]initWithImage:[UIImage imageNamed:@"screen"] style:UIBarButtonItemStylePlain target:self action:@selector(showDropDownView:)];
+        _leftBarItem = [[UIBarButtonItem alloc ]initWithImage:[UIImage imageNamed:@"screen"]
+                                                        style:UIBarButtonItemStylePlain
+                                                       target:self
+                                                       action:@selector(showDropDownView:)];
     }
     return _leftBarItem;
 }
 
 - (UIBarButtonItem *)rightBarItem {
     if (_rightBarItem == nil) {
-        _rightBarItem = [[UIBarButtonItem alloc ]initWithImage:[UIImage imageNamed:@"magni"] style:UIBarButtonItemStylePlain target:self action:nil];
+        _rightBarItem = [[UIBarButtonItem alloc ]initWithImage:[UIImage imageNamed:@"magni"]
+                                                         style:UIBarButtonItemStylePlain
+                                                        target:self
+                                                        action:nil];
     }
     return _rightBarItem;
 }
@@ -129,7 +150,9 @@ static NSString *YWHomeCellMoreNineImageIdentifier = @"moreNineImageCell";
         [titles addObject:@"关注的话题"];
         [titles addObject:@"好友动态"];
 
-        _drorDownView = [[YWDropDownView alloc] initWithTitlesArr:titles height:120 width:100];
+        _drorDownView = [[YWDropDownView alloc] initWithTitlesArr:titles
+                                                           height:120
+                                                            width:100];
     }
     return _drorDownView;
 }
@@ -156,21 +179,33 @@ static NSString *YWHomeCellMoreNineImageIdentifier = @"moreNineImageCell";
 
 - (UIAlertController *)compliantAlertView {
     if (_compliantAlertView == nil) {
-        _compliantAlertView = [UIAlertController alertControllerWithTitle:@"举报" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+        _compliantAlertView = [UIAlertController alertControllerWithTitle:@"举报"
+                                                                  message:nil
+                                                           preferredStyle:UIAlertControllerStyleActionSheet];
         
-        [_compliantAlertView addAction:[UIAlertAction actionWithTitle:@"广告" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [_compliantAlertView addAction:[UIAlertAction actionWithTitle:@"广告"
+                                                                style:UIAlertActionStyleDefault
+                                                              handler:^(UIAlertAction * _Nonnull action) {
             
         }]];
-        [_compliantAlertView addAction:[UIAlertAction actionWithTitle:@"色情" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [_compliantAlertView addAction:[UIAlertAction actionWithTitle:@"色情"
+                                                                style:UIAlertActionStyleDefault
+                                                              handler:^(UIAlertAction * _Nonnull action) {
             
         }]];
-        [_compliantAlertView addAction:[UIAlertAction actionWithTitle:@"反动" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [_compliantAlertView addAction:[UIAlertAction actionWithTitle:@"反动"
+                                                                style:UIAlertActionStyleDefault
+                                                              handler:^(UIAlertAction * _Nonnull action) {
             
         }]];
-        [_compliantAlertView addAction:[UIAlertAction actionWithTitle:@"其他" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [_compliantAlertView addAction:[UIAlertAction actionWithTitle:@"其他"
+                                                                style:UIAlertActionStyleDefault
+                                                              handler:^(UIAlertAction * _Nonnull action) {
             
         }]];
-        [_compliantAlertView addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        [_compliantAlertView addAction:[UIAlertAction actionWithTitle:@"取消"
+                                                                style:UIAlertActionStyleCancel
+                                                              handler:^(UIAlertAction * _Nonnull action) {
             
         }]];
     }
@@ -207,7 +242,9 @@ static NSString *YWHomeCellMoreNineImageIdentifier = @"moreNineImageCell";
  *  举报弹出框
  */
 - (void)showCompliantAlertView {
-    [self.view.window.rootViewController presentViewController:self.compliantAlertView animated:YES completion:nil];
+    [self.view.window.rootViewController presentViewController:self.compliantAlertView
+                                                      animated:YES
+                                                    completion:nil];
 }
 
 - (void)viewDidLoad {
@@ -217,28 +254,22 @@ static NSString *YWHomeCellMoreNineImageIdentifier = @"moreNineImageCell";
     [self.tabBar selectTabAtIndex:self.index];
     
     NSLog(@"%@",NSHomeDirectory());
-//    NSDictionary *dic = @{CAT_ID:@0};
-    
-    [self.viewModel requestFreshThingWithUrl:TIEZI_URL paramaters:nil success:^(NSArray *tieZi) {
-        
-    } error:^(NSURLSessionDataTask *task, NSError *error) {
-        
-    }];
     
     __weak HomeController *weakSelf = self;
-    self.homeTableview.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
-        [weakSelf loadDataWithModel:self.contentCategoryModel];
+    self.homeTableview.mj_header    = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        [weakSelf loadDataWithRequestEntity:self.requestEntity];
     }];
-    
-    self.homeTableview.mj_footer = [MJRefreshAutoFooter footerWithRefreshingBlock:^{
-        [weakSelf loadMoreDataWithModel:self.contentCategoryModel];
+
+    self.homeTableview.mj_footer    = [MJRefreshAutoFooter footerWithRefreshingBlock:^{
+        [weakSelf loadMoreDataWithRequestEntity:self.requestEntity];
     }];
-    
+
     [self.homeTableview.mj_header beginRefreshing];
     
     [self.view addSubview:self.homeTableview];
-    [self.view addSubview:self.drorDownView];    
     
+    //下拉列表
+    [self.navigationController.view addSubview:self.drorDownView];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -259,20 +290,64 @@ static NSString *YWHomeCellMoreNineImageIdentifier = @"moreNineImageCell";
     }
 }
 
+#pragma YWSpringButtonDelegate 
+
+- (void)didSelectSpringButtonOnView:(UIView *)view postId:(int)postId model:(int)model {
+    
+    
+    //点赞数量的改变，这里要注意的是，无论是否可以网络请求，本地数据都要显示改变
+    UILabel *favour = [view viewWithTag:101];
+    int count       = [favour.text intValue];
+
+    if (model == YES) {
+        count ++;
+    }
+    else
+    {
+        count --;
+    }
+    
+    favour.text = [NSString stringWithFormat:@"%d",count];
+    
+    
+    //网络请求
+    NSDictionary *paramaters = @{@"post_id":@(postId),@"value":@(model)};
+    
+    [self.viewModel postTieZiLIkeWithUrl:TIEZI_LIKE_URL
+                              paramaters:paramaters
+                                 success:^(StatusEntity *statusEntity) {
+                                     
+                                     if (statusEntity.status == YES) {
+                                         
+                                         if (model == YES) {
+                                             
+                                             [self.viewModel saveLikeCookieWithPostId:[NSNumber numberWithInt:postId]];
+                                         }
+                                         else
+                                         {
+                                             [self.viewModel deleteLikeCookieWithPostId:[NSNumber numberWithInt:postId]];
+                                         }
+                                     }
+                                     
+                                 } failure:^(NSString *error) {
+                                     
+                                 }];
+
+}
 
 /**
  *  下拉刷新
  */
-- (void)loadDataWithModel:(ContentCategory)model {
+- (void)loadDataWithRequestEntity:(RequestEntity *)requestEntity {
     
-    [self loadForType:1 model:model];
+    [self loadForType:1 RequestEntity:requestEntity];
 }
 
 /**
  *  上拉刷新
  */
-- (void)loadMoreDataWithModel:(ContentCategory)model {
-    [self loadForType:2 model:model];
+- (void)loadMoreDataWithRequestEntity:(RequestEntity *)requestEntity {
+    [self loadForType:2 RequestEntity:requestEntity];
 }
 
 /**
@@ -281,10 +356,10 @@ static NSString *YWHomeCellMoreNineImageIdentifier = @"moreNineImageCell";
  *  @param type  上拉or下拉
  *  @param model 刷新类别：所有帖、新鲜事、好友动态、关注的话题
  */
-- (void)loadForType:(int)type model:(ContentCategory)model {
+- (void)loadForType:(int)type RequestEntity:(RequestEntity *)requestEntity {
     
     @weakify(self);
-    [[self.viewModel.fecthTieZiEntityCommand execute:[NSNumber numberWithInteger:model]] subscribeNext:^(NSArray *tieZis) {
+    [[self.viewModel.fecthTieZiEntityCommand execute:requestEntity] subscribeNext:^(NSArray *tieZis) {
         @strongify(self);
         if (type == 1) {
             
@@ -313,12 +388,14 @@ static NSString *YWHomeCellMoreNineImageIdentifier = @"moreNineImageCell";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    self.model                    = [self.tieZiList objectAtIndex:indexPath.row];
-    NSString *cellIdentifier      = [self.viewModel idForRowByModel:self.model];
-    YWHomeTableViewCellBase *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
-    cell.selectionStyle           = UITableViewCellSelectionStyleNone;
-    cell.middleView.delegate      = self;
-    cell.bottemView.more.delegate = self;
+    self.model                      = [self.tieZiList objectAtIndex:indexPath.row];
+    NSString *cellIdentifier        = [self.viewModel idForRowByModel:self.model];
+    YWHomeTableViewCellBase *cell   = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
+    cell.selectionStyle             = UITableViewCellSelectionStyleNone;
+    cell.middleView.delegate        = self;
+    cell.bottemView.more.delegate   = self;
+    cell.bottemView.favour.delegate = self;
+
     [self.viewModel setupModelOfCell:cell model:self.model];
 
     return cell;
@@ -511,7 +588,9 @@ CGFloat lastPosition = 0;
 
 
 
-- (void)requestForImageByImageUrls:(NSArray *)imageUrls showImageView:(UIImageView *)showImageView oldImageArr:(NSMutableArray *)oldImageArr{
+- (void)requestForImageByImageUrls:(NSArray *)imageUrls
+                     showImageView:(UIImageView *)showImageView
+                       oldImageArr:(NSMutableArray *)oldImageArr{
     
     MBProgressHUD *hud =  [MBProgressHUD showProgressViewToView:self.view animated:YES];
 

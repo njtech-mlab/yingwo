@@ -25,7 +25,7 @@
         _tableViewHeight     = height;
         _tableViewWidth      = width;
         self.backgroundColor = [UIColor blackColor];
-        self.alpha           = 0.6;
+        self.alpha           = 0.2;
 
         [self createSubview];
     }
@@ -34,7 +34,7 @@
 
 - (void)createSubview {
     
-    _tableView                     = [[UITableView alloc] initWithFrame:CGRectMake(10, 10, _tableViewWidth, 0) style:UITableViewStylePlain];
+    _tableView                     = [[UITableView alloc] initWithFrame:CGRectMake(30, 70, _tableViewWidth, 0) style:UITableViewStylePlain];
     _tableView.delegate            = self;
     _tableView.dataSource          = self;
     _tableView.layer.masksToBounds = YES;
@@ -56,15 +56,16 @@ static CGFloat ANIMATION_TIME = 0.3;
     [self.superview addSubview:_tableView];
 
     
-    [UIView animateWithDuration:ANIMATION_TIME animations:^{
-        _tableView.frame = CGRectMake(10, 10, _tableViewWidth, _tableViewHeight);
+    [UIView animateWithDuration:ANIMATION_TIME
+                     animations:^{
+        _tableView.frame = CGRectMake(30, 70, _tableViewWidth, _tableViewHeight);
     }];
 }
 
 - (void)hideDropDownView{
     
     [UIView animateWithDuration:ANIMATION_TIME animations:^{
-        _tableView.frame = CGRectMake(10, 10, _tableViewWidth, 0);
+        _tableView.frame = CGRectMake(30, 70, _tableViewWidth, 0);
 
     } completion:^(BOOL finished) {
         self.hidden = YES;

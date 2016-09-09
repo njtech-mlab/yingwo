@@ -78,8 +78,8 @@
 }
 
 - (void)selectMessage {
+
     if ([self.delegate respondsToSelector:@selector(didSelectMessageWith:onSuperview:)]) {
-        
         [self.delegate didSelectMessageWith:self.post_reply_id onSuperview:self.superview];
     }
 }

@@ -9,7 +9,7 @@
 #import "YWTabBar.h"
 #import "YWButton.h"
 
-#define TABVIEW_MARGIN 10
+#define TABVIEW_MARGIN 20
 
 @implementation YWTabBar
 

@@ -16,23 +16,25 @@
                               gender:(NSString *)gender {
     if (self = [super init]) {
         
-        _headPortraitImageView = [[UIImageView alloc] init];
-        _genderImageView       = [[UIImageView alloc] init];
-        _rightImageView        = [[UIImageView alloc] init];
-        _usernameLabel         = [[UILabel alloc] init];
-        _signatureLabel        = [[UILabel alloc] init];
-        
-        _headPortraitImageView.image = headPortrait;
-        _usernameLabel.text          = username;
-        _signatureLabel.text         = signature;
-        
-        _usernameLabel.font       = [UIFont systemFontOfSize:15];
-        _usernameLabel.textColor  = [UIColor colorWithHexString:THEME_COLOR_2];
+        _headPortraitImageView                     = [[UIImageView alloc] init];
+        _genderImageView                           = [[UIImageView alloc] init];
+        _rightImageView                            = [[UIImageView alloc] init];
+        _usernameLabel                             = [[UILabel alloc] init];
+        _signatureLabel                            = [[UILabel alloc] init];
 
-        _signatureLabel.font      = [UIFont systemFontOfSize:14];
-        _signatureLabel.textColor = [UIColor colorWithHexString:THEME_COLOR_3];
-        
-        _rightImageView.image = [UIImage imageNamed:@"Row"];
+        _headPortraitImageView.image               = headPortrait;
+        _headPortraitImageView.layer.cornerRadius  = 32.5f;
+        _headPortraitImageView.layer.masksToBounds = YES;
+        _usernameLabel.text                        = username;
+        _signatureLabel.text                       = signature;
+
+        _usernameLabel.font                        = [UIFont systemFontOfSize:15];
+        _usernameLabel.textColor                   = [UIColor colorWithHexString:THEME_COLOR_2];
+
+        _signatureLabel.font                       = [UIFont systemFontOfSize:14];
+        _signatureLabel.textColor                  = [UIColor colorWithHexString:THEME_COLOR_3];
+
+        _rightImageView.image                      = [UIImage imageNamed:@"Row"];
         
         [self addSubview:_headPortraitImageView];
         [self addSubview:_genderImageView];

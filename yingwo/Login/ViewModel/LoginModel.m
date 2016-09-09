@@ -45,10 +45,7 @@
 
 - (void)requestForHeadImageWithUrl:(NSString *)imageUrl{
     
-    NSString *partUrlString = [BASE_URL stringByAppendingString:HEADIMAGE_URL];
-    NSString *fullUrl       = [partUrlString stringByAppendingString:imageUrl];
-
-    NSURL *url              = [NSURL URLWithString:fullUrl];
+    NSURL *url              = [NSURL URLWithString:imageUrl];
     
     NSURLSession *session = [NSURLSession sharedSession];
     NSURLSessionTask *task = [session dataTaskWithURL:url

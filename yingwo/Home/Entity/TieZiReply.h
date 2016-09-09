@@ -12,14 +12,14 @@
 @interface TieZiReply : TieZi
 
 //	回复ID
-@property (nonatomic, assign) NSInteger reply_id;
+@property (nonatomic, assign) int reply_id;
 //	帖子ID
-@property (nonatomic, assign) NSInteger post_id;
+@property (nonatomic, assign) int post_id;
 //无
-@property (nonatomic, assign) NSInteger del;
+@property (nonatomic, assign) int del;
 
 //评论数
-@property (nonatomic, assign) NSInteger comment_cnt;
+@property (nonatomic, assign) int comment_cnt;
 
 @property (nonatomic, strong)NSMutableArray *commentArr;
 

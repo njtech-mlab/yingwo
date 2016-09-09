@@ -21,23 +21,30 @@
 }
 
 - (void)createSubView {
+
+    _headImageView                     = [[UIImageView alloc] init];
+    _nickname                          = [[UILabel alloc] init];
+    _time                              = [[UILabel alloc] init];
+
+    _favour                            = [[YWSpringButton alloc ]initWithSelectedImage:[UIImage imageNamed:@"heart_red"]
+                                          
+                                                                        andCancelImage:[UIImage imageNamed:@"heart_gray"]];
+    _more                              = [[YWAlertButton alloc] initWithNames:[NSArray arrayWithObjects:@"删除",@"复制",@"举报",nil]];
+
+    _message                           = [[UIButton alloc] init];
+    _favourLabel                       = [[UILabel alloc] init];
+    _messageLabel                      = [[UILabel alloc] init];
+
+    _favourLabel.tag                   = 101;
+
+    _headImageView.image               = [UIImage imageNamed:@"touxiang"];
+    _headImageView.layer.masksToBounds = YES;
+    _headImageView.layer.cornerRadius  = 20;
     
-    _headImageView = [[UIImageView alloc] init];
-    _nickname      = [[UILabel alloc] init];
-    _time          = [[UILabel alloc] init];
-    
-    _favour        = [[YWSpringButton alloc ]initWithSelectedImage:[UIImage imageNamed:@"heart_red"]
-                                                    andCancelImage:[UIImage imageNamed:@"heart_gray"]];
-    _more          = [[YWAlertButton alloc] initWithNames:[NSArray arrayWithObjects:@"删除",@"复制",@"举报",nil]];
-    
-    _message       = [[UIButton alloc] init];
-    _favourLabel   = [[UILabel alloc] init];
-    _messageLabel  = [[UILabel alloc] init];
-    
-    _headImageView.image = [UIImage imageNamed:@"touxiang"];
-    
-    [_message setBackgroundImage:[UIImage imageNamed:@"bub_gray"] forState:UIControlStateNormal];
-    [_more setBackgroundImage:[UIImage imageNamed:@"more_gray"] forState:UIControlStateNormal];
+    [_message setBackgroundImage:[UIImage imageNamed:@"bub_gray"]
+                        forState:UIControlStateNormal];
+    [_more setBackgroundImage:[UIImage imageNamed:@"more_gray"]
+                     forState:UIControlStateNormal];
     
     _nickname.font = [UIFont systemFontOfSize:12];
     _time.font     = [UIFont systemFontOfSize:10];

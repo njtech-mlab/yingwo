@@ -30,8 +30,13 @@
 #pragma mark 懒加载
 - (YWPersonCenterTopView *)headView {
     if (_headView == nil) {
-        _headView = [[YWPersonCenterTopView alloc] initWithHeadPortrait:[UIImage imageNamed:@"defaultHead"] username:@"张三" signature:@"nice day" gender:@"male"];
-        [_headView setBackgroundImage:[UIImage imageNamed:@"WBG"] forState:UIControlStateNormal];
+        _headView = [[YWPersonCenterTopView alloc] initWithHeadPortrait:[UIImage imageNamed:@"defaultHead"]
+                                                               username:@"张三"
+                                                              signature:@"nice day"
+                                                                 gender:@"male"];
+        
+        [_headView setBackgroundImage:[UIImage imageNamed:@"WBG"]
+                             forState:UIControlStateNormal];
         _headView.genderImageView.image = [UIImage imageNamed:@"man"];
     }
     return _headView;
@@ -141,7 +146,7 @@
     Customer *customer = [User findCustomer];
     if (customer != nil) {
         
-        self.headView.usernameLabel.text  = customer.mobile;
+        self.headView.usernameLabel.text  = customer.name;
         self.headView.signatureLabel.text = customer.signature;
         NSString *imagePath               = [YWSandBoxTool getHeadPortraitPathFromCache];
         
@@ -214,6 +219,8 @@
             perfectInfo.name                   = user.name;
             perfectInfo.academy_id             = user.academy_id;
             perfectInfo.school_id              = user.school_id;
+            perfectInfo.school                 = user.school_name;
+            perfectInfo.academy                = user.academy_name;
             perfectInfo.gender                 = user.sex;
             perfectInfo.grade                  = user.grade;
             perfectInfo.headImagePath          = [YWSandBoxTool getHeadPortraitPathFromCache];

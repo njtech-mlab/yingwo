@@ -16,7 +16,16 @@
 //请求所需参数
 @property (nonatomic, strong) NSDictionary *paramaters;
 
+//话题的id
+@property (nonatomic, assign) int          topic_id;
+
 //回贴偏移量
-@property (nonatomic, assign) NSInteger    page;
+@property (nonatomic, assign) int          page;
+
+//下拉刷新需要的偏移量
+@property (nonatomic, assign) int          offset_id;
+
+
+
 
 @end

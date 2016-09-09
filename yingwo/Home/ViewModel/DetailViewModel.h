@@ -7,6 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "DetailController.h"
+
 #import "YWDetailBaseTableViewCell.h"
 #import "YWDetailReplyCell.h"
 #import "YWDetailTableViewCell.h"

@@ -16,7 +16,7 @@
 #import "PerfectViewModel.h"
 #import "CollegeModel.h"
 
-@interface PerfectInfoController ()<UIPickerViewDelegate,UIPickerViewDataSource>
+@interface PerfectInfoController ()<UIPickerViewDelegate,UIPickerViewDataSource,LSYAlbumCatalogDelegate,RSKImageCropViewControllerDelegate>
 
 @property (nonatomic, strong) UIScrollView    *backgroundSrcView;
 @property (nonatomic, strong) UIButton        *photoImageBtn;
@@ -50,9 +50,12 @@
 #pragma mark ----------懒加载
 - (UIButton *)photoImageBtn {
     if (_photoImageBtn == nil) {
-        _photoImageBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+        _photoImageBtn                     = [UIButton buttonWithType:UIButtonTypeSystem];
         [_photoImageBtn setBackgroundImage:[UIImage imageNamed:@"photo"]
                                   forState:UIControlStateNormal];
+        _photoImageBtn.layer.masksToBounds = YES;
+        _photoImageBtn.layer.cornerRadius  = 65;
+
         [_photoImageBtn addTarget:self
                            action:@selector(selectHeadPortrait)
                  forControlEvents:UIControlEventTouchUpInside];
@@ -253,6 +256,7 @@
     
     [self.photoImageBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.backgroundSrcView.mas_top).offset(25);
+        make.width.height.equalTo(@130);
         make.centerX.equalTo(self.backgroundSrcView);
     }];
         
@@ -420,7 +424,8 @@
     [self.backgroundSrcView addSubview:self.gradePickerView];
 
     [UIView animateWithDuration:0.3 animations:^{
-        self.gradePickerView.center = CGPointMake(self.view.center.x, self.view.height-self.gradePickerView.height/2);
+        self.gradePickerView.center = CGPointMake(self.view.center.x,
+                                                  self.view.height-self.gradePickerView.height/2);
     }];
 }
 
@@ -428,7 +433,8 @@
 - (void)closeGradePickerView {
     
     [UIView animateWithDuration:0.3 animations:^{
-        self.gradePickerView.center = CGPointMake(self.view.center.x, self.view.height+self.gradePickerView.height/2);
+        self.gradePickerView.center = CGPointMake(self.view.center.x,
+                                                  self.view.height+self.gradePickerView.height/2);
 
     } completion:^(BOOL finished) {
         self.gradeText.centerLabel.text = self.selectedGrade;
@@ -440,25 +446,58 @@
 
 - (void)selectHeadPortrait {
     
-    CroppingController *cropVC = [[CroppingController alloc] initWithCompleteBlock:^(UIImage *img) {
-        NSLog(@"imageSize%@",[NSValue valueWithCGSize:img.size]);
-        if (img != nil) {
-            self.photoImage = img;
-            [self.photoImageBtn setBackgroundImage:[UIImage circleImage:img] forState:UIControlStateNormal];
-        }
+    LSYAlbumCatalog *albumCatalog              = [[LSYAlbumCatalog alloc] init];
+    albumCatalog.delegate                      = self;
+    LSYNavigationController *navigation        = [[LSYNavigationController alloc] initWithRootViewController:albumCatalog];
+    //最多选择15张照片
+    albumCatalog.maximumNumberOfSelectionMedia = 1;
+    
+    [self presentViewController:navigation animated:YES completion:^{
+        
     }];
-    [self.navigationController pushViewController:cropVC animated:NO];
+    
+//    CroppingController *cropVC = [[CroppingController alloc] initWithCompleteBlock:^(UIImage *img) {
+//        NSLog(@"imageSize%@",[NSValue valueWithCGSize:img.size]);
+//        if (img != nil) {
+//            self.photoImage = img;
+//            [self.photoImageBtn setBackgroundImage:[UIImage circleImage:img] forState:UIControlStateNormal];
+//        }
+//    }];
+//    [self.navigationController pushViewController:cropVC animated:NO];
+}
+
+- (void)copperHeadImageWithImage:(UIImage *)headImage {
+    
+    RSKImageCropViewController *imageCropVC = [[RSKImageCropViewController alloc] initWithImage:headImage];
+    imageCropVC.delegate                    = self;
+    [self.navigationController pushViewController:imageCropVC animated:YES];
+    
 }
 
 - (void)finishBaseInfo {
     
+    if (self.schoolText.centerLabel.text.length == 0) {
+        [SVProgressHUD showErrorWithStatus:@"学校不能为空"];
+        return;
+    }
+    
+    if (self.nicknameText.centerLabel.text.length == 0) {
+        self.nicknameText.centerLabel.text = @"匿名";
+    }
+    
+    if (self.academyText.centerLabel.text.length == 0) {
+        self.academyText.centerLabel.text = @"";
+    }
+    
     NSString *requestUrl = @"";
     
     if (self.isModfiyInfo == YES) {
+        //修改个人信息
         requestUrl = UPDATE_INFO_URL;
     }
     else
     {
+        //注册完善信息
         requestUrl = BASE_INFO_URL;
     }
 
@@ -472,14 +511,21 @@
         NSDictionary *paramaters = @{@"name":self.nicknameText.centerLabel.text,
                                      @"grade":self.gradeText.centerLabel.text,
                                      @"signature":self.signatureText.centerLabel.text,
-                                     @"school_id":self.schoolText.centerLabel.text,
-                                     @"academy_id":self.academyText.centerLabel.text};
+                                     @"school_id":self.school_id,
+                                     @"academy_id":self.academy_id,
+                                     @"school_name":self.schoolText.centerLabel.text,
+                                     @"academy_name":self.academyText.centerLabel.text
+                                     };
+        
+        User *user = [User mj_objectWithKeyValues:paramaters];
         
         [self.viewModel requestForFinishUserBaseInfoWithUrl:urlString
                                                  paramaters:paramaters
                                                     success:^(College *info) {
                                                         if (info.status == YES) {
                                                             NSLog(@"成功");
+                                                            //本地存储
+                                                            [User saveCustomerByUser:user];
                                                             
                                                             [self finishedUserInfo];
                                                             
@@ -496,18 +542,25 @@
                               progress:nil
                                success:^(NSString *url) {
                                    
-                                   NSDictionary *paramaters = @{@"name":self.name,
+                                   NSDictionary *paramaters = @{@"name":self.nicknameText.centerLabel.text,
                                                                 @"grade":self.gradeText.centerLabel.text,
-                                                                @"signature":self.signature,
+                                                                @"signature":self.signatureText.centerLabel.text,
                                                                 @"face_img":url,
-                                                                @"school_id":self.school,
-                                                                @"academy_id":self.academy};
+                                                                @"school_id":self.school_id,
+                                                                @"academy_id":self.academy_id,
+                                                                @"school_name":self.schoolText.centerLabel.text,
+                                                                @"academy_name":self.academyText.centerLabel.text
+                                                                };
                                    
+                                   User *user = [User mj_objectWithKeyValues:paramaters];
+
                                    [self.viewModel requestForFinishUserBaseInfoWithUrl:urlString
                                                                             paramaters:paramaters
                                                                                success:^(College *info) {
                                                                                    if (info.status == YES) {
                                                                                        NSLog(@"成功");
+                                                                                       //本地存储
+                                                                                       [User saveCustomerByUser:user];
                                                                                        [self finishedUserInfo];
                                                                                    }
                                                                                    
@@ -534,13 +587,11 @@
 - (void)finishedUserInfo{
     
     if (self.isModfiyInfo == YES) {
-        [SVProgressHUD setMinimumDismissTimeInterval:1];
-        [SVProgressHUD showSuccessStatus:@"修改成功"];
+        [SVProgressHUD showSuccessStatus:@"修改成功" afterDelay:HUD_DELAY];
     }
     else
     {
-        [SVProgressHUD setMinimumDismissTimeInterval:1];
-        [SVProgressHUD showSuccessWithStatus:@"完善成功"];
+        [SVProgressHUD showSuccessStatus:@"完善成功" afterDelay:HUD_DELAY];
     }
     [self backToForward];
 }
@@ -558,6 +609,63 @@
         [self.navigationController popToRootViewControllerAnimated:YES];
     }
 }
+
+#pragma mark -- LSYAlbumCatalogDelegate
+
+-(void)AlbumDidFinishPick:(NSArray *)assets {
+    
+    for (ALAsset *asset in assets) {
+        
+        if ([[asset valueForProperty:@"ALAssetPropertyType"] isEqual:@"ALAssetTypePhoto"]) {
+            
+            UIImage *photoImage    = [UIImage imageWithCGImage:asset.defaultRepresentation.fullResolutionImage];
+            
+            [self copperHeadImageWithImage:photoImage];
+        }
+        else if ([[asset valueForProperty:@"ALAssetPropertyType"] isEqual:@"ALAssetTypeVideo"]){
+            //  NSURL *url = asset.defaultRepresentation.url;
+            //  视频不处理
+        }
+    }
+}
+
+#pragma mark RSKImageCropViewControllerDelegate
+
+// Crop image has been canceled.
+- (void)imageCropViewControllerDidCancelCrop:(RSKImageCropViewController *)controller
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+// The original image has been cropped.
+- (void)imageCropViewController:(RSKImageCropViewController *)controller
+                   didCropImage:(UIImage *)croppedImage
+                  usingCropRect:(CGRect)cropRect
+{
+    self.photoImage = croppedImage;
+    [self.photoImageBtn setBackgroundImage:[UIImage circleImage:self.photoImage] forState:UIControlStateNormal];
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+// The original image has been cropped. Additionally provides a rotation angle used to produce image.
+//- (void)imageCropViewController:(RSKImageCropViewController *)controller
+//                   didCropImage:(UIImage *)croppedImage
+//                  usingCropRect:(CGRect)cropRect
+//                  rotationAngle:(CGFloat)rotationAngle
+//{
+//    self.photoImage = croppedImage;
+//    [self.navigationController popViewControllerAnimated:YES];
+//}
+
+// The original image will be cropped.
+- (void)imageCropViewController:(RSKImageCropViewController *)controller
+                  willCropImage:(UIImage *)originalImage
+{
+    // Use when `applyMaskToCroppedImage` set to YES.
+    //[SVProgressHUD show];
+}
+
+
 
 #pragma mark - UIPickerView Delegate
 // returns the number of 'columns' to display.
@@ -579,6 +687,7 @@
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
     self.selectedGrade = [self.RecentYears objectAtIndex:row];
 }
+
 
 
 - (void)viewDidLoad {
@@ -626,6 +735,7 @@
  *  设置详细信息
  */
 - (void)setCustomerInfo {
+    
     if (self.name.length != 0) {
         self.nicknameText.centerLabel.text = self.name;
     }

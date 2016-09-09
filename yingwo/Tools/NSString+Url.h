@@ -31,4 +31,12 @@
  */
 + (NSMutableArray *)separateImageViewURLString:(NSString *)urlString;
 
+/**
+ *  取出前面的url
+ *
+ *  @param appendUrl 平接后的url
+ *
+ *  @return 返回url
+ */
++ (NSString *)selectCorrectUrlWithAppendUrl:(NSString *)appendUrl;
 @end

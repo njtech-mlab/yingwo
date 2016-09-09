@@ -35,9 +35,9 @@
         return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
             
             @strongify(self);
-            NSInteger model = [(NSNumber *)input integerValue];
+            RequestEntity *requestEntity = (RequestEntity *)input;
             
-            if (model == AllThingModel) {
+            if (requestEntity.topic_id == AllThingModel) {
                 
                 [self requesAllThingsWithUrl:TIEZI_URL
                                   paramaters:nil
@@ -50,7 +50,7 @@
                     [subscriber sendError:error];
                 }];
                 
-            }else if (model == FreshThingModel) {
+            }else if (requestEntity.topic_id == FreshThingModel) {
                 
                 NSDictionary *paramaters = @{@"topic_id":@0};
                 
@@ -67,9 +67,9 @@
 
                 }];
                 
-            }else if (model == ConcernedTopicModel) {
+            }else if (requestEntity.topic_id == ConcernedTopicModel) {
                 
-            }else if (model == FriendActivityModel) {
+            }else if (requestEntity.topic_id == FriendActivityModel) {
                 
             }
             
@@ -85,16 +85,34 @@
     if (model.topic_title.length != 0) {
         cell.labelView.title.label.text = model.topic_title;
     }
-    cell.contentText.text             = model.content;
-    cell.bottemView.nickname.text     = model.user_name;
-    cell.bottemView.favourLabel.text  = model.like_cnt;
-    cell.bottemView.messageLabel.text = model.reply_cnt;
-    NSString *dataString              = [NSString stringWithFormat:@"%d",model.create_time];
-    cell.bottemView.time.text         = [NSDate getDateString:dataString];
+    cell.contentText.text                            = model.content;
+    cell.bottemView.nickname.text                    = model.user_name;
+    cell.bottemView.favourLabel.text                 = model.like_cnt;
+    cell.bottemView.messageLabel.text                = model.reply_cnt;
+    NSString *dataString                             = [NSString stringWithFormat:@"%d",model.create_time];
+    cell.bottemView.time.text                        = [NSDate getDateString:dataString];
+    cell.bottemView.headImageView.layer.cornerRadius = 20;
+    cell.bottemView.favour.post_id                   = model.tieZi_id;
+
+    //获取正确的头像url
+    model.user_face_img = [NSString selectCorrectUrlWithAppendUrl:model.user_face_img];
     
     [cell.bottemView.headImageView sd_setImageWithURL:[NSURL URLWithString:model.user_face_img]
                                      placeholderImage:[UIImage imageNamed:@"touxiang"]];
-    cell.bottemView.headImageView.layer.cornerRadius = 20;
+    
+    //判断是否有点赞记录
+    if ([self isLikedTieZiWithTieZiId:[NSNumber numberWithInt:model.tieZi_id]]) {
+        [cell.bottemView.favour setBackgroundImage:[UIImage imageNamed:@"heart_red"]
+                                          forState:UIControlStateNormal];
+         cell.bottemView.favour.isSpring = YES;
+    }
+    else
+    {
+        [cell.bottemView.favour setBackgroundImage:[UIImage imageNamed:@"heart_gray"]
+                                          forState:UIControlStateNormal];
+        cell.bottemView.favour.isSpring = NO;
+    }
+    
     if (model.imageUrlArrEntity.count > 0) {
         
         for (int i = 0; i < model.imageUrlArrEntity.count; i ++) {
@@ -284,7 +302,6 @@
     for (TieZi *tie in tieZiArr) {
         tie.imageUrlArrEntity = [NSString separateImageViewURLString:tie.img];
         
-    //    tie.imageUrlArrEntity = [tie.img componentsSeparatedByString:@","];
     }
     
 }
@@ -323,5 +340,90 @@
 
 }
 
+- (void)postTieZiLIkeWithUrl:(NSString *)url
+                  paramaters:(NSDictionary *)paramaters
+                    success:(void (^)(StatusEntity *statusEntity))success
+                    failure:(void (^)(NSString *error))failure{
+    
+    NSString *fullUrl      = [BASE_URL stringByAppendingString:url];
+    YWHTTPManager *manager =[YWHTTPManager manager];
+    
+    [manager POST:fullUrl
+       parameters:paramaters
+         progress:nil
+          success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        
+              NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)task.response;
+              
+              if (httpResponse.statusCode == SUCCESS_STATUS) {
+                  NSDictionary *content = [NSJSONSerialization JSONObjectWithData:responseObject
+                                                                          options:NSJSONReadingMutableContainers
+                                                                            error:nil];
+                  StatusEntity *entity = [StatusEntity mj_objectWithKeyValues:content];
+                  //本地存储点赞记录
+                  
+                  [self saveLikeCookieWithPostId:paramaters[@"post_id"]];
+                  success(entity);
+              }
+              
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        
+    }];
+}
+
+//保存点赞记录
+- (void)saveLikeCookieWithPostId:(NSNumber *) postId{
+    
+    NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+    NSMutableArray *likeArr     = [userDefault objectForKey:TIEZI_LIKE_COOKIE];
+    
+    if (likeArr == nil ) {
+        
+        likeArr = [[NSMutableArray alloc] init];
+    }
+    else
+    {
+        likeArr = [NSMutableArray arrayWithArray:likeArr];
+    }
+    
+    [likeArr addObject:postId];
+    [userDefault setObject:likeArr forKey:TIEZI_LIKE_COOKIE];
+    
+}
+
+//取消点赞记录
+- (void)deleteLikeCookieWithPostId:(NSNumber *) postId{
+    
+    NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+    NSMutableArray *likeArr     = [userDefault objectForKey:TIEZI_LIKE_COOKIE];
+    
+    if (likeArr == nil ) {
+        
+        return;
+    }
+    else
+    {
+        likeArr = [NSMutableArray arrayWithArray:likeArr];
+    }
+    
+    [likeArr removeObject:postId];
+    [userDefault setObject:likeArr forKey:TIEZI_LIKE_COOKIE];
+    
+}
+
+//判断是否有点赞记录
+- (BOOL)isLikedTieZiWithTieZiId:(NSNumber *)postId {
+    
+    NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
+    NSMutableArray *likeArr     = [userDefault objectForKey:TIEZI_LIKE_COOKIE];
+    
+    for (NSNumber *tieZiId in likeArr) {
+        if ([tieZiId integerValue] == [postId integerValue]) {
+            return YES;
+        }
+    }
+    
+    return NO;
+}
 
 @end

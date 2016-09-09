@@ -66,6 +66,8 @@
 
 - (void)setupModelOfDetailCell:(YWDetailTableViewCell *)cell model:(TieZiReply *)model {
     
+    [cell createSubview];
+
     //保存楼主的user_id
     self.master_id = model.user_id;
     
@@ -97,8 +99,14 @@
 
 - (void)setupModelOfReplyCell:(YWDetailReplyCell *)cell model:(TieZiReply *)model {
     
+    NSArray *subviews = [[NSArray alloc] initWithArray:cell.backgroundView.subviews];
+    for (UIView *subview in subviews) {
+        [subview removeFromSuperview];
+    }
+    
+    [cell createSubview];
     //所在楼层
-    cell.masterView.floorLabel.text            = [NSString stringWithFormat:@"第%lu楼",model.reply_id];
+    cell.masterView.floorLabel.text            = [NSString stringWithFormat:@"第%d楼",model.reply_id];
 
     //回复内容
     cell.contentLabel.text                     = model.content;
@@ -115,6 +123,9 @@
     NSString *dataString                       = [NSString stringWithFormat:@"%d",model.create_time];
     cell.masterView.timeLabel.text             = [NSDate getDateString:dataString];
     
+    //获取正确的头像url
+    model.user_face_img = [NSString selectCorrectUrlWithAppendUrl:model.user_face_img];
+    
     //头像
     [cell.masterView.headImageView sd_setImageWithURL:[NSURL URLWithString:model.user_face_img]
                                      placeholderImage:[UIImage imageNamed:@"touxiang"]];
@@ -123,7 +134,7 @@
     cell.masterView.headImageView.layer.cornerRadius = 20;
     
     //回复评论的数量
-    cell.bottomView.messageLabel.text                = [NSString stringWithFormat:@"%lu",model.comment_cnt];
+    cell.bottomView.messageLabel.text                = [NSString stringWithFormat:@"%d",model.comment_cnt];
     
     //当前回复的id，不是楼主的贴子id！！
     cell.bottomView.post_reply_id                          = model.reply_id;
@@ -142,7 +153,11 @@
         NSMutableArray *entities = [NSMutableArray arrayWithArray:model.commentArr];
         [cell addCommentViewByCommentArr:entities withMasterId:self.master_id];
     }
-    
+    else
+    {
+        //如果没有任何评论隐藏cell的下划线
+        cell.bottomView.bottomLine.hidden = YES;
+    }
 }
 
 
@@ -167,9 +182,16 @@
                                                                              options:NSJSONReadingMutableContainers
                                                                                error:nil];
                 StatusEntity *statusEntity = [StatusEntity mj_objectWithKeyValues:content];
+                  
+                  //没有评论直接返回nil
+                  if (statusEntity.info.count == 0) {
+                      success(nil) ;
+                  }
+                  
                   NSMutableArray *replyArr = [[NSMutableArray alloc] init];
                   
                   NSLog(@"reply:%@",content);
+                  
                   //回复字典转模型
                   for (NSDictionary *reply in statusEntity.info) {
                       TieZiReply *replyEntity       = [TieZiReply mj_objectWithKeyValues:reply];
@@ -182,12 +204,19 @@
                                           paramaters:paramaters
                                              success:^(NSArray *commentArr) {
                                                  
+                                                 
                                                  replyEntity.commentArr = [commentArr mutableCopy];
-                                            
+                                                 
+                                                 //这里使用的是一步加载，因此replyArr add的顺序是可能改变的
+                                                 //需要按照reply_id进行排序
+                                                 
                                                  [replyArr addObject:replyEntity];
                                                  
                                                  //这里获取完所有的评论才回调数据！！
                                                  if (replyArr.count == statusEntity.info.count) {
+                                                     //升序排序
+                                                     [replyArr bubSortWithArrayByAsc];
+                                                     
                                                      success(replyArr);
                                                  }
                           
@@ -236,6 +265,7 @@
                       TieZiComment *commentEntity = [TieZiComment mj_objectWithKeyValues:comment];
                       [commentArr addObject:commentEntity];
                   }
+
                   NSLog(@"commentArr.count:%lu",commentArr.count);
                   success(commentArr);
               }

@@ -25,21 +25,29 @@ NSInteger cancelCode = -1;
 }
 
 - (void)showAlertViewController {
-    UIAlertController *alertView = [UIAlertController alertControllerWithTitle:@"操作" message:@"" preferredStyle:UIAlertControllerStyleActionSheet];
+    UIAlertController *alertView = [UIAlertController alertControllerWithTitle:@"操作"
+                                                                       message:@""
+                                                                preferredStyle:UIAlertControllerStyleActionSheet];
+    
     NSMutableAttributedString *title = [[NSMutableAttributedString alloc] initWithString:@"操作"];
     [title addAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15]} range:NSMakeRange(0, 2)];
+    
     //改变title的字体大小
     [alertView setValue:title forKey:@"attributedTitle"];
     for (int i = 0; i < _names.count; i ++) {
         
-        UIAlertAction *action = [UIAlertAction actionWithTitle:_names[i] style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        UIAlertAction *action = [UIAlertAction actionWithTitle:_names[i]
+                                                         style:UIAlertActionStyleDefault
+                                                       handler:^(UIAlertAction * _Nonnull action) {
             [self.delegate seletedAlertViewIndex:i];
         }];
         [action setValue:[UIColor blackColor] forKey:@"titleTextColor"];
         [alertView addAction:action];
     }
     
-    [alertView addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+    [alertView addAction:[UIAlertAction actionWithTitle:@"取消"
+                                                  style:UIAlertActionStyleDestructive
+                                                handler:^(UIAlertAction * _Nonnull action) {
         [self.delegate seletedAlertViewIndex:cancelCode];
     }]];
     
@@ -51,7 +59,8 @@ NSInteger cancelCode = -1;
      *
      */
     [self.window.rootViewController presentViewController:alertView animated:YES completion:^{
-        
+      //  [alertView canBecomeFirstResponder];
+    
     }];
 }
 

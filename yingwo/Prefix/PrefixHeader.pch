@@ -35,6 +35,7 @@
 #import "POP.h"
 #import "TTTAttributedLabel.h"
 #import "HPGrowingTextView.h"
+#import <RSKImageCropper/RSKImageCropper.h>
 
 //第三方框架vender,这里的第三方框架后做改动
 #import "LSYNavigationController.h"
@@ -77,6 +78,8 @@
 #import "NSString+Url.h"
 #import "YWAvatarBrowser.h"
 #import "NSArray+(String).h"
+#import "NSMutableArray+Sort.h"
+
 
 //自定义控件
 #import "InputTextField.h"

@@ -19,21 +19,21 @@
 }
 
 - (void)createSubview {
-    
-    self.headImageView              = [[UIImageView alloc] init];
-    self.nicnameLabel               = [[UILabel alloc] init];
-    self.floorLabel                 = [[UILabel alloc] init];
-    self.timeLabel                  = [[UILabel alloc] init];
-    self.identifierLabel            = [[YWLabel alloc] init];
 
-    self.identifierLabel.label.font = [UIFont systemFontOfSize:12];
-    self.nicnameLabel.font          = [UIFont systemFontOfSize:15];
-    self.floorLabel.font            = [UIFont systemFontOfSize:12];
-    self.timeLabel.font             = [UIFont systemFontOfSize:12];
+    self.headImageView                      = [[UIImageView alloc] init];
+    self.nicnameLabel                       = [[UILabel alloc] init];
+    self.floorLabel                         = [[UILabel alloc] init];
+    self.timeLabel                          = [[UILabel alloc] init];
+    self.identifierLabel                    = [[YWLabel alloc] init];
 
-    self.nicnameLabel.textColor     = [UIColor colorWithHexString:THEME_COLOR_3];
-    self.floorLabel.textColor       = [UIColor colorWithHexString:THEME_COLOR_5];
-    self.timeLabel.textColor        = [UIColor colorWithHexString:THEME_COLOR_5];
+    self.identifierLabel.label.font         = [UIFont systemFontOfSize:12];
+    self.nicnameLabel.font                  = [UIFont systemFontOfSize:15];
+    self.floorLabel.font                    = [UIFont systemFontOfSize:12];
+    self.timeLabel.font                     = [UIFont systemFontOfSize:12];
+
+    self.nicnameLabel.textColor             = [UIColor colorWithHexString:THEME_COLOR_3];
+    self.floorLabel.textColor               = [UIColor colorWithHexString:THEME_COLOR_5];
+    self.timeLabel.textColor                = [UIColor colorWithHexString:THEME_COLOR_5];
 
     self.identifierLabel.label.height       = 14;
     self.identifierLabel.layer.cornerRadius = 10;
@@ -41,9 +41,11 @@
     self.identifierLabel.backgroundColor    = [UIColor colorWithHexString:THEME_COLOR_1];
     self.identifierLabel.label.textColor    = [UIColor whiteColor];
 
-    
-    self.headImageView.image = [UIImage imageNamed:@"touxiang"];
 
+    self.headImageView.image                = [UIImage imageNamed:@"touxiang"];
+    self.headImageView.layer.masksToBounds  = YES;
+    self.headImageView.layer.cornerRadius   = 20;
+    
     [self addSubview:self.headImageView];
     [self addSubview:self.nicnameLabel];
     [self addSubview:self.floorLabel];

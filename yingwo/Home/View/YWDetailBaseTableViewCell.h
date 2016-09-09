@@ -27,7 +27,7 @@
 @property (nonatomic, strong) YWContentLabel             *contentLabel;
 @property (nonatomic, strong) YWDetailCellBottomView     *bottomView;
 @property (nonatomic, assign) NSInteger                  imageCount;
-@property (nonatomic,assign ) id<YWDetailTabeleViewProtocol> delegate;
+@property (nonatomic, assign ) id<YWDetailTabeleViewProtocol> delegate;
 
 //common
 - (void)createSubview;

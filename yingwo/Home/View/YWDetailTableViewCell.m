@@ -12,8 +12,14 @@
 
 
 - (void)createSubview {
+
+    self.backgroundView                     = [[UIView alloc] init];
+    self.backgroundColor                    = [UIColor clearColor];
+    self.backgroundView.backgroundColor     = [UIColor whiteColor];
+    self.backgroundView.layer.masksToBounds = YES;
+    self.backgroundView.layer.cornerRadius  = 10;
     
-    self.backgroundView             = [[UIView alloc] init];
+    
     self.topView                    = [[YWDetailTopView alloc] init];
     self.masterView                 = [[YWDetailMasterView alloc] init];
     self.contentLabel               = [[YWContentLabel alloc] initWithFrame:CGRectZero];

@@ -16,12 +16,15 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         
-        [self createSubview];
+        //createSubview 这个方法的调用延迟到子类中，不然无法解决cell复用带来的重叠问题
+        //createSubView 在ViewModel中添加子view的时候调用，即setupModelOfCell这个方法中
+        //下面实现圆角的代码要迁移到子类中去
         
-        self.backgroundColor                    = [UIColor clearColor];
-        self.backgroundView.backgroundColor     = [UIColor whiteColor];
-        self.backgroundView.layer.masksToBounds = YES;
-        self.backgroundView.layer.cornerRadius  = 10;        
+     //   [self createSubview];
+//        self.backgroundColor                    = [UIColor clearColor];
+//        self.backgroundView.backgroundColor     = [UIColor whiteColor];
+//        self.backgroundView.layer.masksToBounds = YES;
+//        self.backgroundView.layer.cornerRadius  = 10;        
     }
     return self;
 }

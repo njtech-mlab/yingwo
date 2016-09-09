@@ -212,7 +212,11 @@
             
             //登录成功后保存cookie
             [YWNetworkTools cookiesValueWithKey:LOGIN_COOKIE];
+            
             //登录后本地保存数据
+            //首先改变face_img的形式
+            user.face_img = [NSString selectCorrectUrlWithAppendUrl:user.face_img];
+            
             [self saveDataAfterSuccessLogin:user];
             //头像
             [self requestForHeadImageWithUrl:user.face_img];
@@ -261,6 +265,7 @@
         if (successCode == SUCCESS_STATUS) {
             
             [self.hud hide:YES];
+            [SVProgressHUD showSuccessStatus:@"登录成功" afterDelay:HUD_DELAY];
             //跳转
             [self jumpToMainPage];
         }

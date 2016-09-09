@@ -15,6 +15,8 @@
 #import "YWDetailReplyCell.h"
 
 #import "DetailViewModel.h"
+#import "TieZiViewModel.h"
+
 #import "YWDetailBottomView.h"
 #import "YWDetailCommentView.h"
 #import "YWCommentView.h"
@@ -22,7 +24,7 @@
 #import "TieZiComment.h"
 
 
-@interface DetailController ()<UITableViewDelegate,UITableViewDataSource,YWDetailTabeleViewProtocol,GalleryViewDelegate,UITextFieldDelegate,YWDetailCellBottomViewDelegate,YWKeyboardToolViewProtocol,ISEmojiViewDelegate,HPGrowingTextViewDelegate>
+@interface DetailController ()<UITableViewDelegate,UITableViewDataSource,YWDetailTabeleViewProtocol,GalleryViewDelegate,UITextFieldDelegate,YWKeyboardToolViewProtocol,ISEmojiViewDelegate,HPGrowingTextViewDelegate,YWDetailCellBottomViewDelegate,YWSpringButtonDelegate>
 
 @property (nonatomic, strong) UITableView         *detailTableView;
 @property (nonatomic, strong) UIBarButtonItem     *leftBarItem;
@@ -33,6 +35,8 @@
 @property (nonatomic, strong) GalleryView         *galleryView;
 
 @property (nonatomic, strong) DetailViewModel     *viewModel;
+@property (nonatomic, strong) TieZiViewModel      *homeViewModel;
+
 @property (nonatomic, strong) RequestEntity       *requestEntity;
 @property (nonatomic, strong) TieZiComment        *commentEntity;
 
@@ -45,7 +49,7 @@
 
 @property (nonatomic,assign ) NSInteger           comment_id;
 
-@property (nonatomic, assign) CGFloat keyboardHeight;
+@property (nonatomic, assign) CGFloat             keyboardHeight;
 
 @end
 
@@ -77,6 +81,13 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
         _viewModel = [[DetailViewModel alloc] init];
     }
     return _viewModel;
+}
+
+- (TieZiViewModel *)homeViewModel {
+    if (_homeViewModel == nil) {
+        _homeViewModel = [[TieZiViewModel alloc] init];
+    }
+    return _homeViewModel;
 }
 
 - (RequestEntity *)requestEntity {
@@ -118,6 +129,16 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
     if (_replyView == nil) {
         _replyView                       = [[YWDetailBottomView alloc] init];
         _replyView.messageField.delegate = self;
+        _replyView.favorBtn.delegate     = self;
+        _replyView.favorBtn.post_id      = self.model.tieZi_id;
+        //判断是否有点赞过
+        if ( [self.homeViewModel isLikedTieZiWithTieZiId:[NSNumber numberWithInt:self.model.tieZi_id]]) {
+            [_replyView.favorBtn setBackgroundImage:[UIImage imageNamed:@"heart_red"]
+                                              forState:UIControlStateNormal];
+            _replyView.favorBtn.isSpring = YES;
+        }
+        
+        
     }
     return _replyView;
 }
@@ -349,12 +370,14 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
     replyModel                      = [self.tieZiReplyArr objectAtIndex:indexPath.row];
     NSString *cellIdentifier        = [self.viewModel idForRowByIndexPath:indexPath model:replyModel];
 
-    YWDetailBaseTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    YWDetailBaseTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
     cell.selectionStyle             = UITableViewCellSelectionStyleNone;
     cell.delegate                   = self;
-    cell.bottomView.delegate        = self;
 
     [self.viewModel setupModelOfCell:cell model:replyModel];
+
+    //这里的赋值必须在setupModelOfCell下面！！！因为bottomView的创建延迟到了viewModel中
+    cell.bottomView.delegate        = self;
 
     return cell;
 }
@@ -364,7 +387,7 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
     TieZiReply *replyModel;
     replyModel                      = [self.tieZiReplyArr objectAtIndex:indexPath.row];
     NSString *cellIdentifier        = [self.viewModel idForRowByIndexPath:indexPath model:replyModel];
-
+    
     return [tableView fd_heightForCellWithIdentifier:cellIdentifier cacheByIndexPath:indexPath configuration:^(id cell) {
         
         [self.viewModel setupModelOfCell:cell model:replyModel];
@@ -434,6 +457,37 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
     self.galleryView = nil;
 }
 
+#pragma YWSpringButtonDelegate
+
+- (void)didSelectSpringButtonOnView:(UIView *)view postId:(int)postId model:(int)model {
+    
+    //网络请求
+    NSDictionary *paramaters = @{@"post_id":@(postId),@"value":@(model)};
+    
+    [self.homeViewModel postTieZiLIkeWithUrl:TIEZI_LIKE_URL
+                                  paramaters:paramaters
+                                     success:^(StatusEntity *statusEntity) {
+                                     
+                                     if (statusEntity.status == YES) {
+                                         
+                                         if (model == YES) {
+                                             
+                                             [self.homeViewModel saveLikeCookieWithPostId:[NSNumber numberWithInt:postId]];
+                                         }
+                                         else
+                                         {
+                                             [self.homeViewModel deleteLikeCookieWithPostId:[NSNumber numberWithInt:postId]];
+                                         }
+                                     }
+                                     
+                                 } failure:^(NSString *error) {
+                                     
+                                 }];
+    
+}
+
+
+
 #pragma mark YWDetailCellBottomViewDelegate
 
 - (void)didSelectMessageWith:(NSInteger)post_id onSuperview:(UIView *)view{
@@ -497,8 +551,7 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
     //没有内容不让发送
     if ([Validate validateIsEmpty:self.commentView.messageTextView.text]) {
     
-        [SVProgressHUD showErrorWithStatus:@"请填写内容～"];
-        
+        [SVProgressHUD showErrorStatus:@"请填写内容～" afterDelay:HUD_DELAY];
     }
     else
     {
@@ -581,8 +634,7 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
     [self.viewModel requestForCommentWithUrl:TIEZI_COMMENT_LIST_URL
                                   paramaters:paramaters
                                      success:^(NSArray *commentArr) {
-        
-                                         [SVProgressHUD showSuccessStatus:@"评论成功"];
+                                         [SVProgressHUD showSuccessStatus:@"评论成功" afterDelay:HUD_DELAY];
                                          
                                          replyEntity.commentArr = [commentArr mutableCopy];
                                          //替换新的评论

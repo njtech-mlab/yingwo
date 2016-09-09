@@ -8,9 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "YWSpringButton.h"
-#import "YWAlertButton.h"
 
-@class YWDetailReplyCell;
 @protocol YWDetailCellBottomViewDelegate;
 
 @interface YWDetailCellBottomView : UIView
@@ -24,7 +22,7 @@
 @property (nonatomic, assign) id<YWDetailCellBottomViewDelegate> delegate;
 
 //点解message按钮需要传的参数
-@property (nonatomic, assign) NSInteger post_reply_id;
+@property (nonatomic, assign) NSInteger                      post_reply_id;
 //@property (nonatomic, assign) NSString *post_comment_id;
 //@property (nonatomic, assign) NSString *post_comment_user_id;
 

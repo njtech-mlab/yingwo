@@ -7,11 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "YWSpringButton.h"
 
 @interface YWDetailBottomView : UIView
 
-@property (nonatomic, strong) UIView      *backgroundView;
-@property (nonatomic, strong) UITextField *messageField;
-@property (nonatomic, strong) UIButton    *favorBtn;
+@property (nonatomic, strong) UIView         *backgroundView;
+@property (nonatomic, strong) UITextField    *messageField;
+@property (nonatomic, strong) YWSpringButton *favorBtn;
 
 @end

@@ -270,7 +270,7 @@
         <!--Detail Controller-->
         <scene sceneID="8WE-Lv-Owf">
             <objects>
-                <viewController id="oFH-jO-xJ8" customClass="DetailController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="DetailController" id="oFH-jO-xJ8" customClass="DetailController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="B9Z-o0-zEw"/>
                         <viewControllerLayoutGuide type="bottom" id="FiD-8b-Gqg"/>

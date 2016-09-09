@@ -33,9 +33,11 @@
 #define CONTROLLER_OF_MAINVC_IDENTIFIER         @"MainController"
 #define CONTROLLER_OF_LOGINVC_IDENTIFIER        @"LoginController"
 #define CONTROLLER_OF_HOME_IDENTIFIER           @"HomeController"
+#define CONTROLLER_OF_DETAIL_IDENTIFIER         @"DetailController"
 #define CONTROLLER_OF_DISCOVERY_IDENTIFIER      @"DiscoveryController"
 #define CONTROLLER_OF_PERSONNAL_CENTER_IDENTIFY @"PersonalCenter"
 #define CONTROLLER_OF_ANNOUNCE_IDENTIFIER       @"AnnounceController"
+
 /********************************storyboard identifier************************************************/
 
 
@@ -72,6 +74,7 @@
 #define TIEZI_COMMENT_LIST_URL @"/Post/Comment_list"
 #define TIEZI_COMMENT_URL @"/Post/Comment"
 #define TIEZI_RELPY_URL @"/Post/reply_list"
+#define TIEZI_LIKE_URL @"/Post/like"
 #define QINIU_BASE_URL  @"http://obabu2buy.bkt.clouddn.com"
 #define QINIU_TOKEN_URL @"/Qiniu/UploadToken"
 /********************************* URL ******************************************************/
@@ -104,6 +107,7 @@
 
 /********************************* cookie ******************************************************/
 #define LOGIN_COOKIE @"loginCookie"
+#define TIEZI_LIKE_COOKIE @"tieZiLike"
 /********************************* cookie ******************************************************/
 
 /********************************* 魔数 ******************************************************/
@@ -134,5 +138,8 @@
 #define ViewSize(view)  (view.frame.size)
 /******************************* 第三方框架需要尺寸，有些数据会与之前定义的宏重复 ****************************/
 
+/********************************* SVProgressHUD Delay ************************************************/
+
+#define HUD_DELAY 2.0
 
 #endif /* Macro_h */

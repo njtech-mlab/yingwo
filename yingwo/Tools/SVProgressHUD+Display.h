@@ -6,10 +6,11 @@
 //  Copyright © 2016年 wangxiaofa. All rights reserved.
 //
 
-#import <SVProgressHUD/SVProgressHUD.h>
-
 @interface SVProgressHUD (Display)
 
-+ (void)showSuccessStatus:(NSString *)string;
++ (void)showSuccessStatus:(NSString *)string afterDelay:(NSInteger)delay;
 
++ (void)showErrorStatus:(NSString *)string afterDelay:(NSInteger)delay;
+
++ (void)showInfoStatus:(NSString *)string afterDelay:(NSInteger)delay;
 @end

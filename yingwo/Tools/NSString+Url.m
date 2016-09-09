@@ -43,4 +43,17 @@
     return newImageUrl;
 }
 
++ (NSString *)selectCorrectUrlWithAppendUrl:(NSString *)appendUrl {
+    
+    
+    if (appendUrl.length == 0) {
+        return @"" ;
+    }
+    
+    NSArray *urlArr = [appendUrl componentsSeparatedByString:@"&amp;"];
+    NSString *url   = [urlArr objectAtIndex:0];
+    
+    return url;
+}
+
 @end

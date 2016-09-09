@@ -133,6 +133,7 @@
     
     Customer *customer = [User findCustomer];
     [self dispalyPhone:customer.mobile];
+    
 }
 
 - (void)dispalyPhone:(NSString *)phone {
@@ -231,9 +232,28 @@
 //退出帐号，返回登录界面
 - (void)exitAccount {
     
-    [User deleteCustoer];
-    [User deleteLoginInformation];
-    [self jumpToLoginPage];
+    UIAlertController *alertView = [UIAlertController alertControllerWithTitle:@"提示"
+                                                                       message:@"是否确定退出账号？"
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+
+    [alertView addAction:[UIAlertAction actionWithTitle:@"确定"
+                                                  style:UIAlertActionStyleDefault
+                                                handler:^(UIAlertAction * _Nonnull action) {
+        
+                                                    [User deleteCustoer];
+                                                    [User deleteLoginInformation];
+                                                    [self jumpToLoginPage];
+     
+    }]];
+    
+    [alertView addAction:[UIAlertAction actionWithTitle:@"取消"
+                                                  style:UIAlertActionStyleDefault
+                                                handler:^(UIAlertAction * _Nonnull action) {
+
+                                                    
+                                                }]];
+    
+    [self presentViewController:alertView animated:true completion:nil];
     
 }
 
