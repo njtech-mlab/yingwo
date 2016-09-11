@@ -21,11 +21,15 @@
 @property (nonatomic, assign) int            post_reply_id;
 @property (nonatomic, assign) int            post_comment_id;
 @property (nonatomic, assign) int            post_comment_user_id;
+@property (nonatomic, copy  ) NSString       *user_name;
 
 @end
 
 @protocol YWCommentViewDelegate <NSObject>
 
-- (void)commentViewWith:(int)postReplyId commentId:(int)commentId commentUserId:(int)commentUserId;
+- (void)commentViewWith:(int)postReplyId
+              commentId:(int)commentId
+          commentUserId:(int)commentUserId
+      commentedUserName:(NSString *)userName;
 
 @end

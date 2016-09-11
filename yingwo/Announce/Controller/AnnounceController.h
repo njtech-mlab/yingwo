@@ -8,9 +8,19 @@
 
 #import "BaseViewController.h"
 
+@protocol AnnounceControllerDelegate;
+
 @interface AnnounceController : BaseViewController
 
-@property (nonatomic, assign) BOOL      isFollowTieZi;
-@property (nonatomic, assign) NSInteger post_id;
+@property (nonatomic, assign) BOOL                       isFollowTieZi;
+@property (nonatomic, assign) NSInteger                  post_id;
+
+@property (nonatomic,assign ) id<AnnounceControllerDelegate> delegate;
+
+@end
+
+@protocol AnnounceControllerDelegate <NSObject>
+
+- (void)jumpToHomeController;
 
 @end

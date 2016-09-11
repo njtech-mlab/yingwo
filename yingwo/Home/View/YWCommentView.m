@@ -46,10 +46,11 @@
     [self.identfier mas_updateConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.leftName.mas_right).offset(2).priorityHigh();
         make.top.equalTo(self).offset(1);
+        make.width.equalTo(@30);
     }];
 
     [self.content mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.leftName.mas_left).offset(90).priorityHigh();
+        make.left.equalTo(self.leftName.mas_left).offset(70).priorityHigh();
         make.right.equalTo(self.mas_right).offset(5);
         make.top.bottom.equalTo(self);
     }];

@@ -25,6 +25,9 @@
 @property (nonatomic, strong) AnnounceModel      *viewModel;
 @property (nonatomic, assign) UIImageView        *lastPhoto;
 @property (nonatomic, assign) NSInteger          photoImagesCount;
+
+@property (nonatomic, assign) BOOL               isRelease;
+
 @end
 
 @implementation AnnounceController
@@ -198,12 +201,11 @@ CGFloat delay = 2.0f;
  */
 - (void)postTieZiWithImages:(NSArray *)photoArr andContent:(NSString *)content {
     
-    MBProgressHUD *hud = [MBProgressHUD showProgressViewToView:self.view animated:YES];
-    
+ //   MBProgressHUD *hud = [MBProgressHUD showProgressViewToView:self.view animated:YES];
     [YWQiNiuUploadTool uploadImages:photoArr
                            progress:^(CGFloat progress) {
         
-        hud.progress = progress;
+                               [SVProgressHUD showProgress:progress];
         
     } success:^(NSArray *arr) {
         
@@ -227,29 +229,35 @@ CGFloat delay = 2.0f;
         [self.viewModel postFreshThingWithUrl:requestUrl
                                    paramaters:paramaters
                                       success:^(NSString *result) {
-          
-            hud.hidden = YES;
-            
-            [MBProgressHUD showHUDToAddToView:self.view
-                                    labelText:@"发布成功"
-                                     animated:YES
-                                   afterDelay:delay
-                                      success:^{
-                
-                [self backToMainView];
-            }];
+                                          
+                                  //        [hud hide:YES];
+                                          
+                                          //确认发布完成
+                                          self.isRelease = YES;
+                                          
+                                          [SVProgressHUD showSuccessStatus:@"发布成功" afterDelay:HUD_DELAY];
+                                          [[NSNotificationCenter defaultCenter] addObserver:self
+                                                                                   selector:@selector(handleNotification:)
+                                                                                       name:SVProgressHUDDidDisappearNotification
+                                                                                     object:nil];
+                                          
             
         } failure:^(NSError *error) {
-            [hud hide:YES];
-            [SVProgressHUD showErrorWithStatus:@"发布失败"];
+       //     [hud hide:YES];
+            [SVProgressHUD showErrorStatus:@"发布失败" afterDelay:HUD_DELAY];
         }];
         
     } failure:^{
-        [hud hide:YES];
-        [SVProgressHUD showErrorWithStatus:@"发布失败"];
+    //    [hud hide:YES];
+        [SVProgressHUD showErrorStatus:@"发布失败" afterDelay:HUD_DELAY];
 
     }];
     
+}
+
+- (void)handleNotification:(NSNotification *)notification {
+    
+    [self backToMainView];
 }
 
 /**
@@ -292,7 +300,19 @@ CGFloat delay = 2.0f;
     
     [self resignKeyboard];
 
-    [self dismissViewControllerAnimated:YES completion:nil];
+    if (self.isRelease == YES && self.isFollowTieZi == NO) {
+        
+        [self dismissViewControllerAnimated:YES completion:^{
+            if ([self.delegate respondsToSelector:@selector(jumpToHomeController)]) {
+                [self.delegate jumpToHomeController];
+            }
+        }];
+    }
+    else
+    {
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
+    
 
 }
 
@@ -376,6 +396,7 @@ CGFloat delay = 2.0f;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
+    
     [super viewDidAppear:animated];
 
     //监听键盘frame改变事件

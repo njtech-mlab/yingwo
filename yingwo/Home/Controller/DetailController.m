@@ -41,9 +41,7 @@
 @property (nonatomic, strong) RequestEntity       *requestEntity;
 @property (nonatomic, strong) TieZiComment        *commentEntity;
 
-//这个textField无实际意义，只为了能弹出键盘用的
-@property (nonatomic, strong) UITextField         *popTextField;
-@property (nonatomic, strong) UIView              *commentListView;
+@property (nonatomic, strong) YWCommentView       *selectCommentView;
 
 @property (nonatomic,assign ) CGFloat             navgationBarHeight;
 
@@ -141,7 +139,9 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
             _replyView.favorBtn.isSpring = YES;
         }
         
-        
+        _replyView.messageField.placeholder = [NSString stringWithFormat:@"%@个评论 %@个赞",
+                                               self.model.reply_cnt,
+                                               self.model.like_cnt];
     }
     return _replyView;
 }
@@ -158,7 +158,7 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
 - (YWDetailCommentView *)commentView {
     if (_commentView == nil) {
         _commentView                              = [[YWDetailCommentView alloc] initWithFrame:CGRectMake(0,
-                                                                                                          0,
+                                                                                                        SCREEN_HEIGHT,
                                                                                                         SCREEN_WIDTH,
                                                                                                           45)];
         _commentView.delegate                     = self;
@@ -166,24 +166,6 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
 
     }
     return _commentView;
-}
-
-- (UITextField *)popTextField {
-    if (_popTextField == nil) {
-        //这个textField无实际意义，只为了能弹出键盘用的
-        _popTextField                    = [[UITextField alloc] init];
-        _popTextField.returnKeyType      = UIReturnKeySend;
-        _popTextField.inputAccessoryView = self.commentView;
-
-    }
-    return  _popTextField;
-}
-
-- (UIView *)commentListView {
-    if (_commentListView == nil) {
-        _commentListView = [[UIView alloc] init];
-    }
-    return _commentListView;
 }
 
 - (NSMutableArray *)tieZiReplyArr {
@@ -260,9 +242,10 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
     [self.replyView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.height.mas_equalTo(40);
         make.bottom.equalTo(self.view.mas_bottom).priorityLow();
-        make.left.equalTo(self.view.mas_left);
-        make.right.equalTo(self.view.mas_right);
+        make.left.equalTo(self.view.mas_left).priorityHigh();
+        make.right.equalTo(self.view.mas_right).priorityHigh();
     }];
+    
 }
 
 - (void)viewDidLoad {
@@ -273,8 +256,8 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
     
     [self.view addSubview:self.detailTableView];
     [self.view addSubview:self.replyView];
-    [self.view addSubview:self.popTextField];
-
+    [self.view addSubview:self.commentView];
+    
     __weak DetailController *weakSelf = self;
     self.detailTableView.mj_header    = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
         [weakSelf loadData];
@@ -317,10 +300,38 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
 //键盘弹出后调用
 - (void)keyboardWillChangeFrame:(NSNotification *)note {
     
+    
     //获取键盘的frame
-    CGRect endFrame     = [note.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    self.keyboardHeight = endFrame.size.height;
+    CGRect endFrame  = [note.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
 
+    //获取键盘弹出时长
+    CGFloat duration = [note.userInfo[UIKeyboardAnimationDurationUserInfoKey]floatValue];
+
+    //修改底部视图高度
+    CGFloat bottom   = endFrame.origin.y != SCREEN_HEIGHT ? endFrame.size.height:0;
+
+    CGFloat originY;
+    
+    if (bottom == 0) {
+        originY = SCREEN_HEIGHT;
+    }
+    else
+    {
+        originY = bottom + 45;
+    }
+    // 约束动画
+    [UIView animateWithDuration:duration
+                     animations:^{
+        
+        self.commentView.frame = CGRectMake(0,
+                                            originY,
+                                            SCREEN_WIDTH,
+                                            45);
+    }];
+    
+
+    
+    
 }
 
 /**
@@ -419,7 +430,9 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
     replyModel                      = [self.tieZiReplyArr objectAtIndex:indexPath.row];
     NSString *cellIdentifier        = [self.viewModel idForRowByIndexPath:indexPath model:replyModel];
     
-    return [tableView fd_heightForCellWithIdentifier:cellIdentifier cacheByIndexPath:indexPath configuration:^(id cell) {
+    return [tableView fd_heightForCellWithIdentifier:cellIdentifier
+                                    cacheByIndexPath:indexPath
+                                       configuration:^(id cell) {
         
         [self.viewModel setupModelOfCell:cell
                                    model:replyModel
@@ -448,14 +461,37 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
     //评论的评论
     self.commentType                               = CommentedModel;
 
+    self.selectCommentView                         = commentView;
+
     //  获取点击的cell
     self.commentCell                               = (YWDetailReplyCell *)commentView.superview.superview.superview.superview;
     //评论所需参数
     self.commetParamaters[@"post_reply_id"]        = @(commentView.post_reply_id);
     self.commetParamaters[@"post_comment_id"]      = @(commentView.post_comment_id);
     self.commetParamaters[@"post_comment_user_id"] = @(commentView.post_comment_user_id);
+    self.commentView.messageTextView.placeholder   = [NSString stringWithFormat:@"回复%@:",commentView.user_name];
 
-    [self.popTextField becomeFirstResponder];
+    [self.commentView.messageTextView becomeFirstResponder];
+    
+    
+    //获取相对self.view的坐标
+    CGRect commentViewFrame = [commentView convertRect:commentView.frame
+                                     toView:self.view];
+    //如果键盘遮挡住了评论的view，需要上移
+    if (commentViewFrame.origin.y > self.commentView.frame.origin.y) {
+        
+        [UIView animateWithDuration:0.3f
+                         animations:^{
+                             
+                             self.detailTableView.frame = CGRectMake(0,
+                                                                     -commentViewFrame.origin.y+self.navgationBarHeight,
+                                                                     SCREEN_WIDTH,
+                                                                     SCREEN_HEIGHT);
+                             
+                         }];
+ 
+    }
+    
     
 }
 
@@ -542,14 +578,14 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
 - (void)didSelectMessageWith:(NSInteger)post_id onSuperview:(UIView *)view{
     
     self.commentType                        = TieZiCommentModel;
-
+    
     self.commetParamaters[@"post_reply_id"] = @(post_id);
 
     //获得被评论的cell
     self.commentCell                        = (YWDetailReplyCell *)view.superview.superview;
 
-    [self.popTextField becomeFirstResponder];
-    
+    [self.commentView.messageTextView becomeFirstResponder];
+
 }
 
 #pragma mark YWKeyboardToolViewProtocol
@@ -701,9 +737,10 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
     
     self.commentView.messageTextView.text = @"";
     self.commetParamaters                 = nil;
+    self.selectCommentView                = nil;
+    self.detailTableView.frame            = self.view.bounds;
     
     [self.commentView.messageTextView resignFirstResponder];
-    [self.popTextField resignFirstResponder];
 }
 
 - (void)didReceiveMemoryWarning {

@@ -506,9 +506,20 @@
 
 - (void)requestFinishedBaseInfoWithUrl:(NSString *)urlString {
     
+    int sex;
+    
+    if (_sex == NO) {
+        sex = 1;
+    }
+    else
+    {
+        sex = 2;
+    }
+    
     if (self.photoImage == nil) {
         
         NSDictionary *paramaters = @{@"name":self.nicknameText.centerLabel.text,
+                                     @"sex" : @(sex),
                                      @"grade":self.gradeText.centerLabel.text,
                                      @"signature":self.signatureText.centerLabel.text,
                                      @"school_id":self.school_id,
@@ -544,6 +555,7 @@
                                    
                                    NSDictionary *paramaters = @{@"name":self.nicknameText.centerLabel.text,
                                                                 @"grade":self.gradeText.centerLabel.text,
+                                                                @"sex" : @(sex),
                                                                 @"signature":self.signatureText.centerLabel.text,
                                                                 @"face_img":url,
                                                                 @"school_id":self.school_id,

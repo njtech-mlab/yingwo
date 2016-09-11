@@ -169,6 +169,12 @@
             [commentView.leftName mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.left.equalTo(commentView.mas_left);
             }];
+            
+            [commentView.identfier mas_updateConstraints:^(MASConstraintMaker *make) {
+                make.left.equalTo(commentView.leftName.mas_right).priorityHigh();
+                make.width.equalTo(@30);
+            }];
+            
             [commentView.content mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.left.equalTo(commentView.identfier.mas_right);
             }];
@@ -195,7 +201,8 @@
         commentView.post_reply_id        = [entity.post_reply_id intValue];
         commentView.post_comment_id      = [entity.comment_id intValue];
         commentView.post_comment_user_id = [entity.post_comment_user_id intValue];
-
+        commentView.user_name            = entity.user_name;
+        
         UITapGestureRecognizer *tap      = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                                               action:@selector(comment:)];
         tap.numberOfTapsRequired         = 1;

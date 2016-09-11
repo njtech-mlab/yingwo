@@ -114,7 +114,7 @@
     
     //所在楼层
   //  cell.masterView.floorLabel.text            = [NSString stringWithFormat:@"第%d楼",model.reply_id];
-    cell.masterView.floorLabel.text            = [NSString stringWithFormat:@"第%lu楼",indexPath.row +1];
+    cell.masterView.floorLabel.text            = [NSString stringWithFormat:@"第%ld楼",indexPath.row +1];
 
     //回复内容
     cell.contentLabel.text                     = model.content;
@@ -190,7 +190,7 @@
                                                                                options:NSJSONReadingMutableContainers
                                                                                  error:nil];
                   StatusEntity *statusEntity = [StatusEntity mj_objectWithKeyValues:content];
-                  
+                  NSLog(@"reply:%@",content);
                   //没有评论直接返回nil
                   if (statusEntity.info.count == 0) {
                       success(nil) ;
@@ -209,7 +209,9 @@
 
                   weakself.singleSuccessBlock = ^(NSArray *commentArr){
                       
-                      TieZiReply *replyEntity = [TieZiReply mj_objectWithKeyValues:statusEntity.info[currentIndex]];
+                      TieZiReply *replyEntity       = [TieZiReply mj_objectWithKeyValues:statusEntity.info[currentIndex]];
+                      
+                      replyEntity.imageUrlArrEntity = [NSString separateImageViewURLString:replyEntity.img];
 
                       currentIndex ++ ;
                       
@@ -222,9 +224,6 @@
                       }
                       else
                       {
-                          TieZiReply *replyEntity       = [TieZiReply mj_objectWithKeyValues:statusEntity.info[currentIndex]];
-                          //获取图片链接
-                          replyEntity.imageUrlArrEntity = [NSString separateImageViewURLString:replyEntity.img];
                           NSDictionary *paramaters      = @{@"post_reply_id":@(replyEntity.reply_id)};
 
                           [self requestForCommentWithUrl:TIEZI_COMMENT_LIST_URL
@@ -278,14 +277,14 @@
                   StatusEntity *statusEntity = [StatusEntity mj_objectWithKeyValues:content];
                   NSMutableArray *commentArr = [[NSMutableArray alloc] init];
                   
-                  NSLog(@"commentList:%@",content);
+                //  NSLog(@"commentList:%@",content);
                   //回复字典转模型
                   for (NSDictionary *comment in statusEntity.info) {
                       TieZiComment *commentEntity = [TieZiComment mj_objectWithKeyValues:comment];
                       [commentArr addObject:commentEntity];
                   }
 
-                  NSLog(@"commentArr.count:%lu",commentArr.count);
+               //   NSLog(@"commentArr.count:%lu",commentArr.count);
                   success(commentArr);
               }
               

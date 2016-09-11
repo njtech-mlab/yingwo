@@ -10,10 +10,12 @@
 #import "YWTabBar.h"
 @class UITabBarController;
 @protocol YWTabBarControllerDelegate;
+@protocol AnnounceControllerDelegate;
+
 /**
  *  应我主要的TabBar
  */
-@interface YWTabBarController : UIViewController<YWTabBarDelegate>
+@interface YWTabBarController : UIViewController<YWTabBarDelegate,AnnounceControllerDelegate>
 
 @property (nonatomic, strong  ) NSMutableArray             *viewControllers;
 @property (nonatomic, readonly) UIViewController           *selectedViewController;
@@ -31,6 +33,7 @@
 
 - (void)removeViewControllerAtIndex:(NSUInteger)index;
 
+- (void)displayViewAtIndex:(NSUInteger)index ;
 
 @end
 

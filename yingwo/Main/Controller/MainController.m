@@ -19,8 +19,9 @@
 @property (nonatomic, strong) HomeController           *homeVC;
 @property (nonatomic, strong) DiscoveryController      *discoveryVC;
 @property (nonatomic, strong) PersonalCenterController *personCenterVC;
+@property (nonatomic, strong) AnnounceController       *announceVC;
 
-@property (nonatomic, assign) NSInteger           selectedIndex;
+@property (nonatomic, assign) NSInteger                selectedIndex;
 
 @end
 
@@ -34,15 +35,18 @@
     
     
     
-    self.homeVC                          = [self.storyboard instantiateViewControllerWithIdentifier:CONTROLLER_OF_HOME_IDENTIFIER];
-    self.discoveryVC                     = [self.storyboard instantiateViewControllerWithIdentifier:CONTROLLER_OF_DISCOVERY_IDENTIFIER];
-    self.personCenterVC                  = [self.storyboard instantiateViewControllerWithIdentifier:CONTROLLER_OF_PERSONNAL_CENTER_IDENTIFY];
+    self.homeVC                        = [self.storyboard instantiateViewControllerWithIdentifier:CONTROLLER_OF_HOME_IDENTIFIER];
+    self.discoveryVC                   = [self.storyboard instantiateViewControllerWithIdentifier:CONTROLLER_OF_DISCOVERY_IDENTIFIER];
+    self.personCenterVC                = [self.storyboard instantiateViewControllerWithIdentifier:CONTROLLER_OF_PERSONNAL_CENTER_IDENTIFY];
+
+    self.announceVC                    = [self.storyboard instantiateViewControllerWithIdentifier:CONTROLLER_OF_ANNOUNCE_IDENTIFIER];
 
     MainNavController *homeNav         = [[MainNavController alloc] initWithRootViewController:self.homeVC];
     MainNavController *discoveryNav    = [[MainNavController alloc] initWithRootViewController:self.discoveryVC];
     MainNavController *personCenterNav = [[MainNavController alloc] initWithRootViewController:self.personCenterVC];
+    MainNavController *announceNav     = [[MainNavController alloc] initWithRootViewController:self.announceVC];
 
-    NSArray *controllerArr = [NSArray arrayWithObjects:homeNav,discoveryNav,@"",discoveryNav,personCenterNav, nil];
+    NSArray *controllerArr = [NSArray arrayWithObjects:homeNav,discoveryNav,announceNav,discoveryNav,personCenterNav, nil];
     
     NSMutableDictionary *imgDic1 = [NSMutableDictionary dictionaryWithCapacity:2];
     [imgDic1 setObject:[UIImage imageNamed:@"home_G"] forKey:@"Default"];
@@ -66,7 +70,8 @@
     
     NSArray *imgArr = [NSArray arrayWithObjects:imgDic1,imgDic2,imgDic3,imgDic4,imgDic5,nil];
 
-    _mainTabBarController = [[YWTabBarController alloc] initWithViewControllers:controllerArr imageArray:imgArr];
+    _mainTabBarController = [[YWTabBarController alloc] initWithViewControllers:controllerArr
+                                                                     imageArray:imgArr];
     _mainTabBarController.delegate = self;
     
     [self.view addSubview:_mainTabBarController.view];

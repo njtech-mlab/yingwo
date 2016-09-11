@@ -183,7 +183,9 @@
         }
     }
     
-    UIViewController *targetViewController = (UIViewController *)[_viewControllers objectAtIndex:index];
+    MainNavController *targetViewController = (MainNavController *)[_viewControllers objectAtIndex:index];
+    AnnounceController *announceVC          = [[targetViewController viewControllers] objectAtIndex:0];
+    announceVC.delegate                     = self;
     
     if ([_delegate respondsToSelector:@selector(didSelectedViewController:AtIndex:)]) {
         [_delegate didSelectedViewController:targetViewController AtIndex:index];
@@ -220,6 +222,11 @@
     }
 }
 
+#pragma mark AnnounceControllerDelegate
+
+- (void)jumpToHomeController {
+    [self displayViewAtIndex:0];
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

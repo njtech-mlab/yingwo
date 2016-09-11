@@ -282,8 +282,9 @@ static NSString *YWHomeCellMoreNineImageIdentifier = @"moreNineImageCell";
     [super viewWillAppear:animated];
     
     self.title = @"南京工业大学";
-    self.navigationItem.leftBarButtonItem = self.leftBarItem;
+    self.navigationItem.leftBarButtonItem  = self.leftBarItem;
     self.navigationItem.rightBarButtonItem = self.rightBarItem;
+    
     //导航栏＋状态栏高度
     [self judgeNetworkStatus];
     [self stopSystemPopGestureRecognizer];
@@ -376,7 +377,7 @@ static NSString *YWHomeCellMoreNineImageIdentifier = @"moreNineImageCell";
     [[self.viewModel.fecthTieZiEntityCommand execute:requestEntity] subscribeNext:^(NSArray *tieZis) {
         @strongify(self);
         if (type == 1) {
-            
+            NSLog(@"tiezi:%@",tieZis);
             self.tieZiList = [tieZis mutableCopy];
             [self.homeTableview.mj_header endRefreshing];
             [self.homeTableview reloadData];
