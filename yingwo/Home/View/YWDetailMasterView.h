@@ -12,7 +12,7 @@
 @interface YWDetailMasterView : UIView
 
 @property (nonatomic, strong) UIImageView *headImageView;
-@property (nonatomic, strong) YWLabel     *identifierLabel;
+@property (nonatomic, strong) UIImageView *identifier;
 @property (nonatomic, strong) UILabel     *nicnameLabel;
 @property (nonatomic, strong) UILabel     *floorLabel;
 @property (nonatomic, strong) UILabel     *timeLabel;

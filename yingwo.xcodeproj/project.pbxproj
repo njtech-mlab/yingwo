@@ -98,6 +98,7 @@
 		184932A21D3FC66C008CE18E /* ResetPasswordController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1849329F1D3FC66C008CE18E /* ResetPasswordController.m */; };
 		184BC1221D5F221D00125448 /* GalleryView.m in Sources */ = {isa = PBXBuildFile; fileRef = 184BC11F1D5F221D00125448 /* GalleryView.m */; };
 		184BC1231D5F221D00125448 /* ZoomScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 184BC1211D5F221D00125448 /* ZoomScrollView.m */; };
+		185718F61D82ACF8002B9701 /* DetailViewModelHepler.m in Sources */ = {isa = PBXBuildFile; fileRef = 185718F51D82ACF8002B9701 /* DetailViewModelHepler.m */; };
 		185EA5A61D52D43B00362A21 /* YWDropDownViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 185EA5A51D52D43B00362A21 /* YWDropDownViewCell.m */; };
 		186C44921D3B732D00BE3427 /* CroppingController.m in Sources */ = {isa = PBXBuildFile; fileRef = 186C448F1D3B732D00BE3427 /* CroppingController.m */; };
 		186C44931D3B732D00BE3427 /* UIViewController+Camera.m in Sources */ = {isa = PBXBuildFile; fileRef = 186C44911D3B732D00BE3427 /* UIViewController+Camera.m */; };
@@ -376,6 +377,8 @@
 		184BC11F1D5F221D00125448 /* GalleryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GalleryView.m; path = Vender/GalleryView/GalleryView.m; sourceTree = "<group>"; };
 		184BC1201D5F221D00125448 /* ZoomScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZoomScrollView.h; path = Vender/GalleryView/ZoomScrollView.h; sourceTree = "<group>"; };
 		184BC1211D5F221D00125448 /* ZoomScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZoomScrollView.m; path = Vender/GalleryView/ZoomScrollView.m; sourceTree = "<group>"; };
+		185718F41D82ACF8002B9701 /* DetailViewModelHepler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DetailViewModelHepler.h; path = Home/ViewModel/DetailViewModelHepler.h; sourceTree = "<group>"; };
+		185718F51D82ACF8002B9701 /* DetailViewModelHepler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DetailViewModelHepler.m; path = Home/ViewModel/DetailViewModelHepler.m; sourceTree = "<group>"; };
 		185EA5A41D52D43B00362A21 /* YWDropDownViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YWDropDownViewCell.h; path = Home/View/YWDropDownViewCell.h; sourceTree = "<group>"; };
 		185EA5A51D52D43B00362A21 /* YWDropDownViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YWDropDownViewCell.m; path = Home/View/YWDropDownViewCell.m; sourceTree = "<group>"; };
 		186C448E1D3B732D00BE3427 /* CroppingController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CroppingController.h; path = Tools/CroppingController.h; sourceTree = "<group>"; };
@@ -1058,6 +1061,8 @@
 				18AF9E811D4F7A390063D81F /* TieZiViewModel.m */,
 				181A01041D575D2800D96DC9 /* DetailViewModel.h */,
 				181A01051D575D2800D96DC9 /* DetailViewModel.m */,
+				185718F41D82ACF8002B9701 /* DetailViewModelHepler.h */,
+				185718F51D82ACF8002B9701 /* DetailViewModelHepler.m */,
 			);
 			name = ViewModel;
 			sourceTree = "<group>";
@@ -1555,7 +1560,7 @@
 				TargetAttributes = {
 					18AFE5E31D30B7E1007BEBDE = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = H9CECX49VX;
+						DevelopmentTeam = 5FXU36NJZS;
 					};
 				};
 			};
@@ -1693,6 +1698,7 @@
 				18F3B2621D7AFC41001A7F18 /* YWDetailReplyCell.m in Sources */,
 				18F921331D7EB85100A44846 /* YWCommentView.m in Sources */,
 				181A00C81D56D5DC00D96DC9 /* NSDate+String.m in Sources */,
+				185718F61D82ACF8002B9701 /* DetailViewModelHepler.m in Sources */,
 				18E8E4EF1D606335003C7289 /* YWContentLabel.m in Sources */,
 				18F426E21D519C7D0017BE31 /* YWHTTPManager.m in Sources */,
 				1803C1071D541E350078EF0F /* LSYAssetPreviewView.m in Sources */,

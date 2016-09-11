@@ -31,13 +31,14 @@
     self.backgroundColor = [UIColor whiteColor];
     
     _contentTextView     = [[HPGrowingTextView alloc] init];
+    
     [self addSubview:_contentTextView];
     
     [_contentTextView mas_updateConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.mas_left).offset(15);
         make.top.equalTo(self.mas_top).offset(10);
         make.right.equalTo(self.mas_right).offset(-15);
-        make.height.equalTo(@30);
+        make.height.equalTo(self.mas_height);
     }];
     
 }

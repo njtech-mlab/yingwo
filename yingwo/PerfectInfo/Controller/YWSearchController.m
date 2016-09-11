@@ -237,6 +237,71 @@
 }
 
 #pragma mark - UISearchResultsUpdating
+//-(void)updateSearchResultsForSearchController:(UISearchController *)searchController {
+//    
+//    NSString *searchText = [self.searchController.searchBar text];
+//    
+//    if ([searchText length] == 0) {
+//        [self initializeTableContent];
+//    }else {
+//        
+//        //这一步必须要，先清除tableSectionsAndItemsPinYin的内容在添加
+//        [self.tableSectionsAndItemsPinYin removeAllObjects];
+//        
+//        //初始化数组
+//        [self initializeTableContent];
+//        
+//        //移除section title的内容，后面重新添加
+//        [self.tableSections removeAllObjects];
+//
+//        if ([searchText length] > 0) {
+//            
+//            NSMutableArray *searchItems = [[NSMutableArray alloc] init];
+//            
+//            //先根据拼音数组，按照拼音找对应的大学名字
+//            //这里不是按照大学首字母英文来找的，是根据所有拼音来找的
+//            for (int i = 0; i < self.tableSectionsAndItemsPinYin.count;  i++) {
+//                
+//                NSArray *pinyinItems     = self.tableSectionsAndItemsPinYin[i];
+//                NSArray *chineseItems    = self.tableSectionsAndItems[i];
+//                NSMutableArray *newItems = [[NSMutableArray alloc] init];
+//                
+//                for (int j = 0; j < pinyinItems.count; j ++) {
+//                    
+//                    NSDictionary *pinyinDic = pinyinItems[j];
+//                    NSString *name          = pinyinDic[@"name"];
+//
+//                    if ([name containsString:searchText]) {
+//                        //找到对应的拼音大学名字后，将对应的中文名字的位置添加到新的数组中
+//                        [newItems addObject:chineseItems[j]];
+//                    }
+//                }
+//                //如果匹配不到，不添加空数组
+//                if (newItems.count != 0) {
+//                    
+//                    [searchItems addObject:newItems];
+//
+//                }
+//            }
+//            
+//            self.tableSectionsAndItems = searchItems;
+//            
+//            //更换section title中的内容
+//            for (NSArray *items in self.tableSectionsAndItems) {
+//                NSDictionary *dic = items[0];
+//                NSString *group   = dic[@"group"];
+//                [self.tableSections addObject:group];
+//            }
+//            
+//            [((UITableViewController *)self.searchController.searchResultsController).tableView reloadData];
+//
+//        }
+//    }
+//
+//}
+
+//本来准备通过输入首字母拼音的方式查找的，后来调整了，改为中文查找
+
 -(void)updateSearchResultsForSearchController:(UISearchController *)searchController {
     
     NSString *searchText = [self.searchController.searchBar text];
@@ -253,24 +318,22 @@
         
         //移除section title的内容，后面重新添加
         [self.tableSections removeAllObjects];
-
+        
         if ([searchText length] > 0) {
             
             NSMutableArray *searchItems = [[NSMutableArray alloc] init];
             
-            //先根据拼音数组，按照拼音找对应的大学名字
-            //这里不是按照大学首字母英文来找的，是根据所有拼音来找的
-            for (int i = 0; i < self.tableSectionsAndItemsPinYin.count;  i++) {
+            for (int i = 0; i < self.tableSectionsAndItems.count;  i++) {
                 
-                NSArray *pinyinItems     = self.tableSectionsAndItemsPinYin[i];
+          //      NSArray *pinyinItems     = self.tableSectionsAndItemsPinYin[i];
                 NSArray *chineseItems    = self.tableSectionsAndItems[i];
                 NSMutableArray *newItems = [[NSMutableArray alloc] init];
                 
-                for (int j = 0; j < pinyinItems.count; j ++) {
+                for (int j = 0; j < chineseItems.count; j ++) {
                     
-                    NSDictionary *pinyinDic = pinyinItems[j];
-                    NSString *name          = pinyinDic[@"name"];
-
+                    NSDictionary *groupDic = chineseItems[j];
+                    NSString *name          = groupDic[@"name"];
+                    
                     if ([name containsString:searchText]) {
                         //找到对应的拼音大学名字后，将对应的中文名字的位置添加到新的数组中
                         [newItems addObject:chineseItems[j]];
@@ -280,7 +343,7 @@
                 if (newItems.count != 0) {
                     
                     [searchItems addObject:newItems];
-
+                    
                 }
             }
             
@@ -294,10 +357,10 @@
             }
             
             [((UITableViewController *)self.searchController.searchResultsController).tableView reloadData];
-
+            
         }
     }
-
+    
 }
 
 #pragma mark - UISearchBarDelegate methods

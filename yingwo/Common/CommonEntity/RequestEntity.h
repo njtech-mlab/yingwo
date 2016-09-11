@@ -23,7 +23,7 @@
 @property (nonatomic, assign) int          page;
 
 //下拉刷新需要的偏移量
-@property (nonatomic, assign) int          offset_id;
+@property (nonatomic, assign) int          start_id;
 
 
 

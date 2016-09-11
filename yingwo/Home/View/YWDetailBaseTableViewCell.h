@@ -12,22 +12,27 @@
 #import "YWDetailTopView.h"
 #import "YWContentLabel.h"
 #import "YWDetailCellBottomView.h"
+#import "YWCommentView.h"
 
-@protocol YWDetailTabeleViewProtocol;
+@protocol YWDetailTabeleViewDelegate;
+@protocol YWCommentViewDelegate;
 
 @interface YWDetailBaseTableViewCell : UITableViewCell
 
 //YWDetailTableViewCell members
-@property (nonatomic, strong) YWDetailTopView            *topView;
-@property (nonatomic, strong) YWDetailMasterView         *masterView;
+@property (nonatomic, strong ) YWDetailTopView            *topView;
+@property (nonatomic, strong ) YWDetailMasterView         *masterView;
 //图片容器
-@property (nonatomic, strong) UIView                     *bgImageView;
+@property (nonatomic, strong ) UIView                     *bgImageView;
 //评论容器
-@property (nonatomic, strong) UIView                     *bgCommentView;
-@property (nonatomic, strong) YWContentLabel             *contentLabel;
-@property (nonatomic, strong) YWDetailCellBottomView     *bottomView;
-@property (nonatomic, assign) NSInteger                  imageCount;
-@property (nonatomic, assign ) id<YWDetailTabeleViewProtocol> delegate;
+@property (nonatomic, strong ) UIView                     *bgCommentView;
+@property (nonatomic, strong ) YWContentLabel             *contentLabel;
+@property (nonatomic, strong ) YWDetailCellBottomView     *bottomView;
+@property (nonatomic, assign ) NSInteger                  imageCount;
+@property (nonatomic, assign ) id<YWDetailTabeleViewDelegate> delegate;
+
+@property (nonatomic, assign ) id<YWCommentViewDelegate>  commentDelegate;
+
 
 //common
 - (void)createSubview;
@@ -38,9 +43,10 @@
 
 @end
 
-@protocol YWDetailTabeleViewProtocol <NSObject>
+@protocol YWDetailTabeleViewDelegate <NSObject>
 
 //点击图片查看
 - (void)didSeletedImageView:(UIImageView *)seletedImageView;
+- (void)didSelectCommentView:(YWCommentView *)commentView;
 
 @end

@@ -10,11 +10,22 @@
 #import "YWLabel.h"
 #import "YWContentLabel.h"
 
+
 @interface YWCommentView : UIView
 
-@property (nonatomic, strong) UILabel            *leftName;
-@property (nonatomic, strong) YWLabel            *identfier;
-@property (nonatomic, strong) YWContentLabel     *content;
+@property (nonatomic, strong) UILabel        *leftName;
+@property (nonatomic, strong) UIImageView    *identfier;
+@property (nonatomic, strong) YWContentLabel *content;
 
+//这些值是点击评论的时候需要的
+@property (nonatomic, assign) int            post_reply_id;
+@property (nonatomic, assign) int            post_comment_id;
+@property (nonatomic, assign) int            post_comment_user_id;
+
+@end
+
+@protocol YWCommentViewDelegate <NSObject>
+
+- (void)commentViewWith:(int)postReplyId commentId:(int)commentId commentUserId:(int)commentUserId;
 
 @end

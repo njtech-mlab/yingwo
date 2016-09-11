@@ -12,6 +12,7 @@
 
 @interface YWAlertButton : UIButton
 
+@property (nonatomic, strong)UIAlertController *alertView;
 @property (nonatomic, assign)id<YWAlertButtonProtocol>delegate;
 
 - (instancetype)initWithNames:(NSArray *)names ;
@@ -19,6 +20,6 @@
 
 @protocol YWAlertButtonProtocol <NSObject>
 
-- (void)seletedAlertViewIndex:(NSInteger)index;
+- (void)seletedAlertView:(UIAlertController *)alertView atIndex:(NSInteger)index;
 
 @end

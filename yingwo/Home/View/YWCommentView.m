@@ -14,49 +14,44 @@
     self = [super init];
     if (self) {
         [self createSubview];
-
+    //    self.backgroundColor = [UIColor redColor];
     }
     return self;
 }
 
 - (void)createSubview {
-    
-    self.leftName           = [[UILabel alloc] init];
-    self.identfier          = [[YWLabel alloc] init];
-    self.content            = [[YWContentLabel alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
-    
+
+    self.leftName                 = [[UILabel alloc] init];
+    self.identfier                = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"louzhubiaoqian"]];
+    self.content                  = [[YWContentLabel alloc] initWithFrame:CGRectZero];
     _identfier.layer.cornerRadius = 10;
     _identfier.backgroundColor    = [UIColor colorWithHexString:THEME_COLOR_1 alpha:0.5];
-    _identfier.label.textColor    = [UIColor whiteColor];
-    _identfier.label.font = [UIFont systemFontOfSize:12];
-    
+
     self.leftName.font            = [UIFont systemFontOfSize:14];
 
     self.leftName.textColor       = [UIColor colorWithHexString:THEME_COLOR_1];
 
+    self.content.numberOfLines = 0;
+    self.content.lineBreakMode = NSLineBreakByWordWrapping;
     
     [self addSubview:self.leftName];
     [self addSubview:self.identfier];
     [self addSubview:self.content];
 
-    [self.leftName mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.mas_left).offset(10);
-        make.centerY.equalTo(self);
+    [self.leftName mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.mas_left).priorityHigh();
+        make.top.equalTo(self);
     }];
     
-    [self.identfier mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.leftName.mas_right).offset(5).priorityHigh();
-        make.centerY.equalTo(self);
-        make.height.equalTo(@20);
-        make.width.equalTo(@40);
+    [self.identfier mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.leftName.mas_right).offset(2).priorityHigh();
+        make.top.equalTo(self).offset(1);
     }];
-    
-#warning 这里写死的200，有问题
-    [self.content mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.identfier.mas_right).offset(5);
-  //      make.right.equalTo(self.mas_right);
-        make.width.equalTo(@200).priorityLow();
-        make.centerY.equalTo(self);
+
+    [self.content mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.leftName.mas_left).offset(90).priorityHigh();
+        make.right.equalTo(self.mas_right).offset(5);
+        make.top.bottom.equalTo(self);
     }];
     
     

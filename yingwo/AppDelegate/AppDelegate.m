@@ -23,10 +23,11 @@
     [MagicalRecord setLoggingLevel:MagicalRecordLoggingLevelError];
     [MagicalRecord setupCoreDataStackWithStoreNamed:@"yingwoDatabase.sqlite"];
     
-    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
+    [UIApplication sharedApplication].statusBarStyle              = UIStatusBarStyleLightContent;
     [[UIApplication sharedApplication] keyWindow].backgroundColor = [UIColor whiteColor];
-    
-    UIStoryboard *storyboard       = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+
+    UIStoryboard *storyboard                                      = [UIStoryboard storyboardWithName:@"Main"
+                                                                                              bundle:nil];
     MainNavController *mainNav ;
     
     //如果有账号，则直接登录

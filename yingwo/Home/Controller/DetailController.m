@@ -24,11 +24,12 @@
 #import "TieZiComment.h"
 
 
-@interface DetailController ()<UITableViewDelegate,UITableViewDataSource,YWDetailTabeleViewProtocol,GalleryViewDelegate,UITextFieldDelegate,YWKeyboardToolViewProtocol,ISEmojiViewDelegate,HPGrowingTextViewDelegate,YWDetailCellBottomViewDelegate,YWSpringButtonDelegate>
+@interface DetailController ()<UITableViewDelegate,UITableViewDataSource,YWDetailTabeleViewDelegate,GalleryViewDelegate,UITextFieldDelegate,YWKeyboardToolViewProtocol,ISEmojiViewDelegate,HPGrowingTextViewDelegate,YWDetailCellBottomViewDelegate,YWSpringButtonDelegate>
 
 @property (nonatomic, strong) UITableView         *detailTableView;
 @property (nonatomic, strong) UIBarButtonItem     *leftBarItem;
 @property (nonatomic, strong) UIBarButtonItem     *rightBarItem;
+@property (nonatomic, strong) YWDetailReplyCell   *commentCell;
 
 @property (nonatomic, strong) YWDetailBottomView  *replyView;
 @property (nonatomic, strong) YWDetailCommentView *commentView;
@@ -40,14 +41,16 @@
 @property (nonatomic, strong) RequestEntity       *requestEntity;
 @property (nonatomic, strong) TieZiComment        *commentEntity;
 
+//这个textField无实际意义，只为了能弹出键盘用的
 @property (nonatomic, strong) UITextField         *popTextField;
 @property (nonatomic, strong) UIView              *commentListView;
 
 @property (nonatomic,assign ) CGFloat             navgationBarHeight;
 
 @property (nonatomic, strong) NSMutableArray      *tieZiReplyArr;
+@property (nonatomic, strong) NSMutableDictionary *commetParamaters;
 
-@property (nonatomic,assign ) NSInteger           comment_id;
+@property (nonatomic,assign ) int                 comment_reply_id;
 
 @property (nonatomic, assign) CGFloat             keyboardHeight;
 
@@ -78,7 +81,7 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
 
 - (DetailViewModel *)viewModel {
     if (_viewModel == nil) {
-        _viewModel = [[DetailViewModel alloc] init];
+        _viewModel                 = [[DetailViewModel alloc] init];
     }
     return _viewModel;
 }
@@ -113,7 +116,7 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
 
 - (UIBarButtonItem *)leftBarItem {
     if (_leftBarItem == nil) {
-        _leftBarItem = [[UIBarButtonItem alloc ]initWithImage:[UIImage imageNamed:@"nva_con"] style:UIBarButtonItemStylePlain target:self action:@selector(jumpToConfigurationPage)];
+        _leftBarItem = [[UIBarButtonItem alloc ]initWithImage:[UIImage imageNamed:@"nva_con"] style:UIBarButtonItemStylePlain target:self action:@selector(jumpToHomePage)];
     }
     return _leftBarItem;
 }
@@ -165,6 +168,17 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
     return _commentView;
 }
 
+- (UITextField *)popTextField {
+    if (_popTextField == nil) {
+        //这个textField无实际意义，只为了能弹出键盘用的
+        _popTextField                    = [[UITextField alloc] init];
+        _popTextField.returnKeyType      = UIReturnKeySend;
+        _popTextField.inputAccessoryView = self.commentView;
+
+    }
+    return  _popTextField;
+}
+
 - (UIView *)commentListView {
     if (_commentListView == nil) {
         _commentListView = [[UIView alloc] init];
@@ -177,6 +191,13 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
         _tieZiReplyArr = [[NSMutableArray alloc] init];
     }
     return _tieZiReplyArr;
+}
+
+- (NSMutableDictionary *)commetParamaters {
+    if (_commetParamaters == nil) {
+        _commetParamaters = [[NSMutableDictionary alloc] init];
+    }
+    return _commetParamaters;
 }
 
 - (CGFloat)navgationBarHeight {
@@ -194,7 +215,10 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
 
 #pragma mark Button action
 
-- (void)jumpToConfigurationPage {
+- (void)jumpToHomePage {
+    //隐藏键盘
+    [self hiddenKeyboard];
+    
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -204,7 +228,9 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
     announceVC.post_id             = self.model.tieZi_id;
     MainNavController *mainNav = [[MainNavController alloc] initWithRootViewController:announceVC];
 
-    [self presentViewController:mainNav animated:YES completion:nil];
+    [self presentViewController:mainNav
+                       animated:YES
+                     completion:nil];
 }
 
 //跳转传参，这里是跟帖，需要贴子的id
@@ -247,7 +273,8 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
     
     [self.view addSubview:self.detailTableView];
     [self.view addSubview:self.replyView];
-    
+    [self.view addSubview:self.popTextField];
+
     __weak DetailController *weakSelf = self;
     self.detailTableView.mj_header    = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
         [weakSelf loadData];
@@ -256,7 +283,6 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
     self.detailTableView.mj_footer = [MJRefreshAutoFooter footerWithRefreshingBlock:^{
     }];
     
-    [self.detailTableView.mj_header beginRefreshing];
     
     [self setAllUILayout];
 
@@ -265,9 +291,12 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    self.title = @"帖子";
+    self.title = @"贴子";
     self.navigationItem.leftBarButtonItem  = self.leftBarItem;
     self.navigationItem.rightBarButtonItem = self.rightBarItem;
+
+    
+    [self.detailTableView.mj_header beginRefreshing];
 
     [self judgeNetworkStatus];
 
@@ -333,8 +362,8 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
                 if (self.tieZiReplyArr.count == 1) {
                     
                     [self.tieZiReplyArr addObjectsFromArray:tieZiList];
-                    NSLog(@"tieZiList.count:%lu",tieZiList.count);
-                    NSLog(@"self.tieZiReplyArr.count:%lu",self.tieZiReplyArr.count);
+                    NSLog(@"tieZiList.count:%lu",(unsigned long)tieZiList.count);
+                    NSLog(@"self.tieZiReplyArr.count:%lu",(unsigned long)self.tieZiReplyArr.count);
                 }
                 else {
                     [self.tieZiReplyArr removeAllObjects];
@@ -374,8 +403,10 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
     cell.selectionStyle             = UITableViewCellSelectionStyleNone;
     cell.delegate                   = self;
 
-    [self.viewModel setupModelOfCell:cell model:replyModel];
-
+    [self.viewModel setupModelOfCell:cell
+                               model:replyModel
+                           indexPath:indexPath];
+    
     //这里的赋值必须在setupModelOfCell下面！！！因为bottomView的创建延迟到了viewModel中
     cell.bottomView.delegate        = self;
 
@@ -390,7 +421,9 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
     
     return [tableView fd_heightForCellWithIdentifier:cellIdentifier cacheByIndexPath:indexPath configuration:^(id cell) {
         
-        [self.viewModel setupModelOfCell:cell model:replyModel];
+        [self.viewModel setupModelOfCell:cell
+                                   model:replyModel
+                               indexPath:indexPath];
     }];
 }
 
@@ -403,11 +436,27 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
     [self hiddenKeyboard];
 }
 
-#pragma mark YWDetailTabeleViewProtocol
+#pragma mark YWDetailTabeleViewDelegate
 
 - (void)didSeletedImageView:(UIImageView *)seletedImageView {
     
     [self covertImageView:seletedImageView];
+}
+
+- (void)didSelectCommentView:(YWCommentView *)commentView {
+    
+    //评论的评论
+    self.commentType                               = CommentedModel;
+
+    //  获取点击的cell
+    self.commentCell                               = (YWDetailReplyCell *)commentView.superview.superview.superview.superview;
+    //评论所需参数
+    self.commetParamaters[@"post_reply_id"]        = @(commentView.post_reply_id);
+    self.commetParamaters[@"post_comment_id"]      = @(commentView.post_comment_id);
+    self.commetParamaters[@"post_comment_user_id"] = @(commentView.post_comment_user_id);
+
+    [self.popTextField becomeFirstResponder];
+    
 }
 
 /**
@@ -492,18 +541,15 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
 
 - (void)didSelectMessageWith:(NSInteger)post_id onSuperview:(UIView *)view{
     
-    //这个textField无实际意义，只为了能弹出键盘用的
-    self.popTextField                    = [[UITextField alloc] init];
-    self.popTextField.returnKeyType      = UIReturnKeyDone;
+    self.commentType                        = TieZiCommentModel;
 
-    self.popTextField.inputAccessoryView = self.commentView;
-    //回贴所在的id
-    self.comment_id                      = post_id;
+    self.commetParamaters[@"post_reply_id"] = @(post_id);
 
-    self.commentListView                 = view;
+    //获得被评论的cell
+    self.commentCell                        = (YWDetailReplyCell *)view.superview.superview;
 
-    [self.view addSubview:self.popTextField];
     [self.popTextField becomeFirstResponder];
+    
 }
 
 #pragma mark YWKeyboardToolViewProtocol
@@ -574,7 +620,7 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
             self.commentView.height -= 45;
         }
     }
-    else
+    else if(height == 45)
     {
 //        self.commentView.frame = CGRectMake(0,
 //                                            self.commentView.y-height/2,
@@ -598,15 +644,15 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
 
 #pragma private method
 
-
+/**
+ *  贴子评论、评论的评论
+ */
 - (void)commentTieZi {
     
-    NSDictionary *paramaters = @{@"post_reply_id":@(self.comment_id),
-                                 @"content":self.commentView.messageTextView.text
-                                 };
+    self.commetParamaters[@"content"] = self.commentView.messageTextView.text;
     
     [self.viewModel postCommentWithUrl:TIEZI_COMMENT_URL
-                            paramaters:paramaters
+                            paramaters:self.commetParamaters
                                success:^(StatusEntity *status) {
         
                                    if (status.status == YES) {
@@ -619,13 +665,13 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
 
 }
 
+
 /**
  *  页面上添加评论
  */
 - (void)addCommentOnReplyTieZi {
     
-    YWDetailReplyCell *cell = (YWDetailReplyCell *)self.commentListView.superview.superview;
-    NSIndexPath *indexPath  = [self.detailTableView indexPathForCell:cell];
+    NSIndexPath *indexPath  = [self.detailTableView indexPathForCell:self.commentCell];
     
     TieZiReply *replyEntity = [self.tieZiReplyArr objectAtIndex:indexPath.row];
     
@@ -652,7 +698,10 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
 
 #pragma mark 收起键盘
 - (void)hiddenKeyboard {
+    
     self.commentView.messageTextView.text = @"";
+    self.commetParamaters                 = nil;
+    
     [self.commentView.messageTextView resignFirstResponder];
     [self.popTextField resignFirstResponder];
 }

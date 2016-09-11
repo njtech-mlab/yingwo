@@ -52,7 +52,7 @@
                 
             }else if (requestEntity.topic_id == FreshThingModel) {
                 
-                NSDictionary *paramaters = @{@"topic_id":@0};
+                NSDictionary *paramaters = @{@"topic_id":@0,@"start_id":@(requestEntity.start_id)};
                 
                 [self requestFreshThingWithUrl:TIEZI_URL
                                     paramaters:paramaters

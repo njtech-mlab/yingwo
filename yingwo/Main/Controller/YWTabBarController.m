@@ -199,10 +199,10 @@
 - (void)addTabBarOnSelectedController:(UIViewController *)viewController {
     
     [viewController.view addSubview:_tabBar];
-    [_tabBar mas_makeConstraints:^(MASConstraintMaker *make) {
+    [_tabBar mas_updateConstraints:^(MASConstraintMaker *make) {
         
         make.centerX.equalTo(viewController.view);
-        make.bottom.equalTo(viewController.view.mas_bottom).offset(-7).priorityLow();
+        make.bottom.equalTo(viewController.view.mas_bottom).offset(-8).priorityLow();
 
     }];
 }

@@ -19,7 +19,6 @@
     [super viewDidLoad];
     
     YWCommentView *commentView = [[YWCommentView alloc] init];
-    commentView.identfier.label.text = @"楼主";
 //    commentView.identfier = nil;
 //    commentView.rightName = nil;
     [self.view addSubview:commentView];

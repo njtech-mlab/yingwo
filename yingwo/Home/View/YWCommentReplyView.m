@@ -21,7 +21,7 @@
 - (void)createSubview {
     
     self.leftName           = [[UILabel alloc] init];
-    self.content            = [[YWContentLabel alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
+    self.content            = [[YWContentLabel alloc] initWithFrame:CGRectZero];
     
     self.leftName.font      = [UIFont systemFontOfSize:14];
     
@@ -31,14 +31,16 @@
     [self addSubview:self.content];
     
     [self.leftName mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.mas_left).offset(10);
-        make.centerY.equalTo(self);
+        make.left.equalTo(self.mas_left);
+        make.top.equalTo(self);
+        make.bottom.equalTo(self);
     }];
-    
+
     [self.content mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.leftName.mas_right).offset(5);
         make.right.equalTo(self.mas_right);
-        make.centerY.equalTo(self);
+        make.top.equalTo(self);
+        make.bottom.equalTo(self);
     }];
     
 }

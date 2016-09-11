@@ -44,7 +44,7 @@
     
     [_moreBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(self);
-        make.right.equalTo(self.mas_right).offset(-10);
+        make.right.equalTo(self.mas_right);
     }];
 }
 

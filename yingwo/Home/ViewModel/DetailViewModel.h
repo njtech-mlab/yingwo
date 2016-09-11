@@ -17,6 +17,8 @@
 #import "TieZi.h"
 #import "TieZiComment.h"
 
+#import "DetailViewModelHepler.h"
+
 typedef NS_ENUM(NSInteger,ReloadModel) {
     HeaderReloadDataModel,
     FooterReoladDataModel
@@ -35,9 +37,11 @@ typedef NS_ENUM(NSInteger,ReloadModel) {
  *
  *  @param cell  YWDetailBaseTableViewCell
  *  @param model TieZi
+ *  @param model indexPath 用来算楼层的
  */
-- (void)setupModelOfCell:(YWDetailBaseTableViewCell *)cell model:(TieZi *)model;
-
+- (void)setupModelOfCell:(YWDetailBaseTableViewCell *)cell
+                   model:(TieZiReply *)model
+               indexPath:(NSIndexPath *)indexPath;
 /**
  *  寻找相对应的id
  *

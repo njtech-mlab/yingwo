@@ -53,13 +53,18 @@
     return @"replyCell";
 }
 
-- (void)setupModelOfCell:(YWDetailBaseTableViewCell *)cell model:(TieZiReply *)model {
+- (void)setupModelOfCell:(YWDetailBaseTableViewCell *)cell
+                   model:(TieZiReply *)model
+               indexPath:(NSIndexPath *)indexPath{
 
     if ([cell isMemberOfClass:[YWDetailTableViewCell class]]) {
         [self setupModelOfDetailCell:(YWDetailTableViewCell *)cell model:model];
     }
     else if ([cell isMemberOfClass:[YWDetailReplyCell class]]) {
-        [self setupModelOfReplyCell:(YWDetailReplyCell *)cell model:model];
+        
+        [self setupModelOfReplyCell:(YWDetailReplyCell *)cell
+                              model:model
+                          indexPath:indexPath];
     }
     
 }
@@ -79,7 +84,6 @@
         cell.topView.label.label.text              = model.topic_title;
     }
     
-    cell.masterView.identifierLabel.label.text = @"楼主";
     cell.masterView.floorLabel.text            = @"第1楼";
     cell.contentLabel.text                     = model.content;
     cell.masterView.nicnameLabel.text          = model.user_name;
@@ -97,7 +101,9 @@
     }
 }
 
-- (void)setupModelOfReplyCell:(YWDetailReplyCell *)cell model:(TieZiReply *)model {
+- (void)setupModelOfReplyCell:(YWDetailReplyCell *)cell
+                        model:(TieZiReply *)model
+                    indexPath:(NSIndexPath *)indexPath{
     
     NSArray *subviews = [[NSArray alloc] initWithArray:cell.backgroundView.subviews];
     for (UIView *subview in subviews) {
@@ -105,8 +111,10 @@
     }
     
     [cell createSubview];
+    
     //所在楼层
-    cell.masterView.floorLabel.text            = [NSString stringWithFormat:@"第%d楼",model.reply_id];
+  //  cell.masterView.floorLabel.text            = [NSString stringWithFormat:@"第%d楼",model.reply_id];
+    cell.masterView.floorLabel.text            = [NSString stringWithFormat:@"第%lu楼",indexPath.row +1];
 
     //回复内容
     cell.contentLabel.text                     = model.content;
@@ -173,67 +181,78 @@
        parameters:paramaters
          progress:nil
           success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        
+              
               NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)task.response;
               
               if (httpResponse.statusCode == SUCCESS_STATUS) {
                   
-                NSDictionary *content      = [NSJSONSerialization JSONObjectWithData:responseObject
-                                                                             options:NSJSONReadingMutableContainers
-                                                                               error:nil];
-                StatusEntity *statusEntity = [StatusEntity mj_objectWithKeyValues:content];
+                  NSDictionary *content      = [NSJSONSerialization JSONObjectWithData:responseObject
+                                                                               options:NSJSONReadingMutableContainers
+                                                                                 error:nil];
+                  StatusEntity *statusEntity = [StatusEntity mj_objectWithKeyValues:content];
                   
                   //没有评论直接返回nil
                   if (statusEntity.info.count == 0) {
                       success(nil) ;
                   }
                   
-                  NSMutableArray *replyArr = [[NSMutableArray alloc] init];
+                  //保存跟贴数据对象TieZiReply
+                 NSMutableArray *replyArr        = [[NSMutableArray alloc] init];
+                  //计数
+                 __block NSUInteger currentIndex = 0;
                   
-                  NSLog(@"reply:%@",content);
+                //  NSLog(@"reply:%@",content);
                   
-                  //回复字典转模型
-                  for (NSDictionary *reply in statusEntity.info) {
-                      TieZiReply *replyEntity       = [TieZiReply mj_objectWithKeyValues:reply];
+                  //单例实现多线程下载，这里不能用for循环实现，否则会出现数据混乱现象，即使最后排序也没用！！！
+                  DetailViewModelHepler *loadHepler  = [DetailViewModelHepler shareInstance];
+                  __weak typeof(loadHepler) weakself = loadHepler;
+
+                  weakself.singleSuccessBlock = ^(NSArray *commentArr){
+                      
+                      TieZiReply *replyEntity = [TieZiReply mj_objectWithKeyValues:statusEntity.info[currentIndex]];
+
+                      currentIndex ++ ;
+                      
+                      replyEntity.commentArr = [commentArr mutableCopy];
+                      
+                      [replyArr addObject:replyEntity];
+                      
+                      if (currentIndex == statusEntity.info.count) {
+                          success(replyArr);
+                      }
+                      else
+                      {
+                          TieZiReply *replyEntity       = [TieZiReply mj_objectWithKeyValues:statusEntity.info[currentIndex]];
+                          //获取图片链接
+                          replyEntity.imageUrlArrEntity = [NSString separateImageViewURLString:replyEntity.img];
+                          NSDictionary *paramaters      = @{@"post_reply_id":@(replyEntity.reply_id)};
+
+                          [self requestForCommentWithUrl:TIEZI_COMMENT_LIST_URL
+                                              paramaters:paramaters
+                                                 success: weakself.singleSuccessBlock
+                                                 failure:weakself.singleFailureBlock];
+                      }
+                  };
+                  
+                  if (statusEntity.info.count > 0) {
+                      
+                      TieZiReply *replyEntity       = [TieZiReply mj_objectWithKeyValues:statusEntity.info[0]];
                       //获取图片链接
                       replyEntity.imageUrlArrEntity = [NSString separateImageViewURLString:replyEntity.img];
-                      
-                      NSDictionary *paramaters = @{@"post_reply_id":@(replyEntity.reply_id)};
+                      NSDictionary *paramaters      = @{@"post_reply_id":@(replyEntity.reply_id)};
                       
                       [self requestForCommentWithUrl:TIEZI_COMMENT_LIST_URL
                                           paramaters:paramaters
-                                             success:^(NSArray *commentArr) {
-                                                 
-                                                 
-                                                 replyEntity.commentArr = [commentArr mutableCopy];
-                                                 
-                                                 //这里使用的是一步加载，因此replyArr add的顺序是可能改变的
-                                                 //需要按照reply_id进行排序
-                                                 
-                                                 [replyArr addObject:replyEntity];
-                                                 
-                                                 //这里获取完所有的评论才回调数据！！
-                                                 if (replyArr.count == statusEntity.info.count) {
-                                                     //升序排序
-                                                     [replyArr bubSortWithArrayByAsc];
-                                                     
-                                                     success(replyArr);
-                                                 }
-                          
-                      } failure:^(NSString *error) {
-                          
-                      }];
-                      
+                                             success: weakself.singleSuccessBlock
+                                             failure:weakself.singleFailureBlock];
+
                   }
                   
-
-                  
               }
-
               
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        NSLog(@"回帖获取失败");
-    }];
+          } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+              NSLog(@"回帖获取失败");
+          }];
 }
 
 - (void)requestForCommentWithUrl:(NSString *)url
@@ -259,7 +278,7 @@
                   StatusEntity *statusEntity = [StatusEntity mj_objectWithKeyValues:content];
                   NSMutableArray *commentArr = [[NSMutableArray alloc] init];
                   
-            //      NSLog(@"commentList:%@",content);
+                  NSLog(@"commentList:%@",content);
                   //回复字典转模型
                   for (NSDictionary *comment in statusEntity.info) {
                       TieZiComment *commentEntity = [TieZiComment mj_objectWithKeyValues:comment];
@@ -343,6 +362,84 @@
 //    }
 //    
 //}
+
+
+//- (void)requestReplyWithUrl:(NSString *)url
+//                 paramaters:(NSDictionary *)paramaters
+//                    success:(void (^)(NSArray *tieZi))success
+//                    failure:(void (^)(NSString *error))failure {
+//
+//    NSString *fullUrl      = [BASE_URL stringByAppendingString:url];
+//    YWHTTPManager *manager = [YWHTTPManager manager];
+//
+//    [manager POST:fullUrl
+//       parameters:paramaters
+//         progress:nil
+//          success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+//
+//              NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)task.response;
+//
+//              if (httpResponse.statusCode == SUCCESS_STATUS) {
+//
+//                NSDictionary *content      = [NSJSONSerialization JSONObjectWithData:responseObject
+//                                                                             options:NSJSONReadingMutableContainers
+//                                                                               error:nil];
+//                StatusEntity *statusEntity = [StatusEntity mj_objectWithKeyValues:content];
+//
+//                  //没有评论直接返回nil
+//                  if (statusEntity.info.count == 0) {
+//                      success(nil) ;
+//                  }
+//
+//                  NSMutableArray *replyArr = [[NSMutableArray alloc] init];
+//
+//                  NSLog(@"reply:%@",content);
+//
+//                  //回复字典转模型
+//                  for (NSDictionary *reply in statusEntity.info) {
+//
+//                      TieZiReply *replyEntity       = [TieZiReply mj_objectWithKeyValues:reply];
+//                      //获取图片链接
+//                      replyEntity.imageUrlArrEntity = [NSString separateImageViewURLString:replyEntity.img];
+//
+//                      NSDictionary *paramaters      = @{@"post_reply_id":@(replyEntity.reply_id)};
+//
+//                      [self requestForCommentWithUrl:TIEZI_COMMENT_LIST_URL
+//                                          paramaters:paramaters
+//                                             success:^(NSArray *commentArr) {
+//
+//
+//                                                 replyEntity.commentArr = [commentArr mutableCopy];
+//
+//                                                 //这里使用的是一步加载，因此replyArr add的顺序是可能改变的
+//                                                 //需要按照reply_id进行排序
+//
+//                                                 [replyArr addObject:replyEntity];
+//
+//                                                 //这里获取完所有的评论才回调数据！！
+//                                                 if (replyArr.count == statusEntity.info.count && replyArr.count != 0) {
+//                                                     //升序排序
+//                                                     [replyArr bubSortWithArrayByAsc];
+//
+//                                                     success(replyArr);
+//                                                 }
+//
+//                      } failure:^(NSString *error) {
+//
+//                      }];
+//
+//                  }
+//
+//
+//
+//              }
+//
+//
+//    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+//        NSLog(@"回帖获取失败");
+//    }];
+//}
+
 
 
 @end

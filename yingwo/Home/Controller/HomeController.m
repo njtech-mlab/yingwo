@@ -25,11 +25,14 @@
 #import "YWHomeTableViewCellMoreNineImage.h"
 @protocol  YWHomeCellMiddleViewBaseProtocol;
 
+//刷新的初始值
+static int start_id = -1;
+
 @interface HomeController ()<UITableViewDataSource,UITableViewDelegate,YWDropDownViewDelegate,YWHomeCellMiddleViewBaseProtocol,GalleryViewDelegate,YWAlertButtonProtocol,YWSpringButtonDelegate>
 
 @property (nonatomic, strong) UIBarButtonItem   *rightBarItem;
 @property (nonatomic, strong) UIBarButtonItem   *leftBarItem;
-
+@property (nonatomic, strong) UIAlertController *alertView;
 @property (nonatomic, strong) TieZi             *model;
 @property (nonatomic, strong) TieZiViewModel    *viewModel;
 
@@ -50,6 +53,7 @@
 @property (nonatomic, strong) NSMutableArray    *cellNewImageArr;
 
 @property (nonatomic,assign ) CGFloat           navgationBarHeight;
+
 @end
 
 @implementation HomeController
@@ -116,7 +120,7 @@ static NSString *YWHomeCellMoreNineImageIdentifier = @"moreNineImageCell";
         //请求的事新鲜事
         _requestEntity.topic_id   = FreshThingModel;
         //偏移量开始为0
-        _requestEntity.offset_id  = 0;
+        _requestEntity.start_id  = start_id;
     }
     return _requestEntity;
 }
@@ -208,9 +212,11 @@ static NSString *YWHomeCellMoreNineImageIdentifier = @"moreNineImageCell";
                                                               handler:^(UIAlertAction * _Nonnull action) {
             
         }]];
+        
     }
     return _compliantAlertView;
 }
+
 
 - (GalleryView *)galleryView {
     if (_galleryView == nil) {
@@ -280,12 +286,20 @@ static NSString *YWHomeCellMoreNineImageIdentifier = @"moreNineImageCell";
     self.navigationItem.rightBarButtonItem = self.rightBarItem;
     //导航栏＋状态栏高度
     [self judgeNetworkStatus];
+    [self stopSystemPopGestureRecognizer];
+
+}
+
+#pragma mark 禁止pop手势
+- (void)stopSystemPopGestureRecognizer {
+    self.fd_interactivePopDisabled = YES;
 }
 
 #pragma mark YWAlertButtonProtocol
 
-- (void)seletedAlertViewIndex:(NSInteger)index {
+- (void)seletedAlertView:(UIAlertController *)alertView atIndex:(NSInteger)index{
     if (index == 2) {
+        self.alertView = alertView;
         [self showCompliantAlertView];
     }
 }
@@ -366,13 +380,13 @@ static NSString *YWHomeCellMoreNineImageIdentifier = @"moreNineImageCell";
             self.tieZiList = [tieZis mutableCopy];
             [self.homeTableview.mj_header endRefreshing];
             [self.homeTableview reloadData];
-            
+            self.requestEntity.start_id = start_id;
         }else {
             
             [self.tieZiList addObjectsFromArray:tieZis];
             [self.homeTableview.mj_footer endRefreshing];
             [self.homeTableview reloadData];
-            
+            self.requestEntity.start_id ++;
         }
     } error:^(NSError *error) {
         NSLog(@"%@",error.userInfo);
@@ -487,16 +501,17 @@ CGFloat lastPosition = 0;
     if (animated == yesOrNo) {
         if (yesOrNo == YES) {
             
+            
             [UIView animateWithDuration:0.3 animations:^{
                 
-                self.tabBar.center = CGPointMake(self.view.center.x, SCREEN_HEIGHT-self.tabBar.height*2+10);
+                self.tabBar.center = CGPointMake(self.view.center.x, SCREEN_HEIGHT-self.tabBar.height*2+4);
             }];
             
         }
     }else {
         if (yesOrNo == YES)
         {
-            self.tabBar.center = CGPointMake(self.view.center.x, SCREEN_HEIGHT-self.tabBar.height*2+10);
+            self.tabBar.center = CGPointMake(self.view.center.x, SCREEN_HEIGHT-self.tabBar.height*2+4);
 
         }
         

@@ -16,7 +16,6 @@
         
         self.showsVerticalScrollIndicator   = NO;
         self.showsHorizontalScrollIndicator = NO;
-        [self addSubview:self.addMorePhotosBtn];
     }
     return self;
 }
@@ -41,7 +40,9 @@
     PhotoUnitView *photo    = [[PhotoUnitView alloc] initWithImage:photoImage];
     photo.deleteViewBtn.tag = _photoImagesCount;
     
-    [photo.deleteViewBtn addTarget:self action:@selector(deletePhotoImageView:) forControlEvents:UIControlEventTouchUpInside];
+    [photo.deleteViewBtn addTarget:self
+                            action:@selector(deletePhotoImageView:)
+                  forControlEvents:UIControlEventTouchUpInside];
     
     [self.photoImageViewsArr addObject:photo];
     
@@ -58,30 +59,25 @@
 - (void)setPhotoImageViewLayout:(PhotoUnitView *)photo byPhotoImagesCount:(NSInteger)photoImagesCount {
     
     [self addSubview:photo];
-    [photo mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.mas_left).offset(photoImagesCount * self.photoWidth).priorityLow();
-        make.width.height.equalTo(@(self.photoWidth));
-        make.centerY.equalTo(self.mas_centerY);
-
-    }];
     
-    if (_photoImagesCount != 0) {
-        
-        [self.addMorePhotosBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(photo.mas_right);
-            make.centerY.equalTo(photo.mas_centerY);
-        }];
-        
-    }
+    photo.frame = CGRectMake(photoImagesCount * self.photoWidth,
+                             10,
+                             self.photoWidth,
+                             self.photoWidth);
+    
+    self.addMorePhotosBtn.frame = CGRectMake(self.photoWidth * (photoImagesCount + 1)+10,
+                                             14,
+                                             self.photoWidth-9,
+                                             self.photoWidth-9);
 
-    if (_photoImagesCount > 4) {
+
+    if (_photoImagesCount > 3) {
         
         //photosBgSrcollView 滑动
-        self.contentSize = CGSizeMake(SCREEN_WIDTH + (photoImagesCount-4) * 80, 100);
+        self.contentSize = CGSizeMake(SCREEN_WIDTH + (photoImagesCount-4) * 100, 100);
     
     }
     
-    _photoImagesCount = photoImagesCount;
 }
 
 /**
@@ -92,15 +88,16 @@
 - (void)deletePhotoImageView:(UIButton *)sender {
     
     PhotoUnitView *photo = (PhotoUnitView *)sender.superview;
+    
     [photo removeFromSuperview];
-    
-    NSUInteger index = [self.photoImageViewsArr indexOfObject:photo];
-    
+
+    NSUInteger index     = [self.photoImageViewsArr indexOfObject:photo];
+
     [self.photoImageViewsArr removeObject:photo];
     
     _photoImagesCount--;
     
-    [self removeAllPhotos:self.photoImageViewsArr AtIndex:index];
+    [self sortAllPhotos:self.photoImageViewsArr AtIndex:index];
     
 }
 
@@ -110,21 +107,54 @@
  *  @param photosArr 图片数组
  *  @param index     index 后的全部重新排列
  */
-- (void)removeAllPhotos:(NSMutableArray *)photosArr AtIndex:(NSUInteger)index {
+- (void)sortAllPhotos:(NSMutableArray *)photosArr AtIndex:(NSUInteger)index {
     
     
-    
+    //删除最外面的图片
+    if (index == photosArr.count) {
+        
+        //这里index ＝ 0表示数组中已经没有值了
+        if (index > 0) {
+            
+            
+            [UIView animateWithDuration:0.3 animations:^{
+                
+                self.addMorePhotosBtn.frame = CGRectMake(index * self.photoWidth+10,
+                                                         14,
+                                                         self.photoWidth-9,
+                                                         self.photoWidth-9);
+
+            }];
+            
+            }
+
+        else
+        {
+            [self.addMorePhotosBtn removeFromSuperview];
+            
+        }
+    }
+
+        
+    //删除里面的图片
     for (NSInteger i = index; i < photosArr.count; i++) {
+        
         PhotoUnitView *photo = [photosArr objectAtIndex:i];
         
-        [photo mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(@(self.photoWidth*i)).priorityLow();
-        }];
-        
         [UIView animateWithDuration:0.3 animations:^{
-            [photo layoutIfNeeded];
+            
+            photo.frame = CGRectMake(self.photoWidth*i,
+                                     10,
+                                     self.photoWidth,
+                                     self.photoWidth);
+            self.addMorePhotosBtn.frame = CGRectMake((i+1) * self.photoWidth+10,
+                                                     14,
+                                                     self.photoWidth-9,
+                                                     self.photoWidth-9);
+
         }];
     }
+    
     
 }
 
@@ -136,6 +166,17 @@
  *  @param scrollView 滑动背景
  */
 - (void)addImages:(NSArray *)assets{
+    
+    _photoImagesCount   = 0;
+    _photoImageViewsArr = nil;
+    _photoImageArr      = nil;
+    
+    for (UIView *subview in [self subviews]) {
+        [subview removeFromSuperview];
+    }
+
+    [self addSubview:self.addMorePhotosBtn];
+
     
     for (ALAsset *asset in assets) {
         
@@ -170,9 +211,10 @@
         if ([[asset valueForProperty:@"ALAssetPropertyType"] isEqual:@"ALAssetTypePhoto"]) {
             
             UIImage * photoImage    = [UIImage imageWithCGImage:asset.defaultRepresentation.fullResolutionImage];
-            
             [self addPhotoInScrollViewWithImage:photoImage andImageCount:self.photoImagesCount];
             
+            _photoImagesCount++;
+
         }
         else if ([[asset valueForProperty:@"ALAssetPropertyType"] isEqual:@"ALAssetTypeVideo"]){
             //  NSURL *url = asset.defaultRepresentation.url;
@@ -181,11 +223,13 @@
     }
     
     
-    if (_photoImagesCount > 4) {
+    if (_photoImagesCount > 3) {
+        
         //photosBgSrcollView 滑动
-           self.contentSize = CGSizeMake(SCREEN_WIDTH + (_photoImagesCount-4) * self.photoWidth, 100);
+        self.contentSize = CGSizeMake(SCREEN_WIDTH + (_photoImagesCount-4) * 100, 100);
         
     }
+    
 }
 
 - (NSMutableArray *)photoImageViewsArr {
@@ -210,7 +254,6 @@
     }
     return _addMorePhotosBtn;
 }
-
 
 
 

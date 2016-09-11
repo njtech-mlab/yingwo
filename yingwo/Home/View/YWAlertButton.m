@@ -25,7 +25,7 @@ NSInteger cancelCode = -1;
 }
 
 - (void)showAlertViewController {
-    UIAlertController *alertView = [UIAlertController alertControllerWithTitle:@"操作"
+    _alertView = [UIAlertController alertControllerWithTitle:@"操作"
                                                                        message:@""
                                                                 preferredStyle:UIAlertControllerStyleActionSheet];
     
@@ -33,22 +33,22 @@ NSInteger cancelCode = -1;
     [title addAttributes:@{NSFontAttributeName:[UIFont systemFontOfSize:15]} range:NSMakeRange(0, 2)];
     
     //改变title的字体大小
-    [alertView setValue:title forKey:@"attributedTitle"];
+    [_alertView setValue:title forKey:@"attributedTitle"];
     for (int i = 0; i < _names.count; i ++) {
         
         UIAlertAction *action = [UIAlertAction actionWithTitle:_names[i]
                                                          style:UIAlertActionStyleDefault
                                                        handler:^(UIAlertAction * _Nonnull action) {
-            [self.delegate seletedAlertViewIndex:i];
+            [self.delegate seletedAlertView:_alertView atIndex:i];
         }];
         [action setValue:[UIColor blackColor] forKey:@"titleTextColor"];
-        [alertView addAction:action];
+        [_alertView addAction:action];
     }
     
-    [alertView addAction:[UIAlertAction actionWithTitle:@"取消"
+    [_alertView addAction:[UIAlertAction actionWithTitle:@"取消"
                                                   style:UIAlertActionStyleDestructive
                                                 handler:^(UIAlertAction * _Nonnull action) {
-        [self.delegate seletedAlertViewIndex:cancelCode];
+        [self.delegate seletedAlertView:_alertView atIndex:cancelCode];
     }]];
     
     /**
@@ -58,10 +58,10 @@ NSInteger cancelCode = -1;
      *  因此不能再作为第一响应者，如果使用会报错
      *
      */
-    [self.window.rootViewController presentViewController:alertView animated:YES completion:^{
-      //  [alertView canBecomeFirstResponder];
-    
+    [self.window.rootViewController presentViewController:_alertView animated:YES completion:^{
     }];
 }
+
+
 
 @end

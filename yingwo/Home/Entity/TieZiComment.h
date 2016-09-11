@@ -15,6 +15,10 @@
 @property (nonatomic, copy)NSString *post_reply_id;
 //被回复的评论的人id
 @property (nonatomic, copy)NSString *post_comment_user_id;
+
+//被回复的评论的人name
+@property (nonatomic, copy)NSString *commented_user_name;
+
 //用户id
 @property (nonatomic, copy)NSString *user_id;
 //内容

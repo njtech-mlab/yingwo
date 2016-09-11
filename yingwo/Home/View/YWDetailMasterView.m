@@ -24,9 +24,8 @@
     self.nicnameLabel                       = [[UILabel alloc] init];
     self.floorLabel                         = [[UILabel alloc] init];
     self.timeLabel                          = [[UILabel alloc] init];
-    self.identifierLabel                    = [[YWLabel alloc] init];
+    self.identifier                    = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"louzhubiaoqian"]];
 
-    self.identifierLabel.label.font         = [UIFont systemFontOfSize:12];
     self.nicnameLabel.font                  = [UIFont systemFontOfSize:15];
     self.floorLabel.font                    = [UIFont systemFontOfSize:12];
     self.timeLabel.font                     = [UIFont systemFontOfSize:12];
@@ -35,12 +34,10 @@
     self.floorLabel.textColor               = [UIColor colorWithHexString:THEME_COLOR_5];
     self.timeLabel.textColor                = [UIColor colorWithHexString:THEME_COLOR_5];
 
-    self.identifierLabel.label.height       = 14;
-    self.identifierLabel.layer.cornerRadius = 10;
-    self.identifierLabel.alpha              = 0.5;
-    self.identifierLabel.backgroundColor    = [UIColor colorWithHexString:THEME_COLOR_1];
-    self.identifierLabel.label.textColor    = [UIColor whiteColor];
-
+//    self.identifierLabel.alpha              = 0.5;
+//    self.identifierLabel.backgroundColor    = [UIColor colorWithHexString:THEME_COLOR_1];
+//    self.identifierLabel.label.textColor    = [UIColor whiteColor];
+//
 
     self.headImageView.image                = [UIImage imageNamed:@"touxiang"];
     self.headImageView.layer.masksToBounds  = YES;
@@ -50,7 +47,7 @@
     [self addSubview:self.nicnameLabel];
     [self addSubview:self.floorLabel];
     [self addSubview:self.timeLabel];
-    [self addSubview:self.identifierLabel];
+    [self addSubview:self.identifier];
     
     [self.headImageView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.mas_left);
@@ -65,8 +62,8 @@
         make.left.equalTo(self.headImageView.mas_right).offset(7.5);
     }];
     
-    [self.identifierLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.mas_top);
+    [self.identifier mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.mas_top).offset(2);
         make.left.equalTo(self.nicnameLabel.mas_right).offset(7.5);
     }];
     

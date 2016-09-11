@@ -32,7 +32,7 @@
         make.left.equalTo(self.backgroundView.mas_left).offset(5);
         make.right.equalTo(self.backgroundView.mas_right).offset(-5);
     }];
-    
+        
     [self.contentText mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.backgroundView.mas_left).offset(15);
         make.right.equalTo(self.backgroundView.mas_right).offset(-15);

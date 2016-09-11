@@ -191,7 +191,6 @@
 
     [self setUILayout];
     [self setAllAction];
-    [self loadDataFromLocalForCustomer];
 
 }
 
@@ -200,6 +199,8 @@
     self.title = @"我的";
     self.navigationItem.rightBarButtonItem = self.rightBarItem;
     
+    [self loadDataFromLocalForCustomer];
+
     [self judgeNetworkStatus];
 }
 
