@@ -312,14 +312,16 @@
                                           success:^(Register *reg) {
                                               
                                               if (reg.status == YES) {
+                                                  [SVProgressHUD showSuccessStatus:@"注册成功,请完善信息"
+                                                                        afterDelay:HUD_DELAY];
                                                   //注册成功后跳转到完善信息页面
                                                   [self jumpToPerfectInfoPage];
                                               }else if (reg.status == NO) {
-                                                  [MBProgressHUD showErrorHUDToAddToView:self.view labelText:@"注册失败" animated:YES afterDelay:1];
+                                                  [SVProgressHUD showErrorStatus:@"注册失败" afterDelay:HUD_DELAY];
                                               }
                                           } failure:^(NSURLSessionDataTask *task, NSError *error) {
                                               NSLog(@"error:%@",error);
-                                              [MBProgressHUD showErrorHUDToAddToView:self.view labelText:@"注册失败" animated:YES afterDelay:1];
+                                              [SVProgressHUD showErrorStatus:@"注册失败" afterDelay:HUD_DELAY];
                                           }];
 }
 

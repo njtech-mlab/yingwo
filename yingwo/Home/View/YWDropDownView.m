@@ -92,10 +92,13 @@ static CGFloat ANIMATION_TIME = 0.3;
         
         cell.centerLabel.textColor = [UIColor colorWithHexString:THEME_COLOR_1];
     }
+    else
+    {
+        cell.centerLabel.textColor = [UIColor colorWithHexString:THEME_COLOR_3];
+    }
+    cell.centerLabel.text = [self.titleArr objectAtIndex:indexPath.row];
+    cell.tag              = 100 + indexPath.row;
     
-    cell.centerLabel.text      = [self.titleArr objectAtIndex:indexPath.row];
-
-
         return cell;
     
 }
@@ -109,21 +112,51 @@ static CGFloat ANIMATION_TIME = 0.3;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    //第一行不允许点击
-    if (indexPath.row == 0) {
-        YWDropDownViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-        cell.selectionStyle      = UITableViewCellSelectionStyleNone;
+    
+    YWDropDownViewCell *cell;
+    
+    for (int i = 100; i <= 103; i ++)
+    {
+        cell                       = [_tableView viewWithTag:i];
+        cell.centerLabel.textColor = [UIColor colorWithHexString:THEME_COLOR_3];
     }
-    else {
-        [tableView deselectRowAtIndexPath:indexPath animated:YES];
-        
-        [self hideDropDownView];
-        
-        if ([_delegate respondsToSelector:@selector(seletedDropDownViewAtIndex:)]) {
-            [_delegate seletedDropDownViewAtIndex:indexPath.row];
-        }
+    
+    cell                       = [tableView cellForRowAtIndexPath:indexPath];
+    cell.centerLabel.textColor = [UIColor colorWithHexString:THEME_COLOR_1];
+    
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    [self hideDropDownView];
+    
+    if ([_delegate respondsToSelector:@selector(seletedDropDownViewAtIndex:)]) {
+        [_delegate seletedDropDownViewAtIndex:indexPath.row];
     }
+    self.isPopDropDownView = NO;
+    
 }
+
+
+//- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+//    
+//    //第一行不允许点击
+//    if (indexPath.row == 0) {
+//        YWDropDownViewCell *cell   = [tableView cellForRowAtIndexPath:indexPath];
+//        cell.selectionStyle        = UITableViewCellSelectionStyleNone;
+//        cell.centerLabel.textColor = [UIColor colorWithHexString:THEME_COLOR_1];
+//    }
+//    else {
+//        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+//        
+//        [self hideDropDownView];
+//        
+//        if ([_delegate respondsToSelector:@selector(seletedDropDownViewAtIndex:)]) {
+//            [_delegate seletedDropDownViewAtIndex:indexPath.row];
+//        }
+//    }
+//    
+//    self.isPopDropDownView = NO;
+//    
+//}
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return 30;

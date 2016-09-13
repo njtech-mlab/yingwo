@@ -422,8 +422,8 @@
         
     }else {
         
-        perfectInfoVc.academy = name;
-        
+        perfectInfoVc.academy    = name;
+        perfectInfoVc.academy_id = selectedId;
     }
 
     [self.navigationController popViewControllerAnimated:YES];

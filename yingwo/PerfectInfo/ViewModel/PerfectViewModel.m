@@ -53,7 +53,7 @@
 
 - (void)requestForFinishUserBaseInfoWithUrl:(NSString *)url
                                  paramaters:(NSDictionary *)paramaters
-                                    success:(void (^)(College *info))success
+                                    success:(void (^)(StatusEntity *status))success
                                     failure:(void (^)(NSString *error))failure {
     NSString *fullUrl      = [BASE_URL stringByAppendingString:url];
     
@@ -70,9 +70,11 @@
               
               if (httpResponse.statusCode == SUCCESS_STATUS) {
                   
-                  NSDictionary *content = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
-                  College *college      = [College mj_objectWithKeyValues:content];
-                  success(college);
+                  NSDictionary *content        = [NSJSONSerialization JSONObjectWithData:responseObject
+                                                                                 options:NSJSONReadingMutableContainers
+                                                                                   error:nil];
+                  StatusEntity *statusEntity = [StatusEntity mj_objectWithKeyValues:content];
+                  success(statusEntity);
               }
               
 

@@ -39,8 +39,10 @@
             
             if (requestEntity.topic_id == AllThingModel) {
                 
+                NSDictionary *paramaters = @{@"start_id":@(requestEntity.start_id)};
+
                 [self requesAllThingsWithUrl:TIEZI_URL
-                                  paramaters:nil
+                                  paramaters:paramaters
                                      success:^(NSArray *tieZi) {
                     
                     [subscriber sendNext:tieZi];
@@ -82,9 +84,12 @@
 - (void)setupModelOfCell:(YWHomeTableViewCellBase *)cell model:(TieZi *)model {
     
     //新鲜事无topic_title
-    if (model.topic_title.length != 0) {
-        cell.labelView.title.label.text = model.topic_title;
-    }
+ //   NSLog(@"title:%@",model.topic_title);
+
+//    if (model.topic_title.length != 0) {
+//        NSLog(@"title:%@",model.topic_title);
+//        cell.labelView.title.label.text = model.topic_title;
+//    }
     cell.contentText.text                            = model.content;
     cell.bottemView.nickname.text                    = model.user_name;
     cell.bottemView.favourLabel.text                 = model.like_cnt;
@@ -111,6 +116,10 @@
         [cell.bottemView.favour setBackgroundImage:[UIImage imageNamed:@"heart_gray"]
                                           forState:UIControlStateNormal];
         cell.bottemView.favour.isSpring = NO;
+    }
+    
+    if (model.imageUrlArrEntity.count == 3) {
+        
     }
     
     if (model.imageUrlArrEntity.count > 0) {
@@ -164,9 +173,11 @@
     //这里算出的宽度值要乘以2变成像素值
     if (tag == 1) {
         imageWidth = (SCREEN_WIDTH - 10*2 - 5 *2)*2;
-    }else if (tag == 2 || tag == 4) {
+    }
+    else if (tag == 2 || tag == 4) {
         imageWidth = (SCREEN_WIDTH - 10*2 - 5 *2 - 5 * 1)/2*2;
-    }else if(tag > 4) {
+    }
+    else if(tag > 2) {
         imageWidth = (SCREEN_WIDTH - 10*2 - 5 *2 - 5 * 2)/3*2;
     }
     //图片模式，这里请求的是正方形图片
@@ -230,20 +241,25 @@
     NSString *fullUrl      = [BASE_URL stringByAppendingString:url];
     YWHTTPManager *manager =[YWHTTPManager manager];
     
+    [YWNetworkTools loadCookiesWithKey:LOGIN_COOKIE];
+
     [manager POST:fullUrl
        parameters:paramaters
          progress:nil
           success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
               
-              NSDictionary *content    = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
-
+              NSDictionary *content = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
+              
               TieZiResult *tieZiResult = [TieZiResult mj_objectWithKeyValues:content];
               NSArray *tieZiArr        = [TieZi mj_objectArrayWithKeyValuesArray:tieZiResult.info];
               
+              //需要将返回的url字符串，转化为imageUrl数组
+              [self changeImageUrlModelFor:tieZiArr];
+              
               success(tieZiArr);
-              TieZi *tieZi = tieZiArr[0];
+              
               //  NSLog(@"content:%@",content);
-              NSLog(@"tieZi.content:%@",tieZi.content);
+              //  NSLog(@"tieZiArr:%@",tieZiResult.info);
               
           } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
               

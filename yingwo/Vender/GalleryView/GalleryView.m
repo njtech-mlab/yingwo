@@ -8,11 +8,14 @@
 
 @interface GalleryView ()
 
-@property (nonatomic, strong) UIScrollView    *scrollView;
-@property (assign, nonatomic) NSInteger       currentPage;
+@property (nonatomic, strong) UIScrollView *scrollView;
+@property (assign, nonatomic) NSInteger    currentPage;
 
+@property (atomic, assign   ) CGFloat      imageLoadProgress;
+@property (nonatomic, assign) CGFloat      totalProgress;
 
 @end
+
 
 @implementation GalleryView
 
@@ -112,17 +115,26 @@
     
     _imageViews = imageViews;
     
-    [self.scrollView setContentSize:CGSizeMake(self.scrollView.bounds.size.width * imageViews.count, self.scrollView.bounds.size.height)];
+    [self.scrollView setContentSize:CGSizeMake(self.scrollView.bounds.size.width * imageViews.count,
+                                               self.scrollView.bounds.size.height)];
+    
     self.scrollView.contentOffset = CGPointMake(self.scrollView.frame.size.width*index, 0);
     
     for (int i = 0; i < imageViews.count; i++)
     {
-        CGRect rect = CGRectMake(self.scrollView.frame.size.width * i, 0, self.scrollView.frame.size.width, self.scrollView.frame.size.height);
-        ZoomScrollView *zoomScrollView = [[ZoomScrollView alloc] initWithFrame:rect andImageView:[imageViews objectAtIndex:i] atIndex:i];
+        CGRect rect = CGRectMake(self.scrollView.frame.size.width * i,
+                                 0,
+                                 self.scrollView.frame.size.width,
+                                 self.scrollView.frame.size.height);
+        
+        ZoomScrollView *zoomScrollView = [[ZoomScrollView alloc] initWithFrame:rect
+                                                                  andImageView:[imageViews objectAtIndex:i]
+                                                                       atIndex:i];
         
         [self.scrollView addSubview:zoomScrollView];
         
-        UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTap:)];
+        UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                                    action:@selector(singleTap:)];
         [singleTap setNumberOfTouchesRequired:1];
         [singleTap setNumberOfTapsRequired:1];
         [zoomScrollView addGestureRecognizer:singleTap];
@@ -135,15 +147,64 @@
     self.currentPage = index;
 }
 
+- (void)setImageViews:(NSArray *)imageViews
+withImageUrlArrEntity:(NSArray *)entities
+          showAtIndex:(NSInteger)index {
+    
+    _imageViews        = imageViews;
+    _imageUrlArrEntity = entities;
+
+    [self.scrollView setContentSize:CGSizeMake(self.scrollView.bounds.size.width * imageViews.count,
+                                               self.scrollView.bounds.size.height)];
+    
+    self.scrollView.contentOffset = CGPointMake(self.scrollView.frame.size.width*index, 0);
+    
+    for (int i = 0; i < imageViews.count; i++)
+    {
+        CGRect rect = CGRectMake(self.scrollView.frame.size.width * i,
+                                 0,
+                                 self.scrollView.frame.size.width,
+                                 self.scrollView.frame.size.height);
+        
+        ZoomScrollView *zoomScrollView = [[ZoomScrollView alloc] initWithFrame:rect
+                                                                  andImageView:[imageViews objectAtIndex:i]
+                                                                       atIndex:i];
+        //给一个tag，因为图片总是要下载前后三张，方便找到位置
+        zoomScrollView.tag = 200+i;
+        
+        [self.scrollView addSubview:zoomScrollView];
+        
+        //单击事件
+        UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                                    action:@selector(singleTap:)];
+        [singleTap setNumberOfTouchesRequired:1];
+        [singleTap setNumberOfTapsRequired:1];
+        [zoomScrollView addGestureRecognizer:singleTap];
+        
+        [singleTap requireGestureRecognizerToFail:zoomScrollView.doubleTapGesture];
+        
+    }
+    
+    if ([YWNetworkTools networkStauts]) {
+        [self loadImageWithCurrentPage:index];
+    }
+
+    
+    self.pageLabel.text = [NSString stringWithFormat:@"%lu/%lu",index+1,self.imageViews.count];
+    //currentPage 从0开始计算
+    self.currentPage = index;
+}
+
 - (void)removeImageView{
     
     //获取被放大的小图
-    UIImageView *currentSmallView      = [self.imageViews objectAtIndex:self.currentPage];
+    UIImageView *currentSmallView    = [self.imageViews objectAtIndex:self.currentPage];
     //获取放大后的图
     UIImageView *currentBigImageView = [self viewWithTag:self.currentPage+1];
     //先去除背景色
-    self.backgroundColor = [UIColor clearColor];
-    
+    self.backgroundColor             = [UIColor clearColor];
+    self.pageLabel.textColor         = [UIColor clearColor];
+
     [UIView animateWithDuration:0.3 animations:^{
         currentBigImageView.frame = currentSmallView.frame;
     }completion:^(BOOL finished) {
@@ -154,35 +215,66 @@
 
 
 #pragma mark ScrollView Delegate
+//
+//- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+//{
+//    CGFloat   pageWidth   = scrollView.frame.size.width;
+//    NSInteger currentPage = floor((scrollView.contentOffset.x - pageWidth / 2) / pageWidth) + 1;
+//    
+//    if (currentPage != self.currentPage)
+//    {
+//        for (UIView *view in scrollView.subviews)
+//        {
+//            if ([view isKindOfClass:[ZoomScrollView class]])
+//            {
+//                ZoomScrollView *zoomScrollView = (ZoomScrollView *)view;
+//                
+//                //有网络就请求网络下载
+//                if ([YWNetworkTools networkStauts]) {
+//               //     [self resizeImageViewByzoomScrollView:zoomScrollView atIndex:currentPage];
+//                }
+//                NSLog(@"tag:%lu",zoomScrollView.tag);
+//                
+//                if (zoomScrollView.zoomScale != 1)
+//                {
+//                    [zoomScrollView setZoomScale:1 animated:YES];
+//                }
+//            }
+//        }
+//    }
+//        self.currentPage = currentPage;
+//        
+//        if ([self.delegate respondsToSelector:@selector(galleryView:didShowPageAtIndex:)])
+//        {
+//            [self.delegate galleryView:self didShowPageAtIndex:currentPage];
+//        }
+//    
+//    
+//    self.pageLabel.text = [NSString stringWithFormat:@"%lu/%lu",currentPage+1,self.imageViews.count];
+//
+//}
+
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
     CGFloat   pageWidth   = scrollView.frame.size.width;
     NSInteger currentPage = floor((scrollView.contentOffset.x - pageWidth / 2) / pageWidth) + 1;
+    
     if (currentPage != self.currentPage)
     {
-        for (UIView *view in scrollView.subviews)
-        {
-            if ([view isKindOfClass:[ZoomScrollView class]])
-            {
-                ZoomScrollView *zoomScrollView = (ZoomScrollView *)view;
-                if (zoomScrollView.zoomScale != 1)
-                {
-                    [zoomScrollView setZoomScale:1 animated:YES];
-                }
-            }
-        }
+        [self loadImageWithCurrentPage:self.currentPage];
+
     }
-        self.currentPage = currentPage;
-        
-        if ([self.delegate respondsToSelector:@selector(galleryView:didShowPageAtIndex:)])
-        {
-            [self.delegate galleryView:self didShowPageAtIndex:currentPage];
-        }
+    self.currentPage = currentPage;
+    
+    if ([self.delegate respondsToSelector:@selector(galleryView:didShowPageAtIndex:)])
+    {
+        [self.delegate galleryView:self didShowPageAtIndex:currentPage];
+    }
     
     
     self.pageLabel.text = [NSString stringWithFormat:@"%lu/%lu",currentPage+1,self.imageViews.count];
-
+    
 }
 
 
@@ -199,6 +291,119 @@
             [self.delegate galleryView:self didSelectPageAtIndex:zoomScrollView.index];
         }
     }
+}
+
+//预先加载前后两张图片
+- (void)loadImageWithCurrentPage:(NSInteger)currentPage {
+    
+    //左边和右边都有图片，并且两张都加载
+    if (currentPage+1 < self.imageViews.count && currentPage >0) {
+        
+        self.totalProgress = 3.0;
+        
+        //滑动到当前展示的图片
+        ZoomScrollView *centerZoomScrollView = [self.scrollView viewWithTag:200+currentPage];
+        //展示左边的图片
+        ZoomScrollView *leftZoomScrollView   = [self.scrollView viewWithTag:200+currentPage-1];
+        //展示右边的图片
+        ZoomScrollView *rightZoomScrollView  = [self.scrollView viewWithTag:200+currentPage+1];
+        
+        [self resizeImageViewByzoomScrollView:centerZoomScrollView atIndex:currentPage];
+        [self resizeImageViewByzoomScrollView:leftZoomScrollView atIndex:currentPage-1];
+        [self resizeImageViewByzoomScrollView:rightZoomScrollView atIndex:currentPage+1];
+        
+    }
+    //滑动到第一张图片，只加载第一张和第二张
+    else if (currentPage == 0 && self.imageViews.count > 1)
+    {
+        
+        self.totalProgress = 2.0;
+
+        //滑动到当前展示的图片
+        ZoomScrollView *centerZoomScrollView = [self.scrollView viewWithTag:200+currentPage];
+        //展示右边的图片
+        ZoomScrollView *rightZoomScrollView  = [self.scrollView viewWithTag:200+currentPage+1];
+        
+        [self resizeImageViewByzoomScrollView:centerZoomScrollView atIndex:currentPage];
+        [self resizeImageViewByzoomScrollView:rightZoomScrollView atIndex:currentPage+1];
+        
+    }
+    //滑动到最后一张图片，只加载最后一张和最后第二张图片
+    else if (currentPage +1 == self.imageViews.count && currentPage != 0)
+    {
+        self.totalProgress = 2.0;
+
+        //滑动到当前展示的图片
+        ZoomScrollView *centerZoomScrollView = [self.scrollView viewWithTag:200+currentPage];
+        //展示左边的图片
+        ZoomScrollView *leftZoomScrollView   = [self.scrollView viewWithTag:200+currentPage-1];
+        
+        [self resizeImageViewByzoomScrollView:centerZoomScrollView atIndex:currentPage];
+        [self resizeImageViewByzoomScrollView:leftZoomScrollView atIndex:currentPage-1];
+    }
+    //只有一张图片
+    else if (self.imageViews.count == 1)
+    {
+        self.totalProgress = 1.0;
+        
+        //滑动到当前展示的图片
+        ZoomScrollView *centerZoomScrollView = [self.scrollView viewWithTag:200+currentPage];
+        
+        [self resizeImageViewByzoomScrollView:centerZoomScrollView atIndex:currentPage];
+    }
+}
+
+- (void)resizeImageViewByzoomScrollView:(ZoomScrollView *)zoomScrollView atIndex:(NSInteger)index{
+    
+    ImageViewEntity *imageEntity = [self.imageUrlArrEntity objectAtIndex:index];
+    
+    [zoomScrollView.imageView sd_setImageWithURL:[NSURL URLWithString:imageEntity.imageName] placeholderImage:nil
+                                         options:SDWebImageRetryFailed
+                                        progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+                                            
+                                            [SVProgressHUD showLoadingStatusWith:@""];
+
+                                            CGFloat progress       = receivedSize *1.0 / expectedSize;
+                                            self.imageLoadProgress += progress;
+
+                                            if (self.imageLoadProgress >= self.totalProgress) {
+                                                [SVProgressHUD dismiss];
+                                            }
+    }
+                                       completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+                                           
+                                          // imageEntity.isDownload = YES;
+                                           [zoomScrollView resizeImageViewWithImage:image];
+                                           
+                                           if (zoomScrollView.zoomScale != 1) {
+                                               [zoomScrollView setZoomScale:1.0];
+                                           }
+    }];
+    
+    //  下载后一张
+//    if (zoomScrollView.tag == 200 && self.imageViews.count != 1 && self.imageViews.count-1 > index) {
+//        
+//        ZoomScrollView *rightZoomScrollView = [self.scrollView viewWithTag:201];
+//        ImageViewEntity *rigthImageEntity = [self.imageUrlArrEntity objectAtIndex:index+1];
+//
+//        [rightZoomScrollView.imageView sd_setImageWithURL:[NSURL URLWithString:rigthImageEntity.imageName]
+//                                                completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+//                                                    
+//                                                    [rightZoomScrollView resizeImageViewWithImage:image];
+//        }];
+//    }
+    
+//    [YWAvatarBrowser downloadImageWithUrl:imageEntity
+//                                 progress:nil
+//                                  success:^(UIImage *image) {
+//                                      
+//                                      [SVProgressHUD dismiss];
+//                                      [zoomScrollView resizeImageViewWithImage:image];
+//                                      
+//                                  } failure:^(NSString *error) {
+//                                      
+//                                  }];
+    
 }
 
 

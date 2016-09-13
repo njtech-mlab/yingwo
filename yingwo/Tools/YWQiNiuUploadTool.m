@@ -17,7 +17,9 @@
     
     [manger POST:fullUrl parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         
-        NSDictionary *resultDic = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableLeaves error:nil];
+        NSDictionary *resultDic = [NSJSONSerialization JSONObjectWithData:responseObject
+                                                                  options:NSJSONReadingMutableLeaves
+                                                                    error:nil];
         NSDictionary *tokenDic = resultDic[@"info"];
       //  NSLog(@"tokenDic:%@",tokenDic);
 
@@ -111,7 +113,7 @@
         CGFloat imageHeight = image.size.height;
 
         //将图片压缩后以二进制形式上传
-        NSData *imageData          = UIImageJPEGRepresentation(image, 0.01);
+        NSData *imageData          = UIImageJPEGRepresentation(image, 0.5);
         
         [upManager putData:imageData key:nil token:token complete:^(QNResponseInfo *info, NSString *key, NSDictionary *resp) {
             

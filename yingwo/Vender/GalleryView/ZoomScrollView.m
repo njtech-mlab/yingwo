@@ -34,11 +34,15 @@
         
         CGFloat height = frame.size.width / image.size.width * image.size.height;
         self.imageView = [[UIImageView alloc] initWithImage:image];
-        [self.imageView setFrame:CGRectMake(0, (self.frame.size.height - height) / 2, self.frame.size.width, height)];
+        [self.imageView setFrame:CGRectMake(0, (self.frame.size.height - height) / 2,
+                                            self.frame.size.width,
+                                            height)];
+        
         [self.imageView setUserInteractionEnabled:YES];
         [self addSubview:self.imageView];
         
-        self.doubleTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)];
+        self.doubleTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                        action:@selector(handleDoubleTap:)];
         [self.doubleTapGesture setNumberOfTapsRequired:2];
         [self.imageView addGestureRecognizer:self.doubleTapGesture];
     }
@@ -66,19 +70,30 @@
 
         [UIView animateWithDuration:0.3 animations:^{
             
-            [self.imageView setFrame:CGRectMake(0, (self.frame.size.height - height) / 2, self.frame.size.width, height)];
+            [self.imageView setFrame:CGRectMake(0, (self.frame.size.height - height) / 2,
+                                                self.frame.size.width, height)];
 
         }];
         
         [self.imageView setUserInteractionEnabled:YES];
         [self addSubview:self.imageView];
         
-        self.doubleTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)];
+        self.doubleTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                        action:@selector(handleDoubleTap:)];
         [self.doubleTapGesture setNumberOfTapsRequired:2];
         [self.imageView addGestureRecognizer:self.doubleTapGesture];
+        
+        //长按事件
+        UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self
+                                                                                                action:@selector(longPress:)];
+        longPress.minimumPressDuration          = 0.5f;
+        [self.imageView addGestureRecognizer:longPress];
+
+        [longPress requireGestureRecognizerToFail:self.doubleTapGesture];
     }
     return self;
 }
+
 
 - (id)initWithFrame:(CGRect)frame withOriginFrame:(Rect)origin andImageView:(UIImageView *)imageView atIndex:(NSInteger)index {
     
@@ -105,6 +120,70 @@
         [self.imageView addGestureRecognizer:self.doubleTapGesture];
     }
     return self;
+}
+
+- (void)resizeImageViewWithImage:(UIImage *)newImage {
+    
+    CGFloat height       = self.frame.size.width / newImage.size.width * newImage.size.height;
+    self.imageView.image = newImage;
+    
+    [UIView animateWithDuration:0.3 animations:^{
+        
+        [self.imageView setFrame:CGRectMake(0,
+                                            (self.frame.size.height - height) / 2,
+                                            self.frame.size.width,
+                                            height)];
+        
+    }];
+    
+}
+
+
+#pragma mark long press
+
+- (void)longPress:(UILongPressGestureRecognizer *)press {
+    
+    UIAlertController *alertView = [UIAlertController alertControllerWithTitle:@"提示"
+                                                                       message:nil
+                                                                preferredStyle:UIAlertControllerStyleActionSheet];
+    [alertView addAction:[UIAlertAction actionWithTitle:@"保存图片"
+                                                  style:UIAlertActionStyleDefault
+                                                handler:^(UIAlertAction * _Nonnull action) {
+        
+                                                    [SVProgressHUD showLoadingStatusWith:@""];
+                                                    UIImageView *pressImageView = (UIImageView *)[press view];
+                                                    
+                                                    [self saveImageToAlbum:pressImageView.image];
+                                                    
+    }]];
+    
+    [alertView addAction:[UIAlertAction actionWithTitle:@"取消"
+                                                  style:UIAlertActionStyleCancel
+                                                handler:^(UIAlertAction * _Nonnull action) {
+                                                    
+                                                }]];
+    [self.window.rootViewController presentViewController:alertView animated:YES completion:nil];
+}
+
+/**
+ *  将图片保存至相册
+ *
+ *  @param image
+ */
+- (void)saveImageToAlbum:(UIImage *)image {
+    
+    UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+    
+}
+
+- (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo{
+    if (error) {
+        [SVProgressHUD showErrorStatus:@"保存失败" afterDelay:HUD_DELAY];
+    }
+    else
+    {
+        [SVProgressHUD showSuccessStatus:@"保存成功" afterDelay:HUD_DELAY];
+    }
 }
 
 

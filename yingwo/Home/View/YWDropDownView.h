@@ -13,6 +13,7 @@
 
 @property (nonatomic, strong) NSMutableArray         *titleArr;
 @property (nonatomic, assign) BOOL                   isPopDropDownView;
+@property (nonatomic, assign) NSInteger              selectedIndex;
 @property (nonatomic, assign) id<YWDropDownViewDelegate> delegate;
 
 /**

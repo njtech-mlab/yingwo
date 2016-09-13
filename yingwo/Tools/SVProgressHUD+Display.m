@@ -29,6 +29,16 @@
     [SVProgressHUD showInfoWithStatus:string];
 }
 
++ (void)showLoadingStatusWith:(NSString *) string{
+    [SVProgressHUD setCustomDefaultStyle];
+    [SVProgressHUD showWithStatus:string];
+}
+
++ (void)showLoadProgress:(CGFloat)progress {
+    [SVProgressHUD setCustomDefaultStyle];
+    [SVProgressHUD showProgress:progress];
+}
+
 #pragma private method
 
 + (void)setCustomDefaultStyleWithDelay:(NSInteger) delay{
@@ -36,6 +46,12 @@
     [SVProgressHUD setDefaultStyle:SVProgressHUDStyleDark];
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeBlack];
     [SVProgressHUD setMinimumDismissTimeInterval:delay];
+}
+
++ (void)setCustomDefaultStyle{
+    
+    [SVProgressHUD setDefaultStyle:SVProgressHUDStyleDark];
+    [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeBlack];
 }
 
 @end

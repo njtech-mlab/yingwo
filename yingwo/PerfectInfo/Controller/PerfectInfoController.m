@@ -204,11 +204,20 @@
 
 - (GradePickerView *)gradePickerView {
     if (_gradePickerView == nil) {
-        _gradePickerView            = [[GradePickerView alloc] initWithFrame:CGRectMake(0, self.view.height, self.view.width, 150)];
+        _gradePickerView            = [[GradePickerView alloc] initWithFrame:CGRectMake(0,
+                                                                                        self.view.height,
+                                                                                        self.view.width,
+                                                                                        150)];
         _gradePickerView.pickerView.delegate   = self;
         _gradePickerView.pickerView.dataSource = self;
-        _gradePickerView.backgroundColor = [UIColor colorWithHexString:THEME_COLOR_5 alpha:0.7];
-        [_gradePickerView.finishedBtn addTarget:self action:@selector(closeGradePickerView) forControlEvents:UIControlEventTouchUpInside];
+        _gradePickerView.backgroundColor       = [UIColor colorWithHexString:THEME_COLOR_5 alpha:0.7];
+
+        [_gradePickerView.finishedBtn addTarget:self
+                                         action:@selector(finishedGradePickerView)
+                               forControlEvents:UIControlEventTouchUpInside];
+        [_gradePickerView.cancelBtn addTarget:self
+                                       action:@selector(closeGradePickerView)
+                             forControlEvents:UIControlEventTouchUpInside];
     }
     return _gradePickerView;
 }
@@ -367,9 +376,15 @@
 }
 
 - (void)selectSchool {
+    
+    [SVProgressHUD showLoadingStatusWith:@""];
+    
     [self.viewModel requestForCollegeWithUrl:SCHOOL_URL success:^(College *colleges) {
         
         if (colleges.status == YES) {
+            
+            [SVProgressHUD dismiss];
+            
             [self.collegeModel saveCollegeDataInUserDefault:colleges.info];
             YWSearchController *schoolSearchVc = [[YWSearchController alloc] init];
             schoolSearchVc.searchModel         = SchoolSearchModel;
@@ -377,32 +392,43 @@
         }
         
     } failure:^(NSString *error) {
-        
+        [SVProgressHUD showErrorStatus:@"请检查网络" afterDelay:HUD_DELAY];
     }];
 }
 
 - (void)selectAcademy {
     
     if (![self hasSelectedSchool]) {
-        [MBProgressHUD showErrorHUDToAddToView:self.view labelText:@"请先选择学校" animated:YES afterDelay:1.5];
+        [SVProgressHUD showErrorStatus:@"请先选择学校" afterDelay:HUD_DELAY];
         return;
     }
     
     NSDictionary *paramaters = @{@"school_id":self.school_id};
+    
+    [SVProgressHUD showLoadingStatusWith:@""];
+
     
     [self.viewModel requestForAcademyWithUrl:ACADEMY_URL
                                   paramaters:paramaters
                                      success:^(College *colleges) {
         
         if (colleges.status == YES) {
+            
+            [SVProgressHUD dismiss];
+
+            
             [self.collegeModel saveCollegeDataInUserDefault:colleges.info];
             YWSearchController *academySearchVc = [[YWSearchController alloc] init];
             academySearchVc.searchModel         = AcademySearchModel;
-            [self.navigationController pushViewController:academySearchVc animated:YES];
+            
+            if ([YWNetworkTools networkStauts]) {
+                
+                [self.navigationController pushViewController:academySearchVc animated:YES];
+            }
         }
         
     } failure:^(NSString *error) {
-        
+        [SVProgressHUD showErrorStatus:@"请检查网络" afterDelay:HUD_DELAY];
     }];
 }
 
@@ -437,11 +463,24 @@
                                                   self.view.height+self.gradePickerView.height/2);
 
     } completion:^(BOOL finished) {
+        [self.gradePickerView removeFromSuperview];
+    }];
+    
+}
+
+- (void)finishedGradePickerView {
+    
+    [UIView animateWithDuration:0.3 animations:^{
+        self.gradePickerView.center = CGPointMake(self.view.center.x,
+                                                  self.view.height+self.gradePickerView.height/2);
+        
+    } completion:^(BOOL finished) {
         self.gradeText.centerLabel.text = self.selectedGrade;
         [self.gradePickerView removeFromSuperview];
     }];
     
 }
+
 
 
 - (void)selectHeadPortrait {
@@ -476,17 +515,30 @@
 
 - (void)finishBaseInfo {
     
-    if (self.schoolText.centerLabel.text.length == 0) {
-        [SVProgressHUD showErrorWithStatus:@"学校不能为空"];
+    if (self.name.length == 0) {
+        
+        [SVProgressHUD showErrorStatus:@"请填写昵称" afterDelay:HUD_DELAY];
         return;
     }
     
-    if (self.nicknameText.centerLabel.text.length == 0) {
-        self.nicknameText.centerLabel.text = @"匿名";
+    
+    if (self.school_id.length == 0) {
+        [SVProgressHUD showErrorStatus:@"学校必填" afterDelay:HUD_DELAY];
     }
     
-    if (self.academyText.centerLabel.text.length == 0) {
-        self.academyText.centerLabel.text = @"";
+    
+    if (self.signature.length == 0) {
+        
+        self.signature = @"主人很懒什么都没写～";
+    }
+    
+    if (self.academy_id.length == 0) {
+        self.academy_id = @"0";
+        self.academy    = @"暂无";
+    }
+    
+    if (self.grade.length == 0) {
+        self.grade = @"暂无";
     }
     
     NSString *requestUrl = @"";
@@ -518,22 +570,22 @@
     
     if (self.photoImage == nil) {
         
-        NSDictionary *paramaters = @{@"name":self.nicknameText.centerLabel.text,
+        NSDictionary *paramaters = @{@"name":self.name,
                                      @"sex" : @(sex),
-                                     @"grade":self.gradeText.centerLabel.text,
-                                     @"signature":self.signatureText.centerLabel.text,
+                                     @"grade":self.grade,
+                                     @"signature":self.signature,
                                      @"school_id":self.school_id,
                                      @"academy_id":self.academy_id,
-                                     @"school_name":self.schoolText.centerLabel.text,
-                                     @"academy_name":self.academyText.centerLabel.text
+                                     @"school_name":self.school,
+                                     @"academy_name":self.academy
                                      };
         
         User *user = [User mj_objectWithKeyValues:paramaters];
         
         [self.viewModel requestForFinishUserBaseInfoWithUrl:urlString
                                                  paramaters:paramaters
-                                                    success:^(College *info) {
-                                                        if (info.status == YES) {
+                                                    success:^(StatusEntity *status) {
+                                                        if (status.status == YES) {
                                                             NSLog(@"成功");
                                                             //本地存储
                                                             [User saveCustomerByUser:user];
@@ -553,23 +605,22 @@
                               progress:nil
                                success:^(NSString *url) {
                                    
-                                   NSDictionary *paramaters = @{@"name":self.nicknameText.centerLabel.text,
-                                                                @"grade":self.gradeText.centerLabel.text,
+                                   NSDictionary *paramaters = @{@"name":self.name,
+                                                                @"grade":self.grade,
                                                                 @"sex" : @(sex),
-                                                                @"signature":self.signatureText.centerLabel.text,
+                                                                @"signature":self.signature,
                                                                 @"face_img":url,
                                                                 @"school_id":self.school_id,
                                                                 @"academy_id":self.academy_id,
-                                                                @"school_name":self.schoolText.centerLabel.text,
-                                                                @"academy_name":self.academyText.centerLabel.text
-                                                                };
+                                                                @"school_name":self.school,
+                                                                @"academy_name":self.academy                                                                };
                                    
                                    User *user = [User mj_objectWithKeyValues:paramaters];
 
                                    [self.viewModel requestForFinishUserBaseInfoWithUrl:urlString
                                                                             paramaters:paramaters
-                                                                               success:^(College *info) {
-                                                                                   if (info.status == YES) {
+                                                                               success:^(StatusEntity *status) {
+                                                                                   if (status.status == YES) {
                                                                                        NSLog(@"成功");
                                                                                        //本地存储
                                                                                        [User saveCustomerByUser:user];
@@ -655,8 +706,8 @@
                   usingCropRect:(CGRect)cropRect
 {
     self.photoImage = croppedImage;
-    [self.photoImageBtn setBackgroundImage:[UIImage circleImage:self.photoImage] forState:UIControlStateNormal];
     [self.navigationController popViewControllerAnimated:YES];
+
 }
 
 // The original image has been cropped. Additionally provides a rotation angle used to produce image.
@@ -776,7 +827,12 @@
             [self sexToFemale];
         }
     }
-    
+    if (self.photoImage != nil) {
+        
+        [self.photoImageBtn setBackgroundImage:[UIImage circleImage:self.photoImage] forState:UIControlStateNormal];
+
+    }
+
 }
 
 

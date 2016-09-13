@@ -35,9 +35,16 @@
                          success:(void (^)(College *colleges))success
                          failure:(void (^)(NSString *error))failure;
 
-
+/**
+ *  完善个人信息
+ *
+ *  @param url
+ *  @param paramaters
+ *  @param success
+ *  @param failure    
+ */
 - (void)requestForFinishUserBaseInfoWithUrl:(NSString *)url
                                  paramaters:(NSDictionary *)paramaters
-                                    success:(void (^)(College *info))success
+                                    success:(void (^)(StatusEntity *info))success
                                     failure:(void (^)(NSString *error))failure;
 @end

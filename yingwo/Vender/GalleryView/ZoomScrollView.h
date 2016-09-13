@@ -41,4 +41,14 @@
  *  @return 
  */
 - (id)initWithFrame:(CGRect)frame withOriginFrame:(Rect)origin andImageView:(UIImageView *)imageView atIndex:(NSInteger)index ;
+
+/**
+ *  重新下载图片
+ *
+ *  @param newImage 新的图片
+ */
+- (void)resizeImageViewWithImage:(UIImage *)newImage;
+
+
+
 @end

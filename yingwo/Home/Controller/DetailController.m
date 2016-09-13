@@ -256,7 +256,6 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
     
     [self.view addSubview:self.detailTableView];
     [self.view addSubview:self.replyView];
-    [self.view addSubview:self.commentView];
     
     __weak DetailController *weakSelf = self;
     self.detailTableView.mj_header    = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
@@ -294,7 +293,11 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
                                              selector:@selector(keyboardWillChangeFrame:)
                                                  name:UIKeyboardWillChangeFrameNotification
                                                object:nil];
-    
+     //监听键盘消失事件
+     [[NSNotificationCenter defaultCenter] addObserver:self
+                                              selector:@selector(didHiddenKeyboard:)
+                                                  name:UIKeyboardDidHideNotification
+                                                object:nil];
 }
 
 //键盘弹出后调用
@@ -329,9 +332,11 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
                                             45);
     }];
     
+}
 
+- (void)didHiddenKeyboard:(NSNotification *) notes{
     
-    
+    self.commentView = nil;
 }
 
 /**
@@ -373,13 +378,14 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
                 if (self.tieZiReplyArr.count == 1) {
                     
                     [self.tieZiReplyArr addObjectsFromArray:tieZiList];
-                    NSLog(@"tieZiList.count:%lu",(unsigned long)tieZiList.count);
-                    NSLog(@"self.tieZiReplyArr.count:%lu",(unsigned long)self.tieZiReplyArr.count);
+               //     NSLog(@"tieZiList.count:%lu",(unsigned long)tieZiList.count);
+                 //   NSLog(@"self.tieZiReplyArr.count:%lu",(unsigned long)self.tieZiReplyArr.count);
                 }
                 else {
                     [self.tieZiReplyArr removeAllObjects];
                     [self.tieZiReplyArr addObject:self.model];
                     [self.tieZiReplyArr addObjectsFromArray:tieZiList];
+
                 }
             }
             
@@ -394,6 +400,11 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
             [self.detailTableView reloadData];
             
         }
+        
+        //获得最后一个帖子的id,有了这个id才能向前继续获取model
+        TieZi *lastObject           = [tieZiList objectAtIndex:tieZiList.count-1];
+        self.requestEntity.start_id = lastObject.tieZi_id;
+
     }];
     
 }
@@ -458,6 +469,8 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
 
 - (void)didSelectCommentView:(YWCommentView *)commentView {
     
+    [self.view addSubview:self.commentView];
+
     //评论的评论
     self.commentType                               = CommentedModel;
 
@@ -484,7 +497,7 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
                          animations:^{
                              
                              self.detailTableView.frame = CGRectMake(0,
-                                                                     -commentViewFrame.origin.y+self.navgationBarHeight,
+                                                                     -(SCREEN_HEIGHT-commentViewFrame.origin.y+self.navgationBarHeight),
                                                                      SCREEN_WIDTH,
                                                                      SCREEN_HEIGHT);
                              
@@ -643,39 +656,28 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
     
     return YES;
 }
-- (void)growingTextView:(HPGrowingTextView *)growingTextView didChangeHeight:(float)height {
+
+#pragma mark HPGrowingTextViewDelegate
+
+-(void)growingTextView:(HPGrowingTextView *)growingTextView willChangeHeight:(float)height{
+
+//    NSLog(@"growingTextViewheight:%f",growingTextView.height);
+//    NSLog(@"width:%f",height);
+//    
+    //growingTextView 比height要高1
+    CGFloat diff                           = growingTextView.height-1 - height;
     
-//    self.commentView.backgroundColor = [UIColor greenColor];
+    //改变growingTextView的高度这里默认为三行高度
+    growingTextView.height                 -= diff;
+    self.commentView.backgroundView.height -= diff;
+
     
-    if (height == 0) {
-        if (self.commentView.height <= 45) {
-            return;
-        }
-        else
-        {
-            self.commentView.height -= 45;
-        }
-    }
-    else if(height == 45)
-    {
-//        self.commentView.frame = CGRectMake(0,
-//                                            self.commentView.y-height/2,
-//                                            self.commentView.width,
-//                                            self.commentView.height+height/2);
-//        
-        [self.commentView.backgroundView mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.bottom.top.equalTo(self.commentView);
-            make.height.equalTo(@(self.commentView.backgroundView.height+height));
-        }];
-        [self.commentView.messageTextView mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.bottom.top.equalTo(self.commentView.backgroundView);
-        }];
-//        self.commentView.backgroundView.frame = CGRectMake(self.commentView.backgroundView.x,
-//                                            self.commentView.backgroundView.y-height,
-//                                            self.commentView.width,
-//                                            self.commentView.height+height);
-//
-    }
+    self.commentView.frame                = CGRectMake(0,
+                                        self.commentView.y+diff,
+                                        self.commentView.width,
+                                        self.commentView.height-diff);
+
+    
 }
 
 #pragma private method
@@ -735,12 +737,12 @@ static NSString *detailReplyCellIdentifier = @"replyCell";
 #pragma mark 收起键盘
 - (void)hiddenKeyboard {
     
-    self.commentView.messageTextView.text = @"";
-    self.commetParamaters                 = nil;
-    self.selectCommentView                = nil;
-    self.detailTableView.frame            = self.view.bounds;
-    
+    self.commetParamaters      = nil;
+    self.selectCommentView     = nil;
+    self.detailTableView.frame = self.view.bounds;
+
     [self.commentView.messageTextView resignFirstResponder];
+    
 }
 
 - (void)didReceiveMemoryWarning {

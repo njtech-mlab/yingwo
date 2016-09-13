@@ -13,4 +13,9 @@
 + (void)showErrorStatus:(NSString *)string afterDelay:(NSInteger)delay;
 
 + (void)showInfoStatus:(NSString *)string afterDelay:(NSInteger)delay;
+
++ (void)showLoadingStatusWith:(NSString *) string;
+
++ (void)showLoadProgress:(CGFloat)progress;
+
 @end

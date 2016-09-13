@@ -21,7 +21,7 @@
 - (void)createSubview {
     _centerLabel                 = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 100, 30)];
     _centerLabel.textAlignment   = NSTextAlignmentCenter;
-    _centerLabel.font            = [UIFont systemFontOfSize:15];
+    _centerLabel.font            = [UIFont systemFontOfSize:14];
     [self addSubview:_centerLabel];
     
 

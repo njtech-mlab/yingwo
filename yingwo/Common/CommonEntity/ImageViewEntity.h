@@ -10,10 +10,17 @@
 
 @interface ImageViewEntity : NSObject
 
+//图片的宽度，像素
 @property (nonatomic, assign) CGFloat  width;
+
+//图片的长度，像素
 @property (nonatomic, assign) CGFloat  height;
+
 //imageName形式：http://obabu2buy.bkt.clouddn.com/xxxxxxxxxxxxxx
 @property (nonatomic, copy  ) NSString *imageName;
+
+//是否点击大图下载过
+@property (nonatomic, assign) BOOL     isDownload;
 
 /**
  *  获得所有图片的名称

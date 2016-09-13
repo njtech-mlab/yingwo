@@ -150,11 +150,19 @@
         self.headView.signatureLabel.text = customer.signature;
         NSString *imagePath               = [YWSandBoxTool getHeadPortraitPathFromCache];
         
-        if (imagePath != nil) {
-            
-            self.headView.headPortraitImageView.image = [UIImage imageWithContentsOfFile:imagePath];
-
+        //有网的情况下图片都是从服务器上获取
+        if ([YWNetworkTools networkStauts]) {
+            [self.headView.headPortraitImageView sd_setImageWithURL:[NSURL URLWithString:customer.face_img]];
         }
+        else
+        {
+            if (imagePath != nil) {
+                
+                self.headView.headPortraitImageView.image = [UIImage imageWithContentsOfFile:imagePath];
+                
+            }
+        }
+
         
         if ([customer.sex isEqualToString:@"0"]) {
             self.headView.genderImageView.image = [UIImage imageNamed:@"woman"];

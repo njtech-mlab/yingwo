@@ -27,6 +27,7 @@
 
 @property (strong, nonatomic          ) NSArray      *images;
 @property (strong, nonatomic          ) NSArray      *imageViews;
+@property (strong, nonatomic          ) NSArray      *imageUrlArrEntity;
 
 /**
  *  设置需要展示的UIImage，并且确定展示第index个
@@ -35,6 +36,17 @@
  *  @param index        但前点击需要展示的索引
  */
 - (void)setImages:(NSArray *)imageViews showAtIndex:(NSInteger)index;
+
+/**
+ *  设置需要展示的UIImage，并且确定展示第index个
+ *
+ *  @param imageViews 需要展示的UIImageView数组
+ *  @param entities   需要展示的ImageViewEntity数组
+ *  @param index      但前点击需要展示的索引
+ */
+- (void)setImageViews:(NSArray *)imageViews
+withImageUrlArrEntity:(NSArray *)entities
+          showAtIndex:(NSInteger)index;
 
 /**
  *  点击消除

@@ -26,16 +26,25 @@
 
 - (void)createSubview {
     
-    _backgroundView  = [[UIView alloc] init];
+    _backgroundView                   = [[UIView alloc] init];
 
-    _face            = [UIButton buttonWithType:UIButtonTypeCustom];
-    _keyborad        = [UIButton buttonWithType:UIButtonTypeCustom];
+    _face                             = [UIButton buttonWithType:UIButtonTypeCustom];
+    _keyborad                         = [UIButton buttonWithType:UIButtonTypeCustom];
 
-    _messageTextView = [[HPGrowingTextView alloc] init];
+    _messageTextView                  = [[HPGrowingTextView alloc] init];
+
+    //最多四行高度
+    _messageTextView.maxNumberOfLines = 4;
+
+    _face.frame            = CGRectMake(10, 5, 30, 30);
+    _keyborad.frame        = CGRectMake(10, 10, 30, 20);
+    _backgroundView.frame  = CGRectMake(50, 5, SCREEN_WIDTH-60, 30);
+    _messageTextView.frame = CGRectMake(60, 5, SCREEN_WIDTH-70, 30);
 
     _messageTextView.placeholder     = @"请输入你评论";
     _messageTextView.backgroundColor = [UIColor clearColor];
     _messageTextView.returnKeyType   = UIReturnKeyDone;
+    
 
     _backgroundView.layer.cornerRadius  = 10;
     _backgroundView.layer.masksToBounds = YES;
@@ -59,31 +68,31 @@
     [self addSubview:_backgroundView];
     [self addSubview:_messageTextView];
 
-    [_face mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self).offset(10);
-        make.centerY.equalTo(self);
-    }];
-    
-    [_keyborad mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self).offset(10);
-        make.centerY.equalTo(self);
-    }];
-    
-    //_messageTextView 的高度一定要比设置的字体大小要大！！！！这里设置为31，字体为14号
-    [_messageTextView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(_face.mas_right).offset(20);
-        make.right.equalTo(self.mas_right).offset(-20);
-        make.height.equalTo(@31);
-        make.centerY.equalTo(self);
-    }];
-    
-    [self.backgroundView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(_face.mas_right).offset(10);
-        make.height.equalTo(_messageTextView.mas_height);
-        make.right.equalTo(self.mas_right).offset(-10);
-        make.centerY.equalTo(self.mas_centerY);
-    }];
-    
+//    [_face mas_updateConstraints:^(MASConstraintMaker *make) {
+//        make.left.equalTo(self).offset(10);
+//        make.centerY.equalTo(self);
+//    }];
+//    
+//    [_keyborad mas_updateConstraints:^(MASConstraintMaker *make) {
+//        make.left.equalTo(self).offset(10);
+//        make.centerY.equalTo(self);
+//    }];
+//    
+//    //_messageTextView 的高度一定要比设置的字体大小要大！！！！这里设置为31，字体为14号
+//    [_messageTextView mas_updateConstraints:^(MASConstraintMaker *make) {
+//        make.left.equalTo(_face.mas_right).offset(20);
+//        make.right.equalTo(self.mas_right).offset(-20);
+//        make.height.equalTo(@31).priorityLow();
+//        make.centerY.equalTo(self);
+//    }];
+//    
+//    [self.backgroundView mas_updateConstraints:^(MASConstraintMaker *make) {
+//        make.left.equalTo(_face.mas_right).offset(10);
+//        make.height.equalTo(_messageTextView.mas_height);
+//        make.right.equalTo(self.mas_right).offset(-10);
+//        make.centerY.equalTo(self.mas_centerY);
+//    }];
+//    
     _keyborad.hidden = YES;
     
 }
